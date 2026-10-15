@@ -1,0 +1,679 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { GetStaticPaths } from 'astro';
+import Layout from '~/layouts/PageLayout.astro';
+import PageIntro from '~/components/reisun/PageIntro.astro';
+import CTA from '~/components/reisun/CTA.astro';
+import SystemPreview from '~/components/reisun/SystemPreview.astro';
+import SolutionArchitecture from '~/components/reisun/SolutionArchitecture.astro';
+import { solutions, type Solution } from '~/data/solutions';
+import { services } from '~/data/services';
+
+export const getStaticPaths = (() =>
+  solutions.map((solution) => ({
+    params: { slug: solution.id },
+    props: { solution },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  solution: Solution;
+}
+
+const { solution } = Astro.props;
+const relatedServices = services.filter((service) => solution.serviceIds.includes(service.id));
+const relatedSolutions = solutions.filter((item) => item.id !== solution.id);
+const metadata = {
+  title: `${solution.title}｜架构、功能与交付内容`,
+  description: `${solution.summary}${solution.audience}了解业务问题、逻辑架构、功能模块、实施路径与交付边界。REISUN 定制开发方案说明。`,
+};
+---
+
+<Layout metadata={metadata}>
+  <nav class="rs-container solution-breadcrumb" aria-label="面包屑导航">
+    <ol>
+      <li><a href="/">首页</a></li>
+      <li aria-hidden="true"><Icon name="tabler:chevron-right" /></li>
+      <li><a href="/solutions">解决方案</a></li>
+      <li aria-hidden="true"><Icon name="tabler:chevron-right" /></li>
+      <li aria-current="page">{solution.title}</li>
+    </ol>
+  </nav>
+
+  <PageIntro label="解决方案" title={solution.title} description={solution.introduction} />
+
+  <div class="rs-container detail-context">
+    <dl class="context-grid">
+      <div>
+        <dt>适用团队</dt>
+        <dd>{solution.audience}</dd>
+      </div>
+      <div>
+        <dt>建议切入点</dt>
+        <dd>{solution.startingPoint}</dd>
+      </div>
+    </dl>
+    <nav class="detail-navigation" aria-label="方案内容导航">
+      <a href="#problems">业务问题</a>
+      <a href="#architecture">方案架构</a>
+      <a href="#capabilities">功能模块</a>
+      <a href="#preview">界面演示</a>
+      <a href="#delivery">交付与边界</a>
+    </nav>
+  </div>
+
+  <section id="problems" class="rs-section detail-section" aria-labelledby="problems-title">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="problems-title">先看业务卡在哪里。</h2>
+        <p>系统设计的起点，是需要被真正解决的问题。</p>
+      </div>
+      <dl class="problem-list">
+        {
+          solution.problems.map((problem) => (
+            <div>
+              <dt>{problem.title}</dt>
+              <dd>{problem.description}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section
+    id="architecture"
+    class="rs-section rs-section-dark detail-section architecture-section"
+    aria-labelledby="architecture-title"
+  >
+    <div class="rs-container">
+      <div class="architecture-heading">
+        <h2 id="architecture-title">{solution.architecture.title}</h2>
+        <p>{solution.architecture.description}</p>
+      </div>
+      <SolutionArchitecture architecture={solution.architecture} />
+    </div>
+  </section>
+
+  <section class="rs-section rs-section-soft" aria-labelledby="advantages-title">
+    <div class="rs-container advantage-layout">
+      <div class="section-aside">
+        <h2 id="advantages-title">方案的价值，体现在日常使用中。</h2>
+        <p>不是增加更多页面，而是让业务的连接方式更清楚。</p>
+      </div>
+      <dl class="advantage-list">
+        {
+          solution.advantages.map((advantage) => (
+            <div>
+              <dt>{advantage.title}</dt>
+              <dd>{advantage.description}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section id="capabilities" class="rs-section detail-section" aria-labelledby="capabilities-title">
+    <div class="rs-container capability-layout">
+      <div class="section-aside">
+        <h2 id="capabilities-title">围绕业务闭环，组织功能模块。</h2>
+        <p>以下用于说明可讨论的实施范围，具体模块与优先级在需求梳理后确定。</p>
+        <div class="technology-note">
+          <h3>可选技术方向</h3>
+          <ul class="rs-tags">
+            {solution.technologies.map((technology) => <li class="rs-tag">{technology}</li>)}
+          </ul>
+          <p>技术选型结合已有环境、数据规模和维护条件确认。</p>
+        </div>
+      </div>
+      <div class="module-list">
+        {
+          solution.modules.map((module) => (
+            <article class="module">
+              <h3>{module.title}</h3>
+              <p>{module.description}</p>
+              <ul>
+                {module.features.map((feature) => (
+                  <li>
+                    <Icon name="tabler:check" aria-hidden="true" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="preview" class="rs-section rs-section-soft detail-section" aria-labelledby="preview-title">
+    <div class="rs-container preview-layout">
+      <div class="section-aside">
+        <h2 id="preview-title">把业务结构，放进界面里看。</h2>
+        <p>{solution.summary}</p>
+        <p class="preview-disclaimer">
+          本页为静态概念演示。界面、数据和状态用于说明信息组织方式，不连接真实业务系统，不代表已交付项目或部署承诺。
+        </p>
+      </div>
+      <figure class="detail-preview">
+        <div class="preview-surface"><SystemPreview variant={solution.variant} /></div>
+        <figcaption>{solution.previewCaption}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="rs-section implementation-section" aria-labelledby="implementation-title">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="implementation-title">从可用的切入点，逐步形成完整链路。</h2>
+        <p>围绕当前场景安排实施工作，不把未知条件藏到交付阶段。</p>
+      </div>
+      <dl class="implementation-list">
+        {
+          solution.workflow.map((step) => (
+            <div>
+              <dt>{step.title}</dt>
+              <dd>{step.description}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section id="delivery" class="rs-section rs-section-soft detail-section" aria-labelledby="delivery-title">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="delivery-title">交付内容与边界，先说清楚。</h2>
+        <p>功能、源码、资料与维护安排，以项目范围和双方约定为准。</p>
+      </div>
+      <div class="delivery-layout">
+        <div class="deliverable-list">
+          <h3>可约定的交付内容</h3>
+          <ul>
+            {
+              solution.deliverables.map((deliverable) => (
+                <li>
+                  <Icon name="tabler:check" aria-hidden="true" />
+                  <span>{deliverable}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <aside class="scope-note" aria-labelledby="scope-title">
+          <h3 id="scope-title">演示说明与实施前提</h3>
+          <ul>{solution.boundaries.map((boundary) => <li>{boundary}</li>)}</ul>
+        </aside>
+      </div>
+      <div class="service-links">
+        <h3>相关技术服务</h3>
+        <ul>
+          {
+            relatedServices.map((service) => (
+              <li>
+                <a class="rs-link" href={`/services#${service.id}`}>
+                  {service.title}
+                  <Icon name="tabler:arrow-up-right" aria-hidden="true" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rs-section related-section" aria-labelledby="related-title">
+    <div class="rs-container">
+      <div class="related-heading">
+        <h2 id="related-title">也可以从其他业务场景继续了解。</h2>
+        <a class="rs-link" href="/solutions">全部解决方案</a>
+      </div>
+      <ul class="related-list">
+        {
+          relatedSolutions.map((item) => (
+            <li>
+              <a href={`/solutions/${item.id}`}>
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+                <span class="related-action">
+                  了解方案 <Icon name="tabler:arrow-right" aria-hidden="true" />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTA
+    title="让方案，回到你的实际业务里。"
+    description="带上现有流程、系统或现场资料，一起确认适用范围、优先级与实施条件。"
+  />
+</Layout>
+
+<style>
+  .solution-breadcrumb {
+    padding-top: 2rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.8125rem;
+  }
+  .solution-breadcrumb ol {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .solution-breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  .solution-breadcrumb a:hover {
+    color: var(--rs-blue, #245eea);
+    text-decoration: underline;
+  }
+  .solution-breadcrumb :global(svg) {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 4rem;
+    margin: 0;
+    padding: 1.75rem 0;
+    border-block: 1px solid var(--rs-line, #dce4ef);
+  }
+  .context-grid dt {
+    margin-bottom: 0.6rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+  .context-grid dd {
+    margin: 0;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.95rem;
+    line-height: 1.85;
+  }
+  .detail-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.75rem;
+    padding-block: 1.25rem;
+  }
+  .detail-navigation a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--rs-blue, #245eea);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.35em;
+  }
+  .detail-navigation a:hover {
+    text-decoration-color: currentColor;
+  }
+  .detail-section {
+    scroll-margin-top: 7rem;
+  }
+  .problem-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    margin: 0;
+  }
+  .problem-list > div {
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--rs-line, #dce4ef);
+  }
+  .problem-list dt,
+  .advantage-list dt,
+  .module h3,
+  .implementation-list dt,
+  .deliverable-list h3,
+  .scope-note h3,
+  .related-list h3 {
+    color: var(--rs-ink, #172b46);
+    font-size: 1.15rem;
+    font-weight: 650;
+    line-height: 1.6;
+  }
+  .problem-list dd,
+  .advantage-list dd,
+  .implementation-list dd {
+    margin: 0.65rem 0 0;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .architecture-heading {
+    margin-bottom: 2.5rem;
+  }
+  .architecture-heading h2,
+  .section-aside h2,
+  .related-heading h2 {
+    font-size: clamp(1.6rem, 2.7vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: -0.035em;
+  }
+  .architecture-heading h2 {
+    color: #fff;
+  }
+  .architecture-heading p {
+    margin-top: 1rem;
+    color: #c2d2e7;
+    line-height: 1.85;
+  }
+  .advantage-layout,
+  .capability-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+    align-items: start;
+    gap: 2.5rem clamp(2rem, 6vw, 6rem);
+  }
+  .section-aside h2,
+  .related-heading h2 {
+    color: var(--rs-ink, #172b46);
+  }
+  .section-aside > p {
+    margin-top: 1rem;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .advantage-list {
+    margin: 0;
+  }
+  .advantage-list > div + div {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .technology-note {
+    margin-top: 2.5rem;
+  }
+  .technology-note h3 {
+    margin-bottom: 0.875rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+  .technology-note ul {
+    list-style: none;
+    padding: 0;
+  }
+  .technology-note li {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .technology-note p {
+    margin-top: 0.875rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.8125rem;
+    line-height: 1.85;
+  }
+  .module + .module {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .module > p {
+    margin-top: 0.5rem;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .module ul,
+  .deliverable-list ul {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 1rem 0 0;
+    list-style: none;
+  }
+  .module li,
+  .deliverable-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.95rem;
+    line-height: 1.85;
+  }
+  .module :global(svg),
+  .deliverable-list :global(svg) {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+    margin-top: 0.35rem;
+    color: var(--rs-blue, #245eea);
+  }
+  .preview-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.4fr);
+    align-items: center;
+    gap: 2rem 4rem;
+  }
+  .section-aside .preview-disclaimer {
+    padding-left: 1rem;
+    border-left: 2px solid var(--rs-line, #dce4ef);
+    font-size: 0.875rem;
+  }
+  .detail-preview {
+    min-width: 0;
+    margin: 0;
+  }
+  .preview-surface {
+    min-width: 0;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    border-radius: 0.75rem;
+    background: var(--rs-navy, #102b50);
+  }
+  .detail-preview figcaption {
+    margin-top: 1rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.8125rem;
+    line-height: 1.85;
+  }
+  .implementation-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+    margin: 0;
+  }
+  .implementation-list > div {
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--rs-blue, #245eea);
+  }
+  .implementation-list dt {
+    font-size: 1rem;
+  }
+  .implementation-list dd {
+    font-size: 0.9375rem;
+  }
+  .delivery-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 2rem 4rem;
+    align-items: start;
+  }
+  .deliverable-list {
+    padding-top: 1.5rem;
+  }
+  .scope-note {
+    padding: 1.5rem 1.75rem;
+    border-left: 3px solid var(--rs-blue, #245eea);
+    background: var(--rs-white, #fff);
+  }
+  .scope-note ul {
+    display: grid;
+    gap: 0.875rem;
+    margin: 1rem 0 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.875rem;
+    line-height: 1.85;
+  }
+  .service-links {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .service-links h3 {
+    margin-bottom: 0.75rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+  .service-links ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .service-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+  .service-links :global(svg),
+  .related-action :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+  }
+  .related-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .related-heading h2 {
+    font-size: clamp(1.4rem, 2.3vw, 1.8rem);
+  }
+  .related-heading > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+  .related-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .related-list a {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+    text-decoration: none;
+  }
+  .related-list a:hover h3 {
+    color: var(--rs-blue, #245eea);
+  }
+  .related-list p {
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.9375rem;
+    line-height: 1.85;
+  }
+  .related-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin-top: auto;
+    color: var(--rs-blue, #245eea);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  @media (max-width: 900px) {
+    .context-grid {
+      gap: 2rem;
+    }
+    .problem-list,
+    .related-list {
+      gap: 1.5rem;
+    }
+    .preview-layout {
+      grid-template-columns: 1fr;
+    }
+    .preview-layout .section-aside {
+      max-width: 44rem;
+    }
+    .implementation-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .delivery-layout {
+      gap: 2rem;
+    }
+  }
+  @media (max-width: 700px) {
+    .context-grid,
+    .problem-list,
+    .advantage-layout,
+    .capability-layout,
+    .delivery-layout,
+    .related-list {
+      grid-template-columns: 1fr;
+    }
+    .solution-breadcrumb {
+      padding-top: 1rem;
+    }
+    .context-grid {
+      padding-block: 1.5rem;
+      gap: 1.5rem;
+    }
+    .detail-navigation {
+      gap: 0 1.25rem;
+    }
+    .architecture-heading {
+      margin-bottom: 2rem;
+    }
+    .technology-note {
+      margin-top: 1.5rem;
+    }
+    .module-list {
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rs-line, #dce4ef);
+    }
+    .scope-note {
+      padding: 1.25rem;
+    }
+    .service-links {
+      margin-top: 2rem;
+    }
+    .related-list {
+      gap: 1.5rem;
+    }
+  }
+  @media (max-width: 420px) {
+    .implementation-list {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+</style>

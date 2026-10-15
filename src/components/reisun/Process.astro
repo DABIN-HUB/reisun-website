@@ -1,0 +1,120 @@
+---
+const steps = [
+  ['需求沟通', '理解业务目标，梳理使用场景与项目边界。'],
+  ['方案设计', '明确功能清单、技术路径与阶段交付。'],
+  ['UI / 原型', '用可视化原型，对齐操作流程和界面体验。'],
+  ['软件开发', '按模块迭代，让每个阶段都有可见进展。'],
+  ['测试验收', '根据约定的场景与标准，逐项确认。'],
+  ['部署维护', '交接部署文档，明确维护范围与后续计划。'],
+];
+---
+
+<section class="rs-section rs-process">
+  <div class="rs-container">
+    <div class="rs-section-heading">
+      <div>
+        <h2>
+          <span class="rs-heading-phrase">从需求到上线，</span><wbr /><span class="rs-heading-phrase"
+            >每一步都有章可循</span
+          >
+        </h2><p>把复杂项目拆成清晰的阶段，让沟通、交付与验收有据可依。</p>
+      </div>
+    </div>
+    <ol>
+      {
+        steps.map(([title, description], index) => (
+          <li>
+            <>
+              <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+<style>
+  ol {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+    counter-reset: step;
+  }
+  li {
+    position: relative;
+  }
+  li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    left: 58px;
+    right: -12px;
+    top: 22px;
+    background: var(--rs-line);
+  }
+  .step-number {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #c8d8fa;
+    border-radius: 50%;
+    color: var(--rs-blue);
+    font-size: 14px;
+    font-weight: 650;
+    background: white;
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 650;
+    margin: 22px 0 10px;
+  }
+  li p {
+    color: var(--rs-muted);
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  @media (max-width: 1023px) {
+    ol {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    li:nth-child(3)::after {
+      display: none;
+    }
+  }
+  @media (max-width: 599px) {
+    ol {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    li {
+      padding: 0 0 28px 64px;
+      min-height: 94px;
+    }
+    li:last-child {
+      padding-bottom: 0;
+    }
+    .step-number {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    li:not(:last-child)::after,
+    li:nth-child(3)::after {
+      display: block;
+      top: 50px;
+      left: 21px;
+      bottom: 6px;
+      width: 1px;
+      height: auto;
+    }
+    h3 {
+      padding-top: 6px;
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+  }
+</style>

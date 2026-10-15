@@ -1,0 +1,74 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  label?: string;
+}
+const { title, description, label } = Astro.props;
+---
+
+<section class="rs-page-intro">
+  <div class="rs-container">
+    {label && <p class="intro-label">{label}</p>}
+    <h1>{Astro.slots.has('title') ? <slot name="title" /> : title}</h1>
+    <p class="rs-lead">{description}</p>
+  </div>
+  <svg class="intro-lines" viewBox="0 0 500 300" fill="none" aria-hidden="true">
+    <path d="M0 260 280 100l200 115M80 300 360 140l140 80M0 180 280 20l220 127"></path>
+    <path d="m280 20 0 80 80 40v80M160 170v80l120 70"></path>
+    <circle cx="280" cy="100" r="8"></circle><circle cx="360" cy="140" r="8"></circle>
+  </svg>
+</section>
+
+<style>
+  .rs-page-intro {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--rs-soft);
+    padding-block: 78px 74px;
+    border-bottom: 1px solid var(--rs-line);
+  }
+  .rs-container {
+    position: relative;
+    z-index: 1;
+  }
+  .intro-label {
+    color: var(--rs-blue);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  h1 {
+    max-width: 920px;
+    font-size: clamp(30px, 3.5vw, 48px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .rs-lead {
+    max-width: 730px;
+    margin-top: 22px;
+    text-wrap: balance;
+  }
+  .intro-lines {
+    position: absolute;
+    right: -80px;
+    bottom: -90px;
+    width: 530px;
+    stroke: var(--rs-blue);
+    stroke-width: 1;
+    opacity: 0.11;
+    z-index: -1;
+  }
+  @media (max-width: 767px) {
+    .rs-page-intro {
+      padding-block: 48px 44px;
+    }
+    .intro-lines {
+      right: -250px;
+      opacity: 0.07;
+    }
+  }
+</style>

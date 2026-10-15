@@ -1,0 +1,160 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import PageIntro from '~/components/reisun/PageIntro.astro';
+import CTA from '~/components/reisun/CTA.astro';
+import CaseFilter from '~/components/reisun/CaseFilter.astro';
+import SystemPreview from '~/components/reisun/SystemPreview.astro';
+import { cases, caseCategories, caseDemoNotice } from '~/data/cases';
+
+const metadata = {
+  title: '软件定制开发演示案例｜工业物联网、ERP、合同流程与小程序',
+  description:
+    '查看 REISUN 的工业物联网、ERP 企业运营、合同审批和小程序业务演示案例，了解业务背景、实现思路、功能与技术架构。所有页面均为模拟数据与原创概念示意，不代表真实客户项目。',
+};
+---
+
+<PageLayout metadata={metadata}>
+  <PageIntro
+    label="案例中心"
+    title="从业务场景，看系统如何落地"
+    description="围绕设备、经营、流程与移动服务，展示不同系统的设计思路。先看要解决的问题，再看功能与架构如何组织。"
+  />
+
+  <section class="rs-section cases-section" aria-labelledby="case-library-title">
+    <div class="rs-container">
+      <div class="rs-section-heading cases-heading">
+        <h2 id="case-library-title">探索演示案例</h2>
+        <p class="rs-lead">不是客户成果展示，而是可供讨论的软件设计样本。</p>
+      </div>
+      <p class="rs-note cases-disclaimer">{caseDemoNotice}</p>
+
+      <CaseFilter categories={caseCategories} total={cases.length}>
+        {
+          cases.map((item) => (
+            <article class="case-study" data-case-category={item.category} aria-labelledby={`case-${item.id}-title`}>
+              <div class="case-study-preview">
+                <SystemPreview variant={item.variant} compact />
+              </div>
+              <div class="case-study-body">
+                <div class="case-study-meta">
+                  <span class="case-study-label">{item.label}</span>
+                  <span>{item.category}</span>
+                </div>
+                <h3 id={`case-${item.id}-title`}>{item.title}</h3>
+                <p class="case-study-summary">{item.summary}</p>
+                <ul class="rs-tags case-study-stack" aria-label="方案技术组合">
+                  {item.stack.map((technology) => (
+                    <li class="rs-tag">{technology}</li>
+                  ))}
+                </ul>
+                <a
+                  class="rs-link case-study-link"
+                  href={`/cases/${item.id}`}
+                  aria-label={`查看${item.title}演示案例详情`}
+                >
+                  查看案例详情
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </CaseFilter>
+    </div>
+  </section>
+
+  <CTA
+    title="你的业务，值得一套合适的系统"
+    description="不必照搬演示中的功能。带着现有流程、使用角色和最想解决的问题，讨论适合你的实施范围。"
+  />
+</PageLayout>
+
+<style>
+  .cases-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .cases-disclaimer {
+    max-width: 86ch;
+    line-height: 1.85;
+  }
+
+  .case-study {
+    min-width: 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rs-line, #d9e2ef);
+  }
+
+  .case-study-preview {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--rs-line, #d9e2ef);
+    border-radius: 10px;
+    background: var(--rs-soft, #f4f7fb);
+  }
+
+  .case-study-body {
+    padding: 1.5rem 0.15rem 0;
+  }
+
+  .case-study-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.875rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.8125rem;
+  }
+
+  .case-study-label {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--rs-line, #d9e2ef);
+    border-radius: 4px;
+    color: var(--rs-ink, #172b46);
+    font-weight: 600;
+  }
+
+  .case-study h3 {
+    margin: 0.85rem 0 0.625rem;
+    color: var(--rs-ink, #172b46);
+    font-size: clamp(1.25rem, 2vw, 1.625rem);
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .case-study-summary {
+    max-width: 46ch;
+    margin: 0;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+
+  .case-study-stack {
+    margin-top: 1.125rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-study-stack li {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .case-study-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 0.5rem;
+  }
+
+  .case-study-link:focus-visible {
+    outline: 3px solid var(--rs-blue, #245eea);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 479px) {
+    .case-study-body {
+      padding-top: 1.125rem;
+    }
+  }
+</style>

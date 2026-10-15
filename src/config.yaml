@@ -1,72 +1,64 @@
 site:
-  name: AstroWind
-  site: 'https://astrowind.vercel.app'
+  name: REISUN
+  site: 'https://reisun.cn'
   base: '/'
   trailingSlash: false
+  googleSiteVerificationId: null
 
-  googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
-
-# Default SEO metadata
 metadata:
   title:
-    default: AstroWind
-    template: '%s — AstroWind'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+    default: REISUN｜软件定制开发与企业数字化解决方案
+    template: '%s｜REISUN'
+  description: 'REISUN 独立软件开发品牌，专注 Java 企业应用、工业物联网、ERP/OA、微信小程序与系统集成。用清晰的工程方法，让技术真正服务业务。'
+  # 第一阶段仅本地 UI 演示，正式上线前再确认索引策略。
   robots:
-    index: true
+    index: false
     follow: true
   openGraph:
-    site_name: AstroWind
+    site_name: REISUN
     images:
-      - url: '~/assets/images/default.png'
+      - url: '/images/reisun-og.png'
         width: 1200
-        height: 628
+        height: 630
     type: website
   twitter:
-    handle: '@arthelokyo'
-    site: '@arthelokyo'
     cardType: summary_large_image
 
 i18n:
-  language: en
+  language: zh-CN
   textDirection: ltr
 
 apps:
   blog:
     isEnabled: true
-    postsPerPage: 8
-
+    postsPerPage: 6
     post:
       isEnabled: true
-      permalink: '/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
-      robots:
-        index: true
-
-    list:
-      isEnabled: true
-      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
-      robots:
-        index: true
-
-    category:
-      isEnabled: true
-      pathname: 'category' # Category main path /category/some-category, you can change this to "group" (/group/some-category)
-      robots:
-        index: true
-
-    tag:
-      isEnabled: true
-      pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
+      permalink: '/blog/%slug%'
       robots:
         index: false
-
+    list:
+      isEnabled: true
+      pathname: 'blog'
+      robots:
+        index: false
+    category:
+      isEnabled: true
+      pathname: 'category'
+      robots:
+        index: false
+    tag:
+      isEnabled: true
+      pathname: 'tag'
+      robots:
+        index: false
     isRelatedPostsEnabled: true
-    relatedPostsCount: 4
+    relatedPostsCount: 3
 
 analytics:
   vendors:
     googleAnalytics:
-      id: null # or "G-XXXXXXXXXX"
+      id: null
 
 ui:
-  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
+  theme: 'light:only'

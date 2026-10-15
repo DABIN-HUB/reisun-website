@@ -1,4 +1,5 @@
 ---
+draft: true
 publishDate: 2026-08-17T00:00:00Z
 title: 'Build a Website with an AI Coding Assistant and Astro'
 excerpt: AstroWind ships an AGENTS.md and skills that teach any AI coding assistant the template. Which requests work well and how to keep the results reviewable.

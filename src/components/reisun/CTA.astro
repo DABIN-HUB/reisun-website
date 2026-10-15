@@ -1,0 +1,77 @@
+---
+import Button from '~/components/ui/Button.astro';
+export interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = '有软件开发需求？\n欢迎交流项目方案。',
+  description = '从一个业务问题开始，一起梳理目标、边界与合适的实现路径。',
+} = Astro.props;
+---
+
+<section class="rs-cta">
+  <div class="rs-container cta-inner">
+    <div><h2>{title}</h2><p>{description}</p></div>
+    <div class="cta-action">
+      <Button href="/contact" text="聊聊你的项目" class="rs-button cta-button" /><span>先理解业务，再讨论技术</span>
+    </div>
+  </div>
+</section>
+<style>
+  .rs-cta {
+    background: var(--rs-blue);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    padding-block: 64px;
+  }
+  h2 {
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 650;
+    line-height: 1.55;
+    letter-spacing: -0.025em;
+    white-space: pre-line;
+  }
+  p {
+    color: #f1f5ff;
+    margin-top: 18px;
+    max-width: 620px;
+  }
+  .cta-action {
+    flex-shrink: 0;
+    display: grid;
+    gap: 14px;
+    text-align: center;
+  }
+  .cta-action :global(.cta-button) {
+    color: var(--rs-blue);
+    background: white;
+    border-color: white;
+    min-width: 185px;
+  }
+  .cta-action :global(.cta-button:hover) {
+    background: #e9efff;
+  }
+  span {
+    color: #f1f5ff;
+    font-size: 13px;
+  }
+  @media (max-width: 767px) {
+    .cta-inner {
+      display: block;
+      padding-block: 46px;
+    }
+    .cta-action {
+      margin-top: 26px;
+      text-align: left;
+      justify-items: start;
+    }
+  }
+</style>

@@ -1,43 +1,83 @@
 ---
 import { getPermalink } from '~/utils/permalinks';
-
 import { APP_BLOG } from 'astrowind:config';
 import type { Post } from '~/types';
 
 export interface Props {
   tags: Post['tags'];
   class?: string;
-  title?: string | undefined;
+  title?: string;
   isCategory?: boolean;
 }
 
-const { tags, class: className = 'text-sm', title = undefined, isCategory = false } = Astro.props;
+const { tags, class: className = '', title, isCategory = false } = Astro.props;
+const enabled = isCategory ? APP_BLOG.category.isEnabled : APP_BLOG.tag.isEnabled;
 ---
 
 {
-  tags && Array.isArray(tags) && (
-    <>
-      {title !== undefined && (
-        <span class="align-super font-normal underline underline-offset-4 decoration-2 dark:text-slate-400">
-          {title}
-        </span>
-      )}
-      <ul class={className}>
+  tags?.length ? (
+    <div class:list={['blog-tags', className]}>
+      {title && <span class="blog-tags-label">{title}</span>}
+      <ul aria-label={title || (isCategory ? '文章分类' : '文章标签')}>
         {tags.map((tag) => (
-          <li class="bg-gray-100 dark:bg-slate-700 inline-block mr-2 rtl:mr-0 rtl:ml-2 mb-2 py-0.5 px-2 lowercase font-medium">
-            {!APP_BLOG?.tag?.isEnabled ? (
-              tag.title
+          <li>
+            {enabled ? (
+              <a href={getPermalink(tag.slug, isCategory ? 'category' : 'tag')}>{tag.title}</a>
             ) : (
-              <a
-                href={getPermalink(tag.slug, isCategory ? 'category' : 'tag')}
-                class="text-muted dark:text-slate-300 hover:text-primary dark:hover:text-gray-200"
-              >
-                {tag.title}
-              </a>
+              <span>{tag.title}</span>
             )}
           </li>
         ))}
       </ul>
-    </>
-  )
+    </div>
+  ) : null
 }
+
+<style>
+  .blog-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .blog-tags-label {
+    color: #5b6b80;
+    font-size: 0.875rem;
+  }
+  .blog-tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .blog-tags li {
+    margin: 0;
+  }
+  .blog-tags a,
+  .blog-tags li > span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #52657c;
+    font-size: 0.8125rem;
+    text-decoration: none;
+  }
+  .blog-tags a::before,
+  .blog-tags li > span::before {
+    content: '#';
+    margin-right: 4px;
+    color: #8293a8;
+  }
+  .blog-tags a:hover {
+    color: #245eea;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .blog-tags a:focus-visible {
+    outline: 2px solid #245eea;
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+</style>

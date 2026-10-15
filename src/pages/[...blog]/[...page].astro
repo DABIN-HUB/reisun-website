@@ -1,49 +1,29 @@
 ---
 import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
-
 import Layout from '~/layouts/PageLayout.astro';
-import BlogList from '~/components/blog/List.astro';
-import Headline from '~/components/blog/Headline.astro';
-import Pagination from '~/components/blog/Pagination.astro';
-import Newsletter from '~/components/widgets/Newsletter.astro';
+import Archive from '~/components/blog/Archive.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { getPermalink, getBlogPermalink } from '~/utils/permalinks';
-// import PostTags from "~/components/blog/Tags.astro";
-
 import { blogListRobots, getStaticPathsBlogList } from '~/utils/blog';
 
 export const prerender = true;
-
-export const getStaticPaths = (async ({ paginate }) => {
-  return await getStaticPathsBlogList({ paginate });
-}) satisfies GetStaticPaths;
-
+export const getStaticPaths = (async ({ paginate }) =>
+  await getStaticPathsBlogList({ paginate })) satisfies GetStaticPaths;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-
 const { page } = Astro.props as Props;
 const currentPage = page.currentPage ?? 1;
-
 const breadcrumbs = [
-  { text: 'Home', href: getPermalink('/') },
+  { text: '首页', href: getPermalink('/') },
   ...(currentPage > 1
-    ? [{ text: 'Blog', href: getBlogPermalink() }, { text: `Page ${currentPage}` }]
-    : [{ text: 'Blog' }]),
+    ? [{ text: '技术文章', href: getBlogPermalink() }, { text: `第 ${currentPage} 页` }]
+    : [{ text: '技术文章' }]),
 ];
-
-// const allCategories = await findCategories();
-// const allTags = await findTags();
-
 const metadata = {
-  title: `Blog${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  title: `技术文章${currentPage > 1 ? ` · 第 ${currentPage} 页` : ''}`,
   description:
-    'Articles about Astro, Tailwind CSS and the AstroWind template: tutorials, customisation guides and web development notes.',
-  robots: {
-    index: blogListRobots?.index && currentPage === 1,
-    follow: blogListRobots?.follow,
-  },
-  openGraph: {
-    type: 'blog',
-  },
+    '关于 Java 工业采集、企业软件架构与数字化改造的中文技术笔记。以实用演示拆解问题，不把概念方案包装成真实交付。',
+  robots: { index: blogListRobots?.index && currentPage === 1, follow: blogListRobots?.follow },
+  openGraph: { type: 'website' },
 };
 ---
 
@@ -53,25 +33,14 @@ const metadata = {
     {page.url.next && <link rel="next" href={page.url.next} />}
   </Fragment>
   <Breadcrumbs bar items={breadcrumbs} />
-  <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline
-      subtitle="A statically generated blog example with news, tutorials, resources and other interesting content related to AstroWind"
-    >
-      The Blog
-    </Headline>
-    <BlogList posts={page.data} />
-    <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
-    <!--
-      <PostTags tags={allCategories} class="mb-2" title="Search by Categories:" isCategory />
-      <PostTags tags={allTags}  title="Search by Tags:" />
-    -->
-  </section>
-  <Newsletter
-    tagline="Newsletter"
-    title="New articles in your inbox"
-    subtitle="Tutorials and notes about Astro, Tailwind CSS and the template, when they are published. Nothing else."
-    button="Subscribe"
-    disclaimer="Unsubscribe with one click. This form is a template: pass an <code>action</code> to connect it to your email tool."
-    classes={{ container: 'max-w-4xl' }}
+  <Archive
+    title="把复杂问题，写成可用的方法"
+    description="从设备的一次采样，到企业的一条业务流程。记录工业数据、软件架构与数字化实践中的设计思考。"
+    posts={page.data}
+    {currentPage}
+    lastPage={page.lastPage}
+    total={page.total}
+    prevUrl={page.url.prev}
+    nextUrl={page.url.next}
   />
 </Layout>

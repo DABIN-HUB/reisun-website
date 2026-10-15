@@ -1,294 +1,458 @@
 ---
-import Features2 from '~/components/widgets/Features2.astro';
-import Features3 from '~/components/widgets/Features3.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import Steps2 from '~/components/widgets/Steps2.astro';
-import Team from '~/components/widgets/Team.astro';
-import Timeline from '~/components/widgets/Timeline.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import PageIntro from '~/components/reisun/PageIntro.astro';
+import SystemPreview from '~/components/reisun/SystemPreview.astro';
+import CTA from '~/components/reisun/CTA.astro';
+import { brand } from '~/data/brand';
 
 const metadata = {
-  title: 'About us',
+  title: '关于 REISUN｜独立软件开发品牌与工作方式',
   description:
-    'About page demo built with AstroWind: hero, stats, feature grids and timelines ready to describe your company.',
+    'REISUN 是一个独立软件开发品牌，关注企业业务系统、工业数据连接与多端应用。了解技术方向、开发理念与合作方式。',
 };
+
+const capabilities = [
+  {
+    title: '使用与协同',
+    description: '围绕使用角色组织界面，让操作路径、权限和业务状态清楚可见。',
+    tags: ['Web 管理端', '移动端应用', '业务工作台'],
+  },
+  {
+    title: '业务与数据',
+    description: '把业务规则放进明确的模块，让流程、数据与接口有可维护的边界。',
+    tags: ['业务流程', '权限模型', '数据服务'],
+  },
+  {
+    title: '设备与系统连接',
+    description: '关注数据从哪里来、经过什么处理，以及异常时如何定位与恢复。',
+    tags: ['工业数据采集', '接口集成', '状态可观测'],
+  },
+];
+
+const principles = [
+  {
+    title: '先理解问题，再选择技术',
+    description: '先讨论谁在使用、哪里受阻、怎样算完成。技术方案应当解释业务问题，而不是增加一层术语。',
+  },
+  {
+    title: '把边界说在前面',
+    description: '明确本期做什么、不做什么，以及依赖哪些条件。范围变化应当被看见，而不是留到交付时猜测。',
+  },
+  {
+    title: '为后续维护留下线索',
+    description: '代码结构、接口说明和关键决策同样属于交付。让系统不仅可以使用，也便于理解与继续演进。',
+  },
+];
+
+const workingSteps = [
+  { title: '梳理场景', description: '了解业务现状、使用角色与当前卡点。', output: '形成问题与目标清单' },
+  { title: '明确方案', description: '讨论核心流程、实现路径与本期边界。', output: '对齐原型与交付范围' },
+  { title: '分段实现', description: '按约定里程碑展示可讨论的阶段成果。', output: '及时确认反馈与变更' },
+  { title: '交付与交接', description: '围绕约定范围确认功能与使用说明。', output: '交接代码、文档与部署说明' },
+];
 ---
 
 <Layout metadata={metadata}>
-  <!-- Hero Widget ******************* -->
-
-  <Hero
-    tagline="About us"
-    image={{
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Caos Image',
-    }}
-  >
-    <Fragment slot="title">
-      Elevate your online presence with our <br />
-      <span class="text-accent dark:text-white"> Beautiful Website Templates</span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Donec efficitur, ipsum quis congue luctus, mauris magna convallis mauris, eu auctor nisi lectus non augue. Donec
-      quis lorem non massa vulputate efficitur ac at turpis. Sed tincidunt ex a nunc convallis, et lobortis nisi tempus.
-      Suspendisse vitae nisi eget tortor luctus maximus sed non lectus.
-    </Fragment>
-  </Hero>
-
-  <!-- Stats Widget ****************** -->
-
-  <Stats
-    title="Statistics about us"
-    stats={[
-      { title: 'Offices', amount: '4' },
-      { title: 'Employees', amount: '248' },
-      { title: 'Templates', amount: '12' },
-      { title: 'Awards', amount: '24' },
-    ]}
+  <PageIntro
+    label="关于 REISUN"
+    title="把业务理解，落实为清晰的系统。"
+    description="关注真实使用场景，以明确的边界、可讨论的方案和便于维护的实现，推进软件定制开发。"
   />
 
-  <!-- Features3 Widget ************** -->
+  <section class="rs-section" aria-labelledby="brand-heading">
+    <div class="rs-container brand-intro">
+      <div class="brand-story">
+        <p class="brand-positioning">{brand.positioning}</p>
+        <h2 id="brand-heading">不止是写代码，<br />更是把问题理清楚。</h2>
+        <p>
+          {brand.name} 是一个独立软件开发品牌，关注企业内部系统、工业数据连接与多端应用的定制实现。
+        </p>
+        <p>
+          从一个具体业务场景出发，梳理流程、数据和系统之间的关系，再选择合适的技术路径。让开发围绕问题展开，而不是让业务迁就工具。
+        </p>
+        <p class="brand-boundary">具体合作主体、交付范围与责任边界，以双方正式约定为准。</p>
+        <a class="rs-link brand-services" href="/services">了解服务方向</a>
+      </div>
+      <figure class="brand-visual">
+        <div class="brand-visual-title">
+          <span>{brand.name}</span>
+          <p>从业务场景，到系统结构</p>
+        </div>
+        <SystemPreview variant="enterprise" compact />
+        <figcaption>系统架构概念示意，不代表已上线的客户项目。</figcaption>
+      </figure>
+    </div>
+  </section>
 
-  <Features3
-    title="Our templates"
-    subtitle="Etiam scelerisque, enim eget vestibulum luctus, nibh mauris blandit nulla, nec vestibulum risus justo ut enim. Praesent lacinia diam et ante imperdiet euismod."
-    columns={3}
-    isBeforeContent={true}
-    items={[
-      {
-        title: 'Educational',
-        description:
-          'Morbi faucibus luctus quam, sit amet aliquet felis tempor id. Cras augue massa, ornare quis dignissim a, molestie vel nulla.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Interior Design',
-        description:
-          'Vivamus porttitor, tortor convallis aliquam pretium, turpis enim consectetur elit, vitae egestas purus erat ac nunc nulla.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Photography',
-        description:
-          'Duis sed lectus in nisl vehicula porttitor eget quis odio. Aliquam erat volutpat. Nulla eleifend nulla id sem fermentum.',
-        icon: 'tabler:template',
-      },
-    ]}
-  />
+  <section class="rs-section rs-section-soft" aria-labelledby="capabilities-heading">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="capabilities-heading">围绕一条完整的业务链路</h2>
+        <p>界面、规则、数据与连接，不是孤立的技术清单，而是同一个系统的不同层次。</p>
+      </div>
+      <div class="capability-layout">
+        <div class="capability-stack" aria-label="技术能力分层">
+          {
+            capabilities.map((capability) => (
+              <article class="capability-layer">
+                <div class="capability-name">
+                  <span class="layer-mark" aria-hidden="true" />
+                  <h3>{capability.title}</h3>
+                </div>
+                <div class="capability-content">
+                  <p>{capability.description}</p>
+                  <ul class="rs-tags" aria-label={`${capability.title}关注方向`}>
+                    {capability.tags.map((tag) => (
+                      <li class="rs-tag">{tag}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+        <aside class="technology-note" aria-labelledby="technology-heading">
+          <h3 id="technology-heading">技术为场景服务</h3>
+          <dl>
+            <div><dt>前端与交互</dt><dd>Vue、TypeScript 与响应式界面</dd></div>
+            <div><dt>后端与规则</dt><dd>Java、Spring Boot 与业务模块设计</dd></div>
+            <div><dt>数据与连接</dt><dd>关系型数据、系统接口与设备数据集成</dd></div>
+          </dl>
+          <p>选型以实际需求、运行环境和维护条件为依据，不以堆叠框架为目标。</p>
+        </aside>
+      </div>
+    </div>
+  </section>
 
-  <!-- Features3 Widget ************** -->
+  <section class="rs-section" aria-labelledby="principles-heading">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="principles-heading">对开发的三个坚持</h2>
+        <p>少一点模糊承诺，多一点可以确认的事情。</p>
+      </div>
+      <div class="principles-grid">
+        {
+          principles.map((principle) => (
+            <article class="principle">
+              <h3>{principle.title}</h3>
+              <p>{principle.description}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
-  <Features3
-    columns={3}
-    isAfterContent={true}
-    items={[
-      {
-        title: 'E-commerce',
-        description:
-          'Rutrum non odio at vehicula. Proin ipsum justo, dignissim in vehicula sit amet, dignissim id quam. Sed ac tincidunt sapien.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Blog',
-        description:
-          'Nullam efficitur volutpat sem sed fringilla. Suspendisse et enim eu orci volutpat laoreet ac vitae libero.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Business',
-        description:
-          'Morbi et elit finibus, facilisis justo ut, pharetra ipsum. Donec efficitur, ipsum quis congue luctus, mauris magna.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Branding',
-        description:
-          'Suspendisse vitae nisi eget tortor luctus maximus sed non lectus. Cras malesuada pretium placerat. Nullam venenatis dolor a ante rhoncus.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Medical',
-        description:
-          'Vestibulum malesuada lacus id nibh posuere feugiat. Nam volutpat nulla a felis ultrices, id suscipit mauris congue. In hac habitasse platea dictumst.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Fashion Design',
-        description:
-          'Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus.',
-        icon: 'tabler:template',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      alt: 'Colorful Image',
-    }}
-  />
+  <section class="rs-section rs-section-dark working-method" aria-labelledby="method-heading">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <h2 id="method-heading">把合作过程，变成可确认的步骤</h2>
+        <p>建议以小范围、清晰目标开始，在每个阶段对齐理解，再推进下一步。</p>
+      </div>
+      <ol class="working-steps">
+        {
+          workingSteps.map((step, index) => (
+            <li>
+              <span class="step-number" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+              <span class="step-output">{step.output}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="working-note">以上是工作方式说明；具体阶段、交付物与验收标准需在项目开始前共同确认。</p>
+    </div>
+  </section>
 
-  <!-- Steps2 Widget ****************** -->
-
-  <Steps2
-    title="Our values"
-    subtitle="Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus. Nulla facilisi. Vestibulum malesuada lacus."
-    items={[
-      {
-        title: 'Customer-centric approach',
-        description:
-          'Donec id nibh neque. Quisque et fermentum tortor. Fusce vitae dolor a mauris dignissim commodo. Ut eleifend luctus condimentum.',
-      },
-      {
-        title: 'Constant Improvement',
-        description:
-          'Phasellus laoreet fermentum venenatis. Vivamus dapibus pulvinar arcu eget mattis. Fusce eget mauris leo.',
-      },
-      {
-        title: 'Ethical Practices',
-        description:
-          'Vestibulum imperdiet libero et lectus molestie, et maximus augue porta. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-      },
-    ]}
-  />
-
-  <!-- Timeline Widget **************** -->
-
-  <Timeline
-    id="history"
-    tagline="Our story"
-    title="Achievements"
-    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla, sed porttitor est nibh at nulla."
-    layout="alternate"
-    items={[
-      {
-        date: '2019',
-        title: 'The first template',
-        description: 'Nam malesuada urna in enim imperdiet tincidunt. Phasellus non tincidunt nisi, at elementum mi.',
-        icon: 'tabler:rocket',
-      },
-      {
-        date: '2021',
-        title: 'Global reach',
-        description:
-          'Cras semper nulla leo, eget laoreet erat cursus sed. Praesent faucibus massa in purus iaculis dictum.',
-        icon: 'tabler:globe',
-      },
-      {
-        date: '2023',
-        title: 'Positive customer feedback and reviews',
-        description:
-          'Phasellus lacinia cursus velit, eu malesuada magna pretium eu. Etiam aliquet tellus purus, blandit lobortis ex rhoncus vitae.',
-        icon: 'tabler:message-star',
-      },
-      {
-        date: '2026',
-        title: 'Awards and recognition as industry experts',
-        description: 'Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.',
-        icon: 'tabler:award',
-        highlight: true,
-      },
-    ]}
-  />
-
-  <!-- Team Widget ******************** -->
-
-  <Team
-    id="team"
-    tagline="The people"
-    title="Meet the team"
-    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla."
-    members={[
-      {
-        name: 'Alicia Rivera',
-        role: 'Founder & CEO',
-        image: {
-          src: 'https://images.unsplash.com/photo-1618835962148-cf177563c6c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=930&q=80',
-          alt: 'Alicia Rivera',
-        },
-        bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        socials: [
-          { icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/', ariaLabel: 'LinkedIn' },
-          { icon: 'tabler:brand-x', href: 'https://x.com/', ariaLabel: 'X' },
-        ],
-      },
-      {
-        name: 'Daniel Okafor',
-        role: 'Lead developer',
-        image: {
-          src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-          alt: 'Daniel Okafor',
-        },
-        bio: 'Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-        socials: [{ icon: 'tabler:brand-github', href: 'https://github.com/', ariaLabel: 'GitHub' }],
-      },
-      {
-        name: 'Mei Tanaka',
-        role: 'Product designer',
-        image: {
-          src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-          alt: 'Mei Tanaka',
-        },
-        bio: 'Sed porttitor est nibh at nulla. Cras semper nulla leo, eget laoreet erat.',
-        socials: [{ icon: 'tabler:brand-dribbble', href: 'https://dribbble.com/', ariaLabel: 'Dribbble' }],
-      },
-      {
-        name: 'Jonas Weber',
-        role: 'Customer success',
-        image: {
-          src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-          alt: 'Jonas Weber',
-        },
-        bio: 'Praesent faucibus massa in purus iaculis dictum.',
-        socials: [{ icon: 'tabler:brand-linkedin', href: 'https://www.linkedin.com/', ariaLabel: 'LinkedIn' }],
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Our locations"
-    tagline="Find us"
-    columns={4}
-    items={[
-      {
-        title: 'EE.UU',
-        description: '1234 Lorem Ipsum St, 12345, Miami',
-      },
-      {
-        title: 'Spain',
-        description: '5678 Lorem Ipsum St, 56789, Madrid',
-      },
-      {
-        title: 'Australia',
-        description: '9012 Lorem Ipsum St, 90123, Sydney',
-      },
-      {
-        title: 'Brazil',
-        description: '3456 Lorem Ipsum St, 34567, São Paulo',
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Technical Support"
-    tagline="Contact us"
-    columns={2}
-    items={[
-      {
-        title: 'Chat with us',
-        description:
-          'Integer luctus laoreet libero, auctor varius purus rutrum sit amet. Ut nec molestie nisi, quis eleifend mi.',
-        icon: 'tabler:messages',
-      },
-      {
-        title: 'Call us',
-        description:
-          'Mauris faucibus finibus orci, in posuere elit viverra non. In hac habitasse platea dictumst. Cras lobortis metus a hendrerit congue.',
-        icon: 'tabler:headset',
-      },
-    ]}
+  <CTA
+    title="先把需求聊清楚，再决定如何开始。"
+    description="从业务场景、使用角色和当前卡点出发，明确一个可以讨论、可以验收的起点。"
   />
 </Layout>
+
+<style>
+  .brand-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(28px, 5vw, 72px);
+  }
+  .brand-story {
+    min-width: 0;
+  }
+  .brand-positioning {
+    color: var(--rs-blue, #245eea);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .brand-story h2 {
+    color: var(--rs-ink, #172b46);
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.55;
+    font-weight: 650;
+    letter-spacing: -0.025em;
+  }
+  .brand-story > p:not(.brand-positioning) {
+    margin-top: 20px;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .brand-story .brand-boundary {
+    padding-left: 16px;
+    border-left: 2px solid var(--rs-line, #dce4ef);
+    font-size: 14px;
+  }
+  .brand-services {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 16px;
+  }
+  .brand-visual {
+    min-width: 0;
+    margin: 0;
+    padding: 24px;
+    background: var(--rs-soft, #f4f7fb);
+    border: 1px solid var(--rs-line, #dce4ef);
+    border-radius: 12px;
+  }
+  .brand-visual-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-bottom: 20px;
+  }
+  .brand-visual-title span {
+    color: var(--rs-navy, #102b50);
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+  }
+  .brand-visual-title p,
+  figcaption {
+    color: var(--rs-muted, #5b6b80);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  figcaption {
+    margin-top: 18px;
+  }
+  .capability-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+  }
+  .capability-stack {
+    background: white;
+    border: 1px solid var(--rs-line, #dce4ef);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .capability-layer {
+    display: grid;
+    grid-template-columns: minmax(130px, 0.65fr) minmax(0, 1.6fr);
+    gap: 20px;
+    padding: 26px;
+  }
+  .capability-layer + .capability-layer {
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .capability-name {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .layer-mark {
+    flex: 0 0 10px;
+    width: 10px;
+    height: 10px;
+    margin-top: 10px;
+    border: 2px solid var(--rs-blue, #245eea);
+    border-radius: 2px;
+  }
+  .capability-name h3,
+  .technology-note h3,
+  .principle h3 {
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.6;
+    color: var(--rs-ink, #172b46);
+  }
+  .capability-content p,
+  .principle p {
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .capability-content .rs-tags {
+    margin-top: 14px;
+  }
+  .technology-note {
+    padding: 8px 0 8px 26px;
+    border-left: 2px solid var(--rs-blue, #245eea);
+  }
+  .technology-note dl {
+    margin-top: 22px;
+    display: grid;
+    gap: 20px;
+  }
+  .technology-note dt {
+    color: var(--rs-ink, #172b46);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .technology-note dd {
+    margin-top: 4px;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .technology-note > p {
+    color: var(--rs-muted, #5b6b80);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-top: 24px;
+  }
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px;
+  }
+  .principle {
+    border-top: 2px solid var(--rs-line, #dce4ef);
+    padding-top: 24px;
+  }
+  .principle p {
+    margin-top: 14px;
+  }
+  .working-method .rs-section-heading h2 {
+    color: white;
+  }
+  .working-method .rs-section-heading p {
+    color: #bed0e5;
+  }
+  .working-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 0;
+    list-style: none;
+  }
+  .working-steps li {
+    min-width: 0;
+    padding: 0 24px;
+    border-left: 1px solid #365173;
+  }
+  .working-steps li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .working-steps li:last-child {
+    padding-right: 0;
+  }
+  .step-number {
+    display: block;
+    margin-bottom: 22px;
+    color: #63d7e7;
+    font-size: 16px;
+    font-weight: 650;
+  }
+  .working-steps h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .working-steps p {
+    margin-top: 12px;
+    color: #c8d7e9;
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  .step-output {
+    display: block;
+    color: #8cdde8;
+    margin-top: 20px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .working-note {
+    color: #b6c9e0;
+    font-size: 13px;
+    line-height: 1.8;
+    margin-top: 34px;
+  }
+  .brand-services:focus-visible {
+    outline: 3px solid var(--rs-blue, #245eea);
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+  @media (max-width: 1023px) {
+    .brand-intro {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .brand-story {
+      max-width: 720px;
+    }
+    .capability-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .technology-note dl {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .working-steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 30px 0;
+    }
+    .working-steps li:nth-child(odd) {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+  @media (max-width: 639px) {
+    .brand-visual {
+      padding: 16px;
+    }
+    .capability-layer {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      padding: 22px 18px;
+    }
+    .technology-note {
+      padding-left: 18px;
+    }
+    .technology-note dl {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+    .principles-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    .principle {
+      padding-top: 20px;
+    }
+    .working-steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 26px;
+    }
+    .working-steps li,
+    .working-steps li:first-child,
+    .working-steps li:nth-child(odd) {
+      border-left: 2px solid #365173;
+      padding: 0 0 0 20px;
+    }
+    .step-number {
+      margin-bottom: 8px;
+    }
+    .step-output {
+      margin-top: 12px;
+    }
+  }
+</style>

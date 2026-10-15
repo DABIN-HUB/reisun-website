@@ -4,17 +4,41 @@ import type { Post } from '~/types';
 
 export interface Props {
   posts: Array<Post>;
+  featured?: boolean;
 }
-
-const { posts } = Astro.props;
+const { posts, featured = false } = Astro.props;
 ---
 
-<ul>
+<ul class="blog-list">
   {
-    posts.map((post) => (
-      <li class="mb-12 md:mb-20">
-        <Item post={post} />
+    posts.map((post, index) => (
+      <li class:list={{ 'blog-list-featured': featured && index === 0 }}>
+        <Item post={post} featured={featured && index === 0} />
       </li>
     ))
   }
 </ul>
+
+<style>
+  .blog-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 36px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .blog-list > li {
+    min-width: 0;
+  }
+  .blog-list-featured {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 639px) {
+    .blog-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 38px;
+    }
+  }
+</style>

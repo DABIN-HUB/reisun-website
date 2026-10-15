@@ -25,6 +25,7 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 
 export default defineConfig({
   output: 'static',
+  devToolbar: { enabled: false },
 
   // Prefetch links as they enter the viewport for snappier navigations
   // (works together with <ClientRouter />, which enables prefetch by default).
@@ -125,7 +126,7 @@ export default defineConfig({
     }),
     shikiConfig: {
       // Code blocks follow the site theme; see the `.astro-code` rules in tailwind.css.
-      themes: { light: 'github-light', dark: 'github-dark' },
+      themes: { light: 'github-light-high-contrast', dark: 'github-dark' },
     },
   },
 

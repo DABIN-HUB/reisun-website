@@ -1,31 +1,72 @@
 ---
 import { APP_BLOG } from 'astrowind:config';
-
 import { getRelatedPosts } from '~/utils/blog';
-import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import Grid from '~/components/blog/Grid.astro';
 import type { Post } from '~/types';
 import { getBlogPermalink } from '~/utils/permalinks';
-
 export interface Props {
   post: Post;
 }
-
 const { post } = Astro.props;
-
-const relatedPosts = post.tags ? await getRelatedPosts(post, 4) : [];
+const relatedPosts = APP_BLOG.isRelatedPostsEnabled ? await getRelatedPosts(post, APP_BLOG.relatedPostsCount || 4) : [];
 ---
 
 {
-  APP_BLOG.isRelatedPostsEnabled ? (
-    <BlogHighlightedPosts
-      classes={{
-        container:
-          'pt-0 lg:pt-0 md:pt-0 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade',
-      }}
-      title="Related Posts"
-      linkText="View All Posts"
-      linkUrl={getBlogPermalink()}
-      postIds={relatedPosts.map((post) => post.id)}
-    />
-  ) : null
+  relatedPosts.length > 0 && (
+    <section class="blog-related" aria-labelledby="related-posts-heading">
+      <div class="rs-container">
+        <div class="blog-related-heading">
+          <>
+            <div>
+              <>
+                <p>把问题继续想深一点</p>
+                <h2 id="related-posts-heading">延伸阅读</h2>
+              </>
+            </div>
+            <a href={getBlogPermalink()}>浏览全部文章</a>
+          </>
+        </div>
+        <Grid posts={relatedPosts} />
+      </div>
+    </section>
+  )
 }
+<style>
+  .blog-related {
+    padding: 64px 0 80px;
+    background: #f4f7fb;
+    color: #172b46;
+  }
+  .blog-related-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: end;
+    margin-bottom: 36px;
+  }
+  .blog-related-heading p {
+    color: #5b6b80;
+    font-size: 0.875rem;
+    margin: 0 0 8px;
+  }
+  .blog-related-heading h2 {
+    font-size: 1.9rem;
+    line-height: 1.4;
+    font-weight: 650;
+    margin: 0;
+  }
+  .blog-related-heading > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #245eea;
+    font-size: 0.9375rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .blog-related-heading > a:focus-visible {
+    outline: 2px solid #245eea;
+    outline-offset: 4px;
+  }
+</style>

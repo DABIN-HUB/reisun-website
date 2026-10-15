@@ -1,4 +1,5 @@
 ---
+draft: true
 publishDate: 2026-07-13T00:00:00Z
 title: 'How to Build a Landing Page That Converts (2026 Guide)'
 excerpt: What a landing page is, the six types with examples, the anatomy of one that converts, copy, forms, speed, SEO, testing and a launch checklist.

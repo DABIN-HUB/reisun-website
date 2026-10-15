@@ -1,0 +1,847 @@
+---
+export interface Props {
+  variant?: 'industrial' | 'enterprise' | 'contract' | 'mobile';
+  compact?: boolean;
+}
+const { variant = 'industrial', compact = false } = Astro.props;
+const titles = {
+  industrial: '工业设备数据中心',
+  enterprise: '企业运营工作台',
+  contract: '合同与流程协同',
+  mobile: '移动业务服务',
+};
+const items = {
+  industrial: ['设备总览', '数据采集', '告警中心', '历史趋势'],
+  enterprise: ['运营总览', '采购管理', '库存管理', '协同审批'],
+  contract: ['合同台账', '流程管理', '履约计划', '归档检索'],
+  mobile: ['服务首页', '业务办理', '消息通知', '个人中心'],
+};
+---
+
+<figure
+  class:list={['system-preview', `preview-${variant}`, { compact }]}
+  aria-label={`${titles[variant]}概念界面，以下均为演示数据`}
+>
+  <div class="window-bar">
+    <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>REISUN / {titles[variant]}</span
+    ><span class="demo-label">演示界面</span>
+  </div>
+  <div class="window-body">
+    <div class="system-sidebar" aria-hidden="true">
+      <span class="mini-brand">R<span>REISUN</span></span>{
+        items[variant].map((name, index) => (
+          <span class:list={['sidebar-item', { selected: index === 0 }]}>
+            <i />
+            {name}
+          </span>
+        ))
+      }<span class="sidebar-bottom">系统概念设计</span>
+    </div>
+    <div class="system-content">
+      <div class="system-title"><strong>{titles[variant]}</strong><span>本地模拟</span></div>
+      {
+        variant === 'industrial' && (
+          <>
+            <div class="mini-stats">
+              <>
+                <div>
+                  <>
+                    <span>设备接入</span>
+                    <b>
+                      24 <small>台</small>
+                    </b>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <span>演示点位</span>
+                    <b>
+                      128 <small>个</small>
+                    </b>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <span>采集状态</span>
+                    <b class="status-ok">模拟运行</b>
+                  </>
+                </div>
+              </>
+            </div>
+            <div class="chart-panel">
+              <>
+                <div class="panel-label">
+                  <>
+                    <span>设备运行趋势</span>
+                    <span class="legend">温度 · 演示曲线</span>
+                  </>
+                </div>
+                <svg viewBox="0 0 440 118" role="img" aria-label="模拟设备温度随时间变化的折线图">
+                  <>
+                    <path d="M0 25h440M0 55h440M0 85h440M0 115h440" stroke="#e8edf5" />
+                    <path
+                      d="m0 93 20-10 20 2 20-16 20 5 20-17 20 8 20-24 20 11 20-17 20 7 20-15 20 18 20-2 20-12 20 7 20-16 20 12 20-3 20 10 20-22 20 8"
+                      stroke="#3a70e5"
+                      stroke-width="2.5"
+                      fill="none"
+                    />
+                    <path
+                      d="m0 105 40-8 40 6 40-14 40 5 40-12 40 8 40-12 40 3 40-8 40 4"
+                      stroke="#36adbb"
+                      stroke-width="2"
+                      fill="none"
+                    />
+                  </>
+                </svg>
+                <div class="chart-axis">
+                  <>
+                    <span>09:00</span>
+                    <span>10:00</span>
+                    <span>11:00</span>
+                    <span>12:00</span>
+                  </>
+                </div>
+              </>
+            </div>
+            <div class="device-row">
+              <>
+                <span>
+                  <i />
+                  装配产线 A
+                </span>
+                <span>模拟采集中</span>
+                <span>Modbus TCP</span>
+              </>
+            </div>
+          </>
+        )
+      }
+      {
+        variant === 'enterprise' && (
+          <>
+            <div class="mini-stats">
+              <>
+                <div>
+                  <>
+                    <span>待处理单据</span>
+                    <b>
+                      12 <small>项</small>
+                    </b>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <span>库存预警</span>
+                    <b>
+                      03 <small>项</small>
+                    </b>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <span>业务状态</span>
+                    <b class="status-ok">流程协同</b>
+                  </>
+                </div>
+              </>
+            </div>
+            <div class="erp-columns">
+              <>
+                <div class="chart-panel">
+                  <>
+                    <div class="panel-label">采购与库存概览</div>
+                    <div class="bar-chart" role="img" aria-label="演示业务柱状图">
+                      {[45, 72, 55, 89, 65, 78, 92].map((height) => (
+                        <i style={`height:${height}%`} />
+                      ))}
+                    </div>
+                  </>
+                </div>
+                <div class="pending-list">
+                  <>
+                    <strong>待办工作</strong>
+                    <span>
+                      <i />
+                      采购申请 <em>待审批</em>
+                    </span>
+                    <span>
+                      <i />
+                      物料入库 <em>待确认</em>
+                    </span>
+                    <span>
+                      <i />
+                      合同归档 <em>待归档</em>
+                    </span>
+                  </>
+                </div>
+              </>
+            </div>
+            <div class="device-row">
+              <>
+                <span>单据关联</span>
+                <span>采购 → 入库 → 对账</span>
+              </>
+            </div>
+          </>
+        )
+      }
+      {
+        variant === 'contract' && (
+          <>
+            <div class="contract-document">
+              <>
+                <span class="document-icon" aria-hidden="true">
+                  ≡
+                </span>
+                <div>
+                  <>
+                    <strong>设备采购合同</strong>
+                    <p>演示合同编号 RS-DEMO-001</p>
+                  </>
+                </div>
+                <span class="rs-tag">流程示意</span>
+              </>
+            </div>
+            <div class="approval-flow">
+              {['发起申请', '业务审核', '合同确认', '归档管理'].map((step, index) => (
+                <div>
+                  <span class:list={[{ current: index === 1 }]}>{index === 0 ? '✓' : index + 1}</span>
+                  <p>{step}</p>
+                </div>
+              ))}
+            </div>
+            <div class="contract-lines">
+              <>
+                <span>关联业务</span>
+                <b>采购申请 / 演示项目</b>
+                <span>履约节点</span>
+                <b>交付确认 → 付款审批</b>
+                <span>权限管理</span>
+                <b>按角色和数据范围授权</b>
+              </>
+            </div>
+          </>
+        )
+      }
+      {
+        variant === 'mobile' && (
+          <div class="mobile-scene">
+            <>
+              <div class="phone">
+                <>
+                  <span class="phone-top">
+                    9:41 <i />
+                  </span>
+                  <div class="phone-heading">
+                    你好，欢迎使用
+                    <>
+                      <br />
+                      <strong>企业业务服务</strong>
+                    </>
+                  </div>
+                  <div class="phone-banner">
+                    让业务办理
+                    <br />
+                    更简单
+                  </div>
+                  <div class="phone-apps">
+                    {['业务办理', '进度查询', '资料管理', '消息中心'].map((name) => (
+                      <span>
+                        <i />
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                  <div class="phone-bottom">
+                    <>
+                      <span>首页</span>
+                      <span>服务</span>
+                      <span>我的</span>
+                    </>
+                  </div>
+                </>
+              </div>
+              <div class="mobile-notes">
+                <>
+                  <strong>
+                    一套业务
+                    <br />
+                    多个触点
+                  </strong>
+                  <span>微信小程序</span>
+                  <span>移动端 H5</span>
+                  <span>管理工作台</span>
+                  <p>统一接口与业务规则</p>
+                </>
+              </div>
+            </>
+          </div>
+        )
+      }
+    </div>
+  </div>
+  <figcaption>原创概念界面 · 非真实业务系统截图</figcaption>
+</figure>
+<style>
+  .system-preview {
+    background: #e9eff8;
+    padding: 22px;
+    border-radius: 9px;
+    color: #253c59;
+    width: 100%;
+    min-width: 0;
+    font-family: var(--aw-font-sans);
+  }
+  .window-bar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #d8e1ef;
+    border-bottom: 0;
+    background: #fff;
+    border-radius: 7px 7px 0 0;
+    padding: 0 12px;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+  .window-dots {
+    display: flex;
+    gap: 4px;
+  }
+  .window-dots i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #c1ccdc;
+  }
+  .demo-label {
+    margin-left: auto;
+    color: #526881;
+    white-space: nowrap;
+  }
+  .window-body {
+    display: grid;
+    grid-template-columns: 93px minmax(0, 1fr);
+    border: 1px solid #d8e1ef;
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+    min-height: 275px;
+    background: #f5f7fb;
+  }
+  .system-sidebar {
+    background: #173758;
+    color: #b3c4d8;
+    padding: 14px 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mini-brand {
+    display: flex;
+    gap: 5px;
+    color: #72d4e4;
+    font-weight: 750;
+    font-size: 15px;
+    align-items: center;
+    margin: 0 4px 16px;
+  }
+  .mini-brand > span {
+    font-size: 9px;
+    color: white;
+  }
+  .sidebar-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 9px;
+    padding: 7px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .sidebar-item i {
+    height: 7px;
+    width: 7px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+  }
+  .sidebar-item.selected {
+    background: #2a5d94;
+    color: white;
+  }
+  .sidebar-bottom {
+    margin: auto 0 0 7px;
+    font-size: 8px;
+    padding-top: 14px;
+  }
+  .system-content {
+    padding: 17px;
+    min-width: 0;
+  }
+  .system-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 8px;
+  }
+  .system-title strong {
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .system-title > span {
+    font-size: 8px;
+    color: #526881;
+    white-space: nowrap;
+  }
+  .mini-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .mini-stats > div {
+    background: white;
+    padding: 10px 11px;
+    border: 1px solid #e5eaf2;
+    border-radius: 3px;
+  }
+  .mini-stats span {
+    display: block;
+    font-size: 8px;
+    color: #526881;
+  }
+  .mini-stats b {
+    display: block;
+    font-size: 22px;
+    line-height: 1.7;
+    font-weight: 650;
+  }
+  .mini-stats small {
+    font-size: 8px;
+    font-weight: 400;
+  }
+  .mini-stats .status-ok {
+    font-size: 12px;
+    color: #238272;
+    padding-top: 9px;
+  }
+  .chart-panel {
+    background: white;
+    border: 1px solid #e5eaf2;
+    padding: 12px;
+    border-radius: 3px;
+    min-width: 0;
+  }
+  .panel-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+  .legend {
+    color: #526881;
+    font-size: 8px;
+  }
+  .chart-panel svg {
+    width: 100%;
+    max-height: 103px;
+  }
+  .chart-axis {
+    display: flex;
+    justify-content: space-between;
+    color: #526881;
+    font-size: 7px;
+    margin-top: 4px;
+  }
+  .device-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 8px;
+    padding: 12px 1px 0;
+    color: #526881;
+  }
+  .device-row span:first-child {
+    color: #435d7b;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .device-row i,
+  .pending-list i {
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    background: #2ab394;
+    border-radius: 50%;
+  }
+  figcaption {
+    font-size: 10px;
+    text-align: center;
+    color: #526881;
+    padding-top: 12px;
+    line-height: 1.6;
+  }
+  .erp-columns {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 10px;
+  }
+  .bar-chart {
+    height: 104px;
+    display: flex;
+    gap: 8px;
+    align-items: end;
+    border-bottom: 1px solid #e1e8f2;
+    padding-inline: 4px;
+  }
+  .bar-chart i {
+    flex: 1;
+    background: #4b7de6;
+    border-radius: 2px 2px 0 0;
+  }
+  .bar-chart i:nth-child(even) {
+    background: #8baaf0;
+  }
+  .pending-list {
+    background: white;
+    padding: 12px 9px;
+    font-size: 8px;
+    border: 1px solid #e5eaf2;
+  }
+  .pending-list strong {
+    display: block;
+    font-weight: 550;
+    margin-bottom: 12px;
+  }
+  .pending-list > span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-block: 6px;
+    border-bottom: 1px solid #eef1f6;
+  }
+  .pending-list em {
+    font-style: normal;
+    font-size: 7px;
+    margin-left: auto;
+    color: #977027;
+  }
+  .contract-document {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 12px;
+    background: white;
+    border: 1px solid #e1e7f0;
+  }
+  .document-icon {
+    color: #5481da;
+    background: #eef4ff;
+    padding: 2px 10px;
+    font-size: 29px;
+  }
+  .contract-document strong {
+    font-size: 11px;
+  }
+  .contract-document p {
+    font-size: 8px;
+    color: #526881;
+  }
+  .contract-document .rs-tag {
+    font-size: 8px;
+    margin-left: auto;
+    padding: 3px 6px;
+  }
+  .approval-flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-block: 20px;
+  }
+  .approval-flow > div {
+    position: relative;
+    text-align: center;
+  }
+  .approval-flow > div:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: calc(50% + 18px);
+    right: calc(-50% + 18px);
+    height: 1px;
+    background: #c4d4ea;
+  }
+  .approval-flow span {
+    border: 1px solid #c7d5e9;
+    display: inline-grid;
+    place-items: center;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    background: #fff;
+    font-size: 9px;
+  }
+  .approval-flow .current {
+    background: #386de0;
+    color: white;
+    border-color: #386de0;
+  }
+  .approval-flow p {
+    font-size: 8px;
+    margin-top: 7px;
+  }
+  .contract-lines {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    font-size: 8px;
+    background: white;
+    gap: 10px 20px;
+    padding: 14px;
+  }
+  .contract-lines span {
+    color: #526881;
+  }
+  .contract-lines b {
+    font-weight: 450;
+  }
+  .preview-contract {
+    background: #eaf0f5;
+  }
+  .preview-mobile {
+    background: #e7eefb;
+  }
+  .mobile-scene {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    align-items: center;
+  }
+  .phone {
+    width: 141px;
+    border: 4px solid #253e60;
+    border-radius: 17px;
+    padding: 9px;
+    background: white;
+    box-shadow: 8px 10px 0 #dbe4f4;
+    flex-shrink: 0;
+  }
+  .phone-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 6px;
+    align-items: center;
+  }
+  .phone-top i {
+    width: 12px;
+    height: 4px;
+    border-radius: 3px;
+    background: #698099;
+  }
+  .phone-heading {
+    font-size: 7px;
+    margin-block: 10px;
+  }
+  .phone-heading strong {
+    font-size: 11px;
+    line-height: 2;
+  }
+  .phone-banner {
+    background: #386de0;
+    color: white;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 12px;
+    font-weight: 600;
+  }
+  .phone-apps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-block: 14px;
+  }
+  .phone-apps span {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    font-size: 6px;
+  }
+  .phone-apps i {
+    width: 15px;
+    height: 15px;
+    background: #e1ebff;
+    border-radius: 4px;
+    border: 4px solid #eaf1ff;
+  }
+  .phone-bottom {
+    display: flex;
+    justify-content: space-around;
+    font-size: 6px;
+    border-top: 1px solid #e9eff8;
+    padding-top: 7px;
+    text-align: center;
+    color: #526881;
+  }
+  .mobile-notes {
+    display: grid;
+    gap: 9px;
+  }
+  .mobile-notes strong {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .mobile-notes > span {
+    font-size: 10px;
+    padding-left: 12px;
+    border-left: 2px solid #9bb8ef;
+  }
+  .mobile-notes p {
+    font-size: 8px;
+    color: #526881;
+  }
+  @media (max-width: 599px) {
+    .system-preview {
+      padding: 12px;
+    }
+    .window-bar {
+      padding-inline: 8px;
+      gap: 7px;
+      font-size: 7px;
+      height: 30px;
+    }
+    .window-body {
+      grid-template-columns: 59px minmax(0, 1fr);
+      min-height: 240px;
+    }
+    .system-sidebar {
+      padding-inline: 4px;
+    }
+    .mini-brand {
+      font-size: 13px;
+      margin-inline: 2px;
+    }
+    .mini-brand > span {
+      display: none;
+    }
+    .sidebar-item {
+      font-size: 7px;
+      gap: 4px;
+      padding-inline: 3px;
+    }
+    .sidebar-item i {
+      width: 5px;
+      height: 5px;
+    }
+    .sidebar-bottom {
+      font-size: 6px;
+      margin-left: 2px;
+    }
+    .system-content {
+      padding: 10px 8px;
+    }
+    .system-title strong {
+      font-size: 10px;
+    }
+    .system-title > span {
+      font-size: 6px;
+    }
+    .mini-stats {
+      gap: 4px;
+    }
+    .mini-stats > div {
+      padding: 7px 5px;
+    }
+    .mini-stats b {
+      font-size: 17px;
+    }
+    .mini-stats span {
+      font-size: 6px;
+    }
+    .mini-stats .status-ok {
+      font-size: 8px;
+    }
+    .chart-panel {
+      padding: 8px;
+    }
+    .legend {
+      display: none;
+    }
+    .device-row {
+      font-size: 6px;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .erp-columns {
+      grid-template-columns: 1fr;
+    }
+    .pending-list {
+      display: none;
+    }
+    .contract-document {
+      padding: 10px 7px;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .contract-document strong {
+      font-size: 9px;
+    }
+    .contract-document p {
+      font-size: 6px;
+    }
+    .contract-document .rs-tag {
+      display: none;
+    }
+    .contract-lines {
+      padding: 10px;
+      font-size: 6px;
+      gap: 8px;
+    }
+    .approval-flow p {
+      font-size: 6px;
+    }
+    .mobile-scene {
+      gap: 9px;
+    }
+    .phone {
+      width: 112px;
+      padding: 7px;
+      border-width: 3px;
+    }
+    .phone-heading strong {
+      font-size: 9px;
+    }
+    .phone-banner {
+      font-size: 10px;
+      padding: 8px;
+    }
+    .phone-apps {
+      gap: 7px;
+      padding-block: 9px;
+    }
+    .mobile-notes strong {
+      font-size: 14px;
+    }
+    .mobile-notes > span {
+      font-size: 7px;
+    }
+    .mobile-notes p {
+      font-size: 6px;
+    }
+    figcaption {
+      font-size: 8px;
+    }
+  }
+  @media (max-width: 359px) {
+    .window-body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .system-sidebar {
+      display: none;
+    }
+    .demo-label {
+      font-size: 6px;
+    }
+  }
+</style>

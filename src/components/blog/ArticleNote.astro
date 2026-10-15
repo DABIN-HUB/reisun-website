@@ -1,0 +1,29 @@
+---
+export interface Props {
+  title?: string;
+}
+const { title = '阅读提示' } = Astro.props;
+---
+
+<aside class="article-component-note" aria-label={title}><strong>{title}</strong><div><slot /></div></aside>
+<style>
+  .article-component-note {
+    margin: 2em 0;
+    padding: 20px 24px;
+    background: #f1f5fc;
+    border-left: 3px solid #245eea;
+    border-radius: 0 5px 5px 0;
+    color: #52657c;
+    font-size: 0.9375rem;
+    line-height: 1.95;
+  }
+  .article-component-note > strong {
+    display: block;
+    color: #244a80;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .article-component-note :global(p) {
+    margin: 0;
+  }
+</style>

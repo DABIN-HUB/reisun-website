@@ -1,559 +1,779 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-
-import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
-import Features from '~/components/widgets/Features.astro';
-import QuickStart from '~/components/widgets/QuickStart.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import Timeline from '~/components/widgets/Timeline.astro';
-import Steps from '~/components/widgets/Steps.astro';
-import Content from '~/components/widgets/Content.astro';
-import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
-import SocialProof from '~/components/widgets/SocialProof.astro';
+import Button from '~/components/ui/Button.astro';
+import { Icon } from 'astro-icon/components';
 import StructuredData from '~/components/common/StructuredData.astro';
-import { SITE, METADATA, I18N } from 'astrowind:config';
-import favIconSvg from '~/assets/favicons/favicon.svg';
+import HeroGraphic from '~/components/reisun/HeroGraphic.astro';
+import SystemPreview from '~/components/reisun/SystemPreview.astro';
+import Process from '~/components/reisun/Process.astro';
+import CTA from '~/components/reisun/CTA.astro';
+import BlogGrid from '~/components/blog/Grid.astro';
+import { services } from '~/data/services';
+import { solutions } from '~/data/solutions';
+import { cases } from '~/data/cases';
+import { findLatestPosts } from '~/utils/blog';
+import { SITE, I18N } from 'astrowind:config';
 
+const posts = await findLatestPosts({ count: 3 });
+const featuredSolution = solutions[0];
 const metadata = {
-  title: 'AstroWind — Free template for creating websites with Astro + Tailwind CSS',
+  title: 'REISUN｜专业软件定制开发与企业数字化解决方案',
+  description:
+    '专注 Java 企业应用、工业物联网与设备数据采集、ERP/OA、微信小程序和企业系统集成。了解 REISUN 的开发服务、演示方案与技术实践。',
   ignoreTitleTemplate: true,
 };
-
-// Structured data for the site and its publisher, built only from
-// `src/config.yaml` (`site.name`, `site.site`, `metadata.twitter.handle`), so
-// it is correct for any site made with the template. Blog posts add
-// BlogPosting on their own; the FAQs widget adds FAQPage.
-const organizationId = `${SITE?.site}/#organization`;
-const structuredData = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    '@id': `${SITE?.site}/#website`,
-    name: SITE?.name,
-    url: SITE?.site,
-    inLanguage: I18N?.language,
-    publisher: { '@id': organizationId },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    '@id': organizationId,
-    name: SITE?.name,
-    url: SITE?.site,
-    logo: new URL(favIconSvg.src, SITE?.site).toString(),
-    ...(METADATA?.twitter?.handle ? { sameAs: [`https://x.com/${METADATA.twitter.handle.replace(/^@/, '')}`] } : {}),
-  },
-];
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.site,
+  inLanguage: I18N.language,
+  description: metadata.description,
+};
 ---
 
 <Layout metadata={metadata}>
-  <StructuredData slot="head" schema={structuredData} />
-  <!-- Hero Widget ******************* -->
-
-  <Hero
-    tagline="Free & open source"
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/arthelokyo/astrowind',
-        target: '_blank',
-        icon: 'tabler:download',
-      },
-      { text: 'Learn more', href: '#features' },
-    ]}
-    image={{ src: '~/assets/images/hero-image.png', alt: 'AstroWind Hero Image' }}
-  >
-    <Fragment slot="title">
-      Free template for <span class="hidden xl:inline">creating websites with</span>
-      <span class="text-accent dark:text-white"> Astro v7</span> + Tailwind CSS
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      <span class="hidden sm:inline">
-        <span class="font-semibold">AstroWind</span> is a free, customizable and production-ready template for Astro v7 +
-        Tailwind CSS v4.</span
-      >
-      <span class="block mb-1 sm:hidden font-bold text-blue-600">AstroWind: Production-ready.</span>
-      Suitable for Startups, Small Business, SaaS websites, Professional Portfolios, Marketing websites, Landing Pages & Blogs.
-    </Fragment>
-  </Hero>
-
-  <!-- SocialProof Widget ************ -->
-
-  <SocialProof
-    id="proof"
-    classes={{ container: '!pb-14 md:!pb-20' }}
-    items={[
-      {
-        value: '#1',
-        label: 'most starred Astro theme',
-        icon: 'tabler:star-filled',
-        color: 'text-amber-400',
-        href: 'https://github.com/arthelokyo/astrowind',
-      },
-      { value: '100', label: 'Lighthouse score', icon: 'tabler:gauge', color: 'text-emerald-500' },
-      { value: 'MIT', label: 'licensed, free to use', icon: 'tabler:license', color: 'text-sky-500' },
-    ]}
-  />
-
-  <!-- QuickStart Widget ************* -->
-
-  <QuickStart
-    id="quick-start"
-    classes={{ icon: 'bg-green-600 dark:bg-green-700' }}
-    tagline="TL;DR"
-    title="One command. That is the whole setup."
-    subtitle="For the people who scroll past the features and ask “how do I run it?”. This is how."
-    commands={['npm create astro@latest -- --template arthelokyo/astrowind']}
-    items={[
-      {
-        title: 'Two minutes, one terminal',
-        description:
-          'Answer the prompts, run <code>npm run dev</code>, open localhost:4321. The demo site is now yours to edit. The only requirement is a current Node.js.',
-        icon: 'tabler:terminal-2',
-      },
-      {
-        title: 'AI-ready out of the box',
-        description:
-          'An <code>AGENTS.md</code> and step-by-step skills tell Claude Code, Cursor or any coding assistant how this template works. Ask it for a page; it knows where things go.',
-        icon: 'tabler:sparkles',
-      },
-      {
-        title: 'Free, MIT licensed, no strings',
-        description:
-          'Use it for client work, side projects or the company site. Star the repo if it saves you an afternoon.',
-        icon: 'tabler:license',
-      },
-    ]}
-  >
-    <Fragment slot="bg">
-      <div
-        class="absolute inset-0 bg-[radial-gradient(60%_55%_at_15%_20%,rgb(129_140_248/0.28),transparent_65%),radial-gradient(50%_50%_at_85%_25%,rgb(244_114_182/0.22),transparent_65%)] dark:bg-[radial-gradient(60%_55%_at_15%_20%,rgb(99_102_241/0.25),transparent_65%),radial-gradient(50%_50%_at_85%_25%,rgb(217_70_239/0.18),transparent_65%)]"
-      >
+  <StructuredData slot="head" schema={websiteSchema} />
+  <section class="home-hero">
+    <div class="rs-container hero-layout">
+      <div class="hero-copy">
+        <p class="hero-kicker"><span></span>软件定制开发与企业数字化</p>
+        <h1>专业软件定制开发，<br />让技术真正服务业务</h1>
+        <p class="hero-description">
+          从工业设备的数据连接，到企业管理的高效协同。<br
+            class="desktop-break"
+          />以扎实的工程能力，把业务想法变成可靠的软件。
+        </p>
+        <div class="hero-actions">
+          <Button href="/contact" text="咨询开发需求" class="rs-button" /><Button
+            href="/cases"
+            text="查看项目案例"
+            class="rs-button rs-button-secondary hero-secondary"
+          />
+        </div>
+        <p class="hero-scope">Java 企业应用 / 工业物联网 / ERP·OA / 微信小程序</p>
       </div>
-    </Fragment>
-  </QuickStart>
+      <HeroGraphic />
+    </div>
+    <div class="hero-bottom">
+      <div class="rs-container hero-principles">
+        <span><i></i>围绕业务设计</span><span><i></i>重视系统可靠性</span><span><i></i>关注持续演进</span><span
+          class="hero-brand-note">REISUN · 独立软件开发品牌</span
+        >
+      </div>
+    </div>
+  </section>
 
-  <!-- Features Widget *************** -->
+  <section class="rs-section home-services" id="services">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <div>
+          <h2>
+            <span class="rs-heading-phrase">从业务需求出发，</span><wbr /><span class="rs-heading-phrase"
+              >构建合适的软件</span
+            >
+          </h2><p>不止于功能实现，更关心软件如何融入日常工作，解决真正的问题。</p>
+        </div><a class="rs-link" href="/services">了解开发服务 <Icon name="tabler:arrow-up-right" /></a>
+      </div>
+      <div class="service-grid">
+        {
+          services.map((service) => (
+            <article class="home-service">
+              <>
+                <div class="service-icon">
+                  <Icon name={service.icon} />
+                </div>
+                <h3>
+                  <a href={`/services#${service.id}`}>{service.title}</a>
+                </h3>
+                <p>{service.summary}</p>
+                <a class="rs-link" href={`/services#${service.id}`} aria-label={`了解${service.title}`}>
+                  服务详情 <Icon name="tabler:chevron-right" />
+                </a>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
-  <Features
-    id="features"
-    tagline="Features"
-    title="What you get with AstroWind"
-    subtitle="One of the most professional and comprehensive templates currently on the market. Most starred & forked Astro theme in 2022, 2023, 2024 and 2025."
-    items={[
-      {
-        title: 'Astro + Tailwind CSS Integration',
-        description:
-          'A seamless integration between two great frameworks that offer high productivity, performance and versatility. Now powered by Tailwind CSS v4.',
-        icon: 'tabler:brand-tailwind',
-      },
-      {
-        title: 'Ready-to-use Components',
-        description:
-          'Widgets made with Tailwind CSS v4 ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
-        icon: 'tabler:components',
-      },
-      {
-        title: 'Best Practices',
-        description:
-          'Creating secure, efficient, and user-friendly websites that deliver exceptional experiences and lasting value.',
-        icon: 'tabler:list-check',
-      },
-      {
-        title: 'Excellent Page Speed',
-        description:
-          'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
-        icon: 'tabler:rocket',
-      },
-      {
-        title: 'Search Engine Optimization (SEO)',
-        description:
-          "SEO lies in its ability to enhance a website's visibility, driving organic traffic and enabling it to reach a wider audience.",
-        icon: 'tabler:arrows-right-left',
-      },
-      {
-        title: 'Open to new ideas and contributions',
-        description:
-          'Embracing a culture that is open to new ideas and contributions is integral fostering innovation, collaboration, and a dynamic user experience.',
-        icon: 'tabler:bulb',
-      },
-    ]}
-  />
+  <section class="rs-section rs-section-dark home-solutions">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <div>
+          <h2>
+            <span class="rs-heading-phrase">让技术能力，</span><wbr /><span class="rs-heading-phrase"
+              >落在具体的业务场景里</span
+            >
+          </h2><p>连接现场、整合数据、协同流程，让不同系统成为一条完整的业务链路。</p>
+        </div><a class="rs-link" href="/solutions">浏览解决方案 <Icon name="tabler:arrow-up-right" /></a>
+      </div>
+      <div class="solution-layout">
+        <div class="featured-solution">
+          <span class="solution-label">重点场景 · 工业物联网</span><h3>{featuredSolution.title}</h3><p>
+            {featuredSolution.summary}
+          </p><SystemPreview variant="industrial" compact /><a
+            class="rs-link"
+            href={`/solutions/${featuredSolution.id}`}>探索设备数据方案 <Icon name="tabler:chevron-right" /></a
+          >
+        </div>
+        <div class="solution-list">
+          {
+            solutions.slice(1).map((solution) => (
+              <article>
+                <>
+                  <span class="solution-symbol" aria-hidden="true">
+                    <Icon
+                      name={
+                        solution.variant === 'enterprise'
+                          ? 'tabler:building-factory-2'
+                          : solution.variant === 'contract'
+                            ? 'tabler:file-description'
+                            : 'tabler:device-mobile'
+                      }
+                    />
+                  </span>
+                  <div>
+                    <>
+                      <h3>
+                        <a href={`/solutions/${solution.id}`}>{solution.title}</a>
+                      </h3>
+                      <p>{solution.summary}</p>
+                      <a href={`/solutions/${solution.id}`} class="rs-link">
+                        查看方案 <Icon name="tabler:chevron-right" />
+                      </a>
+                    </>
+                  </div>
+                </>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+      <p class="solution-disclaimer">方案与界面均为能力演示，实际范围与技术选型需结合项目需求确认。</p>
+    </div>
+  </section>
 
-  <!-- Content Widget **************** -->
+  <section class="rs-section home-cases">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <div>
+          <h2>
+            <span class="rs-heading-phrase">把能力讲清楚，</span><wbr /><span class="rs-heading-phrase"
+              >不如把系统展示出来</span
+            >
+          </h2><p>通过四个演示项目，了解从现场数据到企业运营的实现思路。</p>
+        </div><a class="rs-link" href="/cases">查看全部案例 <Icon name="tabler:arrow-up-right" /></a>
+      </div>
+      <div class="rs-grid-2 case-grid">
+        {
+          cases.map((project) => (
+            <article class="home-case">
+              <>
+                <a class="case-visual" href={`/cases/${project.id}`} aria-label={`查看${project.title}演示案例`}>
+                  <SystemPreview variant={project.variant} compact />
+                </a>
+                <div class="case-heading">
+                  <>
+                    <span>{project.category}</span>
+                    <span class="case-demo">演示案例</span>
+                  </>
+                </div>
+                <h3>
+                  <a href={`/cases/${project.id}`}>{project.title}</a>
+                </h3>
+                <p>{project.summary}</p>
+                <div class="case-meta">
+                  <>
+                    <div class="rs-tags">
+                      {project.stack.slice(0, 3).map((item) => (
+                        <span class="rs-tag">{item}</span>
+                      ))}
+                    </div>
+                    <a href={`/cases/${project.id}`} class="case-detail" aria-label={`查看${project.title}详情`}>
+                      <Icon name="tabler:arrow-up-right" />
+                    </a>
+                  </>
+                </div>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
-  <Content
-    isReversed
-    tagline="Inside template"
-    title="AstroWind's Blueprint: Fun Meets Functionality!"
-    items={[
-      {
-        title: 'Built on top of Astro v7',
-        description:
-          'Benefiting from the performance and developer-friendly features of this modern static site generator.',
-      },
-      {
-        title: 'Styled using Tailwind CSS v4',
-        description:
-          'Facilitating rapid design and consistent styling with this highly popular utility-first CSS framework.',
-      },
-      {
-        title: 'Cross-browser compatibility',
-        description:
-          'Ensure your website looks and functions consistently across various web browsers, delivering a seamless experience to all users.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Colorful Image',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Building on modern foundations</h3>
-      Gain a competitive advantage by incorporating industry leading practices
-    </Fragment>
+  <div class="rs-section-soft"><Process /></div>
 
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
+  <section class="rs-section home-about">
+    <div class="rs-container about-layout">
+      <div><p class="about-brand">关于 REISUN</p><h2>理解业务的细节，<br />也尊重技术的边界。</h2></div><div>
+        <p>
+          REISUN
+          是一个专注软件定制开发的独立品牌，关注企业应用、工业互联与系统集成。我们相信，好的软件不必堆砌技术，而应让业务流程更清晰，让系统长期可维护。
+        </p><div class="about-method">
+          <span>清晰的需求边界</span><span>务实的技术选择</span><span>可持续的工程交付</span>
+        </div><a class="rs-link" href="/about">了解品牌与工作方式 <Icon name="tabler:arrow-up-right" /></a>
+      </div>
+    </div>
+  </section>
 
-  <!-- Content Widget **************** -->
-
-  <Content
-    isAfterContent
-    items={[
-      {
-        title: 'High level of customization',
-        description: `Tailor the template effortlessly to match your brand's identity and requirements, making your website distinct and saving you time.`,
-      },
-      {
-        title: 'Multiple layout possibilities',
-        description:
-          'Explore various layout options to find the structure that best presents your content, enhancing user engagement and navigation.',
-      },
-      {
-        title: 'Fully responsive design',
-        description:
-          "Ensure your website's optimal performance on various devices and screen sizes, providing a consistent and enjoyable user experience.",
-      },
-      {
-        title: 'Integration of media',
-        description:
-          'Seamlessly incorporate images, videos, and multimedia elements that enhance your content and engage visitors effectively.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1616674282942-2835e62d612e?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Printed website wireframes on a black table',
-    }}
-  >
-    <Fragment slot="content">Ensure your online presence truly represents you.</Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    isAfterContent
-    items={[
-      {
-        title: 'Enhanced user engagement',
-        description:
-          'Captivate your audience with interactive elements, intuitive navigation, and visually appealing layouts, encouraging longer visits.',
-      },
-      {
-        title: 'Continuous improvement',
-        description:
-          'Ensure your website stays aligned with the latest trends and technologies through regular updates and enhancements.',
-      },
-      {
-        title: 'Time and resource efficiency',
-        description:
-          'Skip the time-consuming process of building a website from scratch and launch your online presence sooner with AstroWind.',
-      },
-      {
-        title: 'Community support',
-        description: `Join the growing AstroWind community for insights, resources, and assistance, ensuring you're never alone on your web development journey.`,
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1611462985358-60d3498e0364?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Astronauts Image',
-    }}
-  >
-    <Fragment slot="content">Designed to foster growth and success.</Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Steps Widget ****************** -->
-
-  <Steps
-    title="Get your dream website up and running in no time with AstroWind."
-    items={[
-      {
-        title: 'Step 1: <span class="font-medium">Download</span>',
-        description:
-          "Kickstart with GitHub! Either fork the AstroWind template or simply click 'Use this template'. Your canvas awaits, ready for your digital masterpiece. In just a few clicks, you've already set the foundation.",
-        icon: 'tabler:package',
-      },
-      {
-        title: 'Step 2: <span class="font-medium">Add content</span>',
-        description:
-          "Pour your vision into it. Add images, text, and all that jazz to breathe life into your digital space. Remember, it's the content that tells your story, so make it captivating.",
-        icon: 'tabler:letter-case',
-      },
-      {
-        title: 'Step 3: <span class="font-medium">Customize styles</span>',
-        description:
-          'Give it your personal touch. Tailor colors, fonts, and layouts until it feels just right. Your unique flair, amplified by AstroWind! Precision in design ensures a seamless user experience.',
-        icon: 'tabler:paint',
-      },
-      {
-        title: 'Ready!',
-        icon: 'tabler:check',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1616198814651-e71f960c3180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
-      alt: 'Steps image',
-    }}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Most used widgets"
-    subtitle="Provides frequently used components for building websites using Tailwind CSS v4"
-    tagline="Components"
-    items={[
-      {
-        title: 'Headers',
-        description: "Ever tried driving without GPS? Boom! That's why websites need headers for direction.",
-        icon: 'flat-color-icons:template',
-      },
-      {
-        title: 'Heros',
-        description:
-          "Picture a superhero landing – epic, right? That's the job of a Hero section, making grand entrances!",
-        icon: 'flat-color-icons:gallery',
-      },
-      {
-        title: 'Features',
-        description:
-          'Where websites strut their stuff and show off superpowers. No holding back on the bragging rights here!',
-        icon: 'flat-color-icons:approval',
-      },
-      {
-        title: 'Content',
-        description:
-          "Dive into the meat and potatoes of a site; without it, you'd just be window shopping. Content is king.",
-        icon: 'flat-color-icons:document',
-      },
-      {
-        title: 'Call-to-Action',
-        description:
-          'That enthusiastic friend who\'s always urging, "Do it! Do it!"? Yeah, that\'s this button nudging you towards adventure.',
-        icon: 'flat-color-icons:advertising',
-      },
-      {
-        title: 'Pricing',
-        description: 'Behold the dessert menu of the website world. Tempting choices await, can you resist?',
-        icon: 'flat-color-icons:currency-exchange',
-      },
-      {
-        title: 'Testimonial',
-        description: 'Step into the gossip corner! Here, other visitors spill the beans and share the juicy details.',
-        icon: 'flat-color-icons:voice-presentation',
-      },
-      {
-        title: 'Contact',
-        description:
-          'Like a digital mailbox, but faster! Drop a line, ask a question, or send a virtual high-five. Ding! Message in.',
-        icon: 'flat-color-icons:business-contact',
-      },
-      {
-        title: 'Footers',
-        description: "The footer's like the credits of a movie but sprinkled with easter eggs. Time to hunt!",
-        icon: 'flat-color-icons:database',
-      },
-    ]}
-  >
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Features2>
-
-  <!-- Timeline Widget **************** -->
-
-  <Timeline
-    id="story"
-    layout="alternate"
-    tagline="Our story"
-    title="One template, since 2022"
-    subtitle="Started before Astro 1.0 shipped, shaped by every Astro release since, and by the people who kept sending pull requests."
-    items={[
-      {
-        date: 'June 2022',
-        title: 'A template for a framework still in beta',
-        description:
-          'AstroWind starts on Astro 1.0 beta with a handful of pages, a few widgets and one idea: a website can be fast, simple and good-looking at the same time.',
-        icon: 'tabler:rocket',
-      },
-      {
-        date: '2022',
-        title: 'The most starred Astro theme, in its first year',
-        description:
-          'By December it is the most starred theme in the Astro ecosystem, a place it would hold year after year. The first pull requests from strangers arrive, and they keep coming.',
-        icon: 'tabler:star-filled',
-      },
-      {
-        date: '2022–2023',
-        title: 'The busiest stretch',
-        description:
-          'Astro grows fast and the template grows with it: collections for content, better images, page transitions. The blog matures, the widgets double, the road to 1.0 begins, and more people than ever send pull requests.',
-        icon: 'tabler:users-group',
-      },
-      {
-        date: '2024',
-        title: 'Polish',
-        description:
-          'Astro 4, and a year of small, careful improvements, most of them sent in by contributors: accessibility, tooling, ways to edit and ways to deploy. Three thousand stars by September.',
-        icon: 'tabler:puzzle',
-      },
-      {
-        date: '2025',
-        title: 'Steady, and quieter',
-        description:
-          'Astro 5 and regular updates. Fewer commits, nothing broken, and the stars kept coming: five thousand by October.',
-        icon: 'tabler:refresh',
-      },
-      {
-        date: '2026',
-        title: 'Astro 7 and Tailwind CSS 4',
-        description:
-          'Two framework majors in one year. The template gets a new generation of widgets, complete landing pages, a blog that finally reads like documentation, and a guide so coding assistants know their way around.',
-        icon: 'tabler:sparkles',
-      },
-      {
-        date: '2026',
-        title: 'Release v1',
-        description:
-          'Four years after the first commit, the demo has no placeholders left: every page, every landing page and every post is real, and the template is ready for whatever comes next.',
-        icon: 'tabler:circle-check-filled',
-        highlight: true,
-      },
-      { icon: 'tabler:dots', ghost: true },
-    ]}
-  />
-
-  <!-- Note Widget ******************* -->
-
-  <Note title="Philosophy:" description="Simplicity, Best Practices and High Performance" />
-
-  <!-- HighlightedPosts Widget ******* -->
-
-  <BlogHighlightedPosts
-    title="Find out more content in our Blog"
-    postIds={[
-      'get-started-website-with-astro-tailwind-css',
-      'how-to-customize-astrowind-to-your-brand',
-      'useful-resources-to-create-websites',
-      'landing',
-    ]}
-    information={`The blog is used to display AstroWind documentation.
-                        Each new article will be an important step that you will need to know to be an expert in creating a website using Astro v7 + Tailwind CSS v4.
-                        Astro is a very interesting technology. Thanks.
-                `}
-  />
-
-  <!-- FAQs Widget ******************* -->
-
-  <FAQs
-    id="faqs"
-    title="Frequently Asked Questions"
-    subtitle="The questions people ask before they clone the repository, answered briefly. For step-by-step tasks, the repository ships skills your AI coding assistant can follow."
-    tagline="FAQs"
-    schema
-    items={[
-      {
-        title: 'What is AstroWind?',
-        description:
-          'A free, open-source template for Astro and Tailwind CSS: a static site with a header, footer, twenty-plus reusable widgets, a Markdown/MDX blog, dark mode, RTL support, image optimisation, SEO metadata and an RSS feed, ready to be customised and deployed anywhere static files are served.',
-      },
-      {
-        title: 'What do I need to start?',
-        description:
-          'A current Node.js (the exact minimum is in <code>package.json</code>) and a terminal. Run <code>npm create astro@latest -- --template arthelokyo/astrowind</code>, then <code>npm run dev</code>. Site name, URL, metadata and blog options live in <code>src/config.yaml</code>; colours and fonts in <code>src/components/CustomStyles.astro</code>.',
-      },
-      {
-        title: 'Can I use it for a site without a blog?',
-        description:
-          'Yes. Set <code>apps.blog.isEnabled: false</code> in <code>src/config.yaml</code> and the blog routes, the RSS feed and the post widgets disappear from the build. The rest of the template is unaffected.',
-      },
-      {
-        title: 'How do I change colours, fonts and the logo?',
-        description:
-          'Colours are CSS variables in <code>src/components/CustomStyles.astro</code> (light and dark), fonts are configured in <code>astro.config.ts</code> through Astro’s Fonts API, and the logo is <code>src/components/Logo.astro</code>. The same variables also feed the shadcn/ui-compatible tokens, so shadcn-style components pick up your theme.',
-      },
-      {
-        title: 'Does it work with an AI coding assistant?',
-        description:
-          'It is built for it. The repository includes <code>AGENTS.md</code> with the project conventions and a <code>.agents/skills/</code> folder with step-by-step guides for common tasks (disable the blog, set an Open Graph image, deploy under a base path, connect a CMS, deploy to Cloudflare…), so tools like Claude Code, Codex or Cursor can do them reliably.',
-      },
-      {
-        title: 'Where can I deploy it and what does it cost?',
-        description:
-          'Anywhere that serves static files: Vercel, Netlify, Cloudflare, GitHub Pages, an nginx container (a Dockerfile is included) or your own server. The template is MIT licensed and free for personal and commercial projects.',
-      },
-    ]}
-  />
-
-  <!-- Stats Widget ****************** -->
-
-  <Stats
-    id="stats"
-    countUp
-    stats={[
-      { title: 'GitHub stars', amount: '6K' },
-      { title: 'Forks', amount: '1.7K' },
-      { title: 'Ready-made widgets', amount: '34' },
-      { title: 'Lighthouse score', amount: '100' },
-    ]}
-  />
-
-  <!-- CallToAction Widget *********** -->
-
-  <CallToAction
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/arthelokyo/astrowind',
-        target: '_blank',
-        icon: 'tabler:download',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      Astro&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Free, open source and production-ready. <br class="hidden md:inline" />Clone it, replace the content and deploy.
-    </Fragment>
-  </CallToAction>
+  <section class="rs-section rs-section-soft home-articles">
+    <div class="rs-container">
+      <div class="rs-section-heading">
+        <div>
+          <h2>
+            <span class="rs-heading-phrase">分享技术实践，</span><wbr /><span class="rs-heading-phrase"
+              >也分享解决问题的思路</span
+            >
+          </h2><p>关于 Java、工业通信、系统架构与数字化建设的中文技术笔记。</p>
+        </div><a class="rs-link" href="/blog">阅读全部文章 <Icon name="tabler:arrow-up-right" /></a>
+      </div><BlogGrid posts={posts} />
+    </div>
+  </section>
+  <CTA />
 </Layout>
+
+<style>
+  .home-hero {
+    background: #102b50;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 0;
+    padding-block: 48px 42px;
+    min-height: 582px;
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .hero-kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #bfdaff;
+    margin-bottom: 24px;
+  }
+  .hero-kicker > span {
+    width: 22px;
+    height: 2px;
+    background: var(--rs-cyan);
+  }
+  h1 {
+    font-size: clamp(34px, 3.4vw, 50px);
+    font-weight: 650;
+    line-height: 1.5;
+    letter-spacing: -0.04em;
+  }
+  .hero-description {
+    font-size: 16px;
+    line-height: 2;
+    color: #b9cbe1;
+    margin-top: 24px;
+    max-width: 530px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .hero-actions :global(.hero-secondary) {
+    color: white;
+    border-color: #637b9c;
+  }
+  .hero-actions :global(.hero-secondary:hover) {
+    color: white;
+    border-color: #a1c1ed;
+    background: #ffffff0d;
+  }
+  .hero-scope {
+    font-size: 11px;
+    color: #a3bbd7;
+    margin-top: 26px;
+  }
+  .hero-bottom {
+    border-top: 1px solid #ffffff14;
+  }
+  .hero-principles {
+    display: flex;
+    align-items: center;
+    gap: 44px;
+    min-height: 67px;
+    font-size: 12px;
+    color: #c5d5e8;
+  }
+  .hero-principles > span {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+  }
+  .hero-principles i {
+    height: 5px;
+    width: 5px;
+    border: 1px solid var(--rs-cyan);
+    transform: rotate(45deg);
+  }
+  .hero-brand-note {
+    margin-left: auto;
+    color: #8da9ca;
+  }
+  .rs-link :global(svg) {
+    width: 17px;
+    height: 17px;
+  }
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 46px;
+  }
+  .home-service {
+    padding: 32px 0 24px;
+    border-top: 1px solid var(--rs-line);
+  }
+  .service-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: #edf3ff;
+    border-radius: 8px;
+    color: var(--rs-blue);
+    margin-bottom: 21px;
+  }
+  .service-icon :global(svg) {
+    width: 25px;
+    height: 25px;
+    stroke-width: 1.5;
+  }
+  .home-service h3 {
+    font-size: 19px;
+    font-weight: 650;
+    line-height: 1.6;
+  }
+  .home-service h3 a:hover {
+    color: var(--rs-blue);
+  }
+  .home-service p {
+    color: var(--rs-muted);
+    font-size: 14px;
+    line-height: 1.9;
+    margin-top: 12px;
+    min-height: 54px;
+  }
+  .home-service .rs-link {
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .home-solutions .rs-section-heading > .rs-link,
+  .home-solutions .rs-link {
+    color: #9bc9ff;
+  }
+  .solution-layout {
+    display: grid;
+    grid-template-columns: 1.16fr 1fr;
+    gap: 60px;
+  }
+  .featured-solution {
+    padding: 28px 28px 12px;
+    border-radius: 8px;
+    background: #1a3a61;
+    border: 1px solid #ffffff18;
+  }
+  .solution-label {
+    font-size: 11px;
+    color: var(--rs-cyan);
+  }
+  .featured-solution h3 {
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+  .featured-solution > p {
+    font-size: 13px;
+    color: #b4c8e0;
+    margin: 12px 0 22px;
+  }
+  .featured-solution :global(.system-preview) {
+    padding: 0;
+    background: none;
+  }
+  .featured-solution :global(figcaption) {
+    color: #a4bddb;
+  }
+  .featured-solution > .rs-link {
+    margin-top: 7px;
+  }
+  .solution-list {
+    display: grid;
+  }
+  .solution-list article {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    padding-block: 24px;
+    border-bottom: 1px solid #ffffff24;
+  }
+  .solution-list article:first-child {
+    padding-top: 12px;
+  }
+  .solution-list article:last-child {
+    border-bottom: 0;
+  }
+  .solution-symbol {
+    margin-top: 3px;
+    width: 35px;
+    flex-shrink: 0;
+    color: #85b5f1;
+  }
+  .solution-symbol :global(svg) {
+    width: 30px;
+    height: 30px;
+    stroke-width: 1.3;
+  }
+  .solution-list h3 {
+    font-size: 20px;
+    line-height: 1.55;
+    font-weight: 600;
+  }
+  .solution-list p {
+    color: #b7c9df;
+    font-size: 14px;
+    margin-top: 10px;
+    line-height: 1.85;
+  }
+  .solution-list .rs-link {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .solution-disclaimer {
+    color: #a2b9d5;
+    font-size: 11px;
+    margin-top: 24px;
+  }
+  .case-grid {
+    gap: 42px 32px;
+  }
+  .home-case {
+    min-width: 0;
+  }
+  .case-visual {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e3eaf3;
+    transition: border-color 0.2s;
+  }
+  .case-visual:hover {
+    border-color: #749cf1;
+  }
+  .case-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    font-size: 11px;
+    color: var(--rs-muted);
+  }
+  .case-demo {
+    color: #4b6484;
+    background: #eef3f8;
+    border-radius: 3px;
+    padding: 3px 8px;
+  }
+  .home-case h3 {
+    font-size: 22px;
+    font-weight: 650;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+  .home-case h3 a:hover {
+    color: var(--rs-blue);
+  }
+  .home-case > p {
+    font-size: 14px;
+    line-height: 1.85;
+    margin-top: 11px;
+    color: var(--rs-muted);
+  }
+  .case-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .case-detail {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: var(--rs-blue);
+    flex-shrink: 0;
+    border: 1px solid var(--rs-line);
+    border-radius: 50%;
+  }
+  .case-detail:hover {
+    background: #edf3ff;
+  }
+  .case-detail :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 80px;
+  }
+  .about-brand {
+    color: var(--rs-blue);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .about-layout h2 {
+    font-size: clamp(27px, 2.7vw, 37px);
+    font-weight: 650;
+    line-height: 1.7;
+    letter-spacing: -0.03em;
+  }
+  .about-layout > div:last-child > p {
+    color: var(--rs-muted);
+    font-size: 16px;
+    line-height: 2;
+  }
+  .about-method {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+    border-top: 1px solid var(--rs-line);
+    padding-top: 23px;
+    margin-top: 23px;
+    font-size: 12px;
+  }
+  .about-layout .rs-link {
+    margin-top: 20px;
+  }
+  .home-articles :global(.blog-grid) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+  @media (max-width: 1199px) {
+    .hero-layout {
+      min-height: 530px;
+    }
+    h1 {
+      font-size: 38px;
+    }
+    .hero-description {
+      font-size: 14px;
+    }
+    .hero-scope {
+      font-size: 10px;
+    }
+    .solution-layout {
+      gap: 32px;
+    }
+    .service-grid {
+      column-gap: 28px;
+    }
+    .home-service h3 {
+      font-size: 18px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .hero-layout {
+      grid-template-columns: 1.05fr 1fr;
+      min-height: 500px;
+    }
+    h1 {
+      font-size: 32px;
+    }
+    .hero-description {
+      font-size: 13px;
+    }
+    .hero-principles {
+      gap: 25px;
+    }
+    .hero-brand-note {
+      display: none !important;
+    }
+    .service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .solution-layout {
+      grid-template-columns: 1fr;
+    }
+    .solution-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .solution-list article {
+      padding: 20px 0 0;
+      border-top: 1px solid #ffffff24;
+      border-bottom: 0;
+      display: block;
+    }
+    .solution-list article:first-child {
+      padding-top: 20px;
+    }
+    .solution-symbol {
+      display: block;
+      margin-bottom: 14px;
+    }
+    .solution-list h3 {
+      font-size: 18px;
+    }
+    .solution-list p {
+      font-size: 13px;
+    }
+    .featured-solution :global(.system-preview) {
+      max-width: 580px;
+      margin-inline: auto;
+    }
+    .about-layout {
+      gap: 40px;
+    }
+    .home-articles :global(.blog-grid) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 767px) {
+    .hero-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+      min-height: 0;
+      padding-block: 40px 25px;
+    }
+    .hero-kicker {
+      font-size: 11px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(27px, 7.7vw, 40px);
+      line-height: 1.55;
+      letter-spacing: -0.04em;
+    }
+    .hero-description {
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.95;
+    }
+    .desktop-break {
+      display: none;
+    }
+    .hero-actions {
+      margin-top: 25px;
+      gap: 10px;
+    }
+    .hero-actions :global(.rs-button) {
+      padding-inline: 19px;
+      font-size: 14px;
+      flex: 1;
+    }
+    .hero-scope {
+      font-size: 10px;
+      line-height: 1.85;
+      margin-top: 20px;
+      max-width: 300px;
+    }
+    .hero-principles {
+      min-height: 58px;
+      gap: 16px;
+      justify-content: space-between;
+      font-size: 10px;
+    }
+    .hero-principles > span {
+      gap: 6px;
+    }
+    .service-grid {
+      gap: 0 24px;
+    }
+    .home-service {
+      padding-block: 24px 18px;
+    }
+    .home-service h3 {
+      font-size: 17px;
+    }
+    .home-service p {
+      font-size: 13px;
+      min-height: 0;
+    }
+    .service-icon {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 15px;
+    }
+    .solution-list {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .solution-list article {
+      padding-block: 24px;
+      display: flex;
+      gap: 17px;
+    }
+    .solution-list article:last-child {
+      padding-bottom: 0;
+    }
+    .featured-solution {
+      padding: 22px 16px 10px;
+    }
+    .featured-solution h3 {
+      font-size: 21px;
+    }
+    .case-grid {
+      gap: 34px;
+    }
+    .home-case h3 {
+      font-size: 21px;
+    }
+    .about-layout {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .about-layout > div:last-child > p {
+      font-size: 14px;
+    }
+    .about-method {
+      gap: 10px 18px;
+      font-size: 11px;
+    }
+    .home-articles :global(.blog-grid) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+  }
+  @media (max-width: 479px) {
+    .service-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .home-service {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 0 15px;
+    }
+    .service-icon {
+      grid-row: 1 / 4;
+      margin: 0;
+    }
+    .home-service p {
+      margin-top: 8px;
+    }
+    .home-service .rs-link {
+      grid-column: 2;
+      margin-top: 4px;
+    }
+  }
+</style>

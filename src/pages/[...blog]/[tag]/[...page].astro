@@ -1,49 +1,46 @@
 ---
 import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
 import { blogTagRobots, getStaticPathsBlogTag } from '~/utils/blog';
-
 import Layout from '~/layouts/PageLayout.astro';
-import BlogList from '~/components/blog/List.astro';
-import Headline from '~/components/blog/Headline.astro';
-import Pagination from '~/components/blog/Pagination.astro';
+import Archive from '~/components/blog/Archive.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { getPermalink, getBlogPermalink } from '~/utils/permalinks';
 
 export const prerender = true;
-
-export const getStaticPaths = (async ({ paginate }) => {
-  return await getStaticPathsBlogTag({ paginate });
-}) satisfies GetStaticPaths;
-
+export const getStaticPaths = (async ({ paginate }) =>
+  await getStaticPathsBlogTag({ paginate })) satisfies GetStaticPaths;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-
 const { page, tag } = Astro.props as Props;
-
 const currentPage = page.currentPage ?? 1;
-
 const breadcrumbs = [
-  { text: 'Home', href: getPermalink('/') },
-  { text: 'Blog', href: getBlogPermalink() },
+  { text: '首页', href: getPermalink('/') },
+  { text: '技术文章', href: getBlogPermalink() },
   ...(currentPage > 1
-    ? [{ text: `Tag: ${tag.title}`, href: getPermalink(tag.slug, 'tag') }, { text: `Page ${currentPage}` }]
-    : [{ text: `Tag: ${tag.title}` }]),
+    ? [{ text: `话题：${tag.title}`, href: getPermalink(tag.slug, 'tag') }, { text: `第 ${currentPage} 页` }]
+    : [{ text: `话题：${tag.title}` }]),
 ];
-
 const metadata = {
-  title: `Posts by tag '${tag.title}'${currentPage > 1 ? ` — Page ${currentPage} ` : ''}`,
-  description: `Articles tagged ${tag.title} on the AstroWind blog.`,
-  robots: {
-    index: blogTagRobots?.index,
-    follow: blogTagRobots?.follow,
-  },
+  title: `${tag.title}技术话题${currentPage > 1 ? ` · 第 ${currentPage} 页` : ''}`,
+  description: `阅读带有「${tag.title}」标签的中文技术演示内容，从具体问题理解相关的工程方法与业务实践。`,
+  robots: { index: blogTagRobots?.index, follow: blogTagRobots?.follow },
 };
 ---
 
 <Layout metadata={metadata}>
+  <Fragment slot="head">
+    {page.url.prev && <link rel="prev" href={page.url.prev} />}
+    {page.url.next && <link rel="next" href={page.url.next} />}
+  </Fragment>
   <Breadcrumbs bar items={breadcrumbs} />
-  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline>Tag: {tag.title}</Headline>
-    <BlogList posts={page.data} />
-    <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
-  </section>
+  <Archive
+    title={`${tag.title}，从不同角度展开`}
+    description={`汇集与${tag.title}有关的文章，把设备接入、架构设计和实际业务中的问题串起来阅读。`}
+    posts={page.data}
+    {currentPage}
+    lastPage={page.lastPage}
+    total={page.total}
+    prevUrl={page.url.prev}
+    nextUrl={page.url.next}
+    {tag}
+  />
 </Layout>

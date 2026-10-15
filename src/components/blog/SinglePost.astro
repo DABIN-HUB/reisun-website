@@ -1,113 +1,302 @@
 ---
-import { Icon } from 'astro-icon/components';
-
+import { APP_BLOG } from 'astrowind:config';
 import Image from '~/components/common/Image.astro';
 import PostTags from '~/components/blog/Tags.astro';
-import SocialShare from '~/components/common/SocialShare.astro';
-
 import { getPermalink } from '~/utils/permalinks';
-import { getFormattedDate } from '~/utils/utils';
-
 import type { Post } from '~/types';
+import { formatChineseDate, formatReadingTime } from './format';
 
 export interface Props {
   post: Post;
   url: string | URL;
 }
-
-const { post, url } = Astro.props;
+const { post } = Astro.props;
+const readingTime = formatReadingTime(post.readingTime);
 ---
 
-<section class="py-8 sm:py-16 lg:py-20 mx-auto">
+<section class="blog-post rs-container">
   <article>
-    <header class="intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
-      <div class="flex justify-between flex-col sm:flex-row max-w-3xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center">
-        <p>
-          <Icon name="tabler:clock" class="w-4 h-4 inline-block -mt-0.5 dark:text-gray-400" />
-          <time datetime={post.publishDate.toISOString()} class="inline-block"
-            >{getFormattedDate(post.publishDate)}</time
-          >
-          {
-            post.updateDate && post.updateDate.getTime() !== post.publishDate.getTime() && (
-              <>
-                {' '}
-                ·{' '}
-                <span class="inline-block">
-                  Updated <time datetime={post.updateDate.toISOString()}>{getFormattedDate(post.updateDate)}</time>
-                </span>
-              </>
-            )
-          }
-          {
-            post.author && (
-              <>
-                {' '}
-                · <Icon name="tabler:user" class="w-4 h-4 inline-block -mt-0.5 dark:text-gray-400" />
-                <span class="inline-block">{post.author}</span>
-              </>
-            )
-          }
-          {
-            post.category && (
-              <>
-                {' '}
-                ·{' '}
-                <a class="hover:underline inline-block" href={getPermalink(post.category.slug, 'category')}>
-                  {post.category.title}
-                </a>
-              </>
-            )
-          }
-          {
-            post.readingTime && (
-              <>
-                &nbsp;· <span>{post.readingTime}</span> min read
-              </>
-            )
-          }
-        </p>
-      </div>
-
-      <h1
-        class="px-4 sm:px-6 max-w-3xl mx-auto text-4xl md:text-5xl font-bold leading-tighter tracking-tighter font-heading"
-      >
-        {post.title}
-      </h1>
-      <p
-        class="max-w-3xl mx-auto mt-4 mb-8 px-4 sm:px-6 text-xl md:text-2xl text-muted dark:text-slate-400 text-pretty"
-      >
-        {post.excerpt}
-      </p>
-
+    <header class="blog-post-header">
       {
-        post.image ? (
+        post.category &&
+          (APP_BLOG.category.isEnabled ? (
+            <a class="blog-post-category" href={getPermalink(post.category.slug, 'category')}>
+              {post.category.title}
+            </a>
+          ) : (
+            <span class="blog-post-category">{post.category.title}</span>
+          ))
+      }
+      <h1>{post.title}</h1>
+      {post.excerpt && <p class="blog-post-summary">{post.excerpt}</p>}
+      <div class="blog-post-meta">
+        <time datetime={post.publishDate.toISOString()}>{formatChineseDate(post.publishDate)}</time>
+        {post.author && <span>{post.author}</span>}
+        {readingTime && <span>{readingTime}</span>}
+        {
+          post.updateDate && post.updateDate.getTime() !== post.publishDate.getTime() && (
+            <span>
+              更新于 <time datetime={post.updateDate.toISOString()}>{formatChineseDate(post.updateDate)}</time>
+            </span>
+          )
+        }
+      </div>
+    </header>
+    {
+      post.image && (
+        <figure class="blog-post-cover">
           <Image
             src={post.image}
-            class="max-w-full lg:max-w-[900px] mx-auto mb-6 sm:rounded-md bg-gray-400 dark:bg-slate-700"
-            widths={[400, 900]}
-            sizes="(max-width: 900px) 400px, 900px"
-            alt={post.imageAlt || ''}
-            width={900}
-            height={506}
+            alt={post.imageAlt || post.title}
+            width={1200}
+            height={750}
+            widths={[400, 760, 1000, 1200]}
+            sizes="(min-width: 1100px) 1000px, 100vw"
             format="webp"
             loading="eager"
-            decoding="async"
+            fetchpriority="high"
           />
-        ) : (
-          <div class="max-w-3xl mx-auto px-4 sm:px-6">
-            <div class="border-t dark:border-slate-700" />
-          </div>
-        )
-      }
-    </header>
-    <div
-      class="mx-auto px-6 sm:px-6 max-w-3xl prose lg:prose-xl dark:prose-invert dark:prose-headings:text-slate-300 prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:text-primary dark:prose-a:text-blue-400 prose-img:rounded-md prose-img:shadow-lg mt-8 prose-headings:scroll-mt-[80px] prose-li:my-0"
-    >
-      <slot />
-    </div>
-    <div class="mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
-      <PostTags tags={post.tags} class="mr-5 rtl:mr-0 rtl:ml-5" />
-      <SocialShare url={url} text={post.title} class="mt-5 sm:mt-1 align-middle text-gray-500 dark:text-slate-600" />
-    </div>
+          <figcaption>原创技术概念示意，非真实项目现场或系统运行截图。</figcaption>
+        </figure>
+      )
+    }
+    <div class="blog-post-body rs-prose"><slot /></div>
+    <footer class="blog-post-footer"><PostTags tags={post.tags} title="继续浏览话题" /></footer>
   </article>
 </section>
+
+<style>
+  .blog-post {
+    padding-top: 48px;
+    padding-bottom: 24px;
+    min-width: 0;
+    color: #172b46;
+  }
+  .blog-post-header {
+    max-width: 880px;
+    margin: 0 auto 36px;
+  }
+  .blog-post-category {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #245eea;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .blog-post h1 {
+    font-size: clamp(1.9rem, 4.5vw, 3.2rem);
+    line-height: 1.35;
+    letter-spacing: -0.035em;
+    font-weight: 650;
+    margin: 12px 0 20px;
+    text-wrap: pretty;
+    overflow-wrap: anywhere;
+  }
+  .blog-post-summary {
+    color: #5b6b80;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.85;
+    max-width: 780px;
+    margin-bottom: 24px;
+  }
+  .blog-post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    color: #65768c;
+    font-size: 0.8125rem;
+  }
+  .blog-post-cover {
+    max-width: 1000px;
+    margin: 0 auto 48px;
+  }
+  .blog-post-cover :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e2eaf4;
+  }
+  .blog-post-cover figcaption {
+    margin-top: 12px;
+    color: #586a80;
+    font-size: 0.75rem;
+    text-align: center;
+    line-height: 1.8;
+  }
+  .blog-post-body,
+  .blog-post-footer {
+    width: 100%;
+    max-width: 760px;
+    min-width: 0;
+    margin-inline: auto;
+  }
+  .blog-post-body {
+    font-size: 1.0625rem;
+    line-height: 1.95;
+    color: #34465e;
+    overflow-wrap: anywhere;
+  }
+  .blog-post-body :global(p) {
+    margin: 1.3em 0;
+  }
+  .blog-post-body :global(h2) {
+    color: #172b46;
+    font-size: 1.65rem;
+    font-weight: 650;
+    line-height: 1.5;
+    margin: 2.5em 0 1em;
+    scroll-margin-top: 110px;
+    letter-spacing: -0.02em;
+  }
+  .blog-post-body :global(h3) {
+    color: #172b46;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    font-weight: 650;
+    margin: 2em 0 0.75em;
+    scroll-margin-top: 110px;
+  }
+  .blog-post-body :global(a) {
+    color: #245eea;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .blog-post-body :global(a:hover) {
+    color: #1744ac;
+  }
+  .blog-post-body :global(strong) {
+    color: #172b46;
+    font-weight: 650;
+  }
+  .blog-post-body :global(ul),
+  .blog-post-body :global(ol) {
+    padding-left: 1.4em;
+    margin: 1.3em 0;
+  }
+  .blog-post-body :global(ul) {
+    list-style-type: disc;
+  }
+  .blog-post-body :global(ol) {
+    list-style-type: decimal;
+  }
+  .blog-post-body :global(li) {
+    padding-left: 0.2em;
+    margin: 0.5em 0;
+  }
+  .blog-post-body :global(blockquote) {
+    margin: 2em 0;
+    padding: 4px 22px;
+    border-left: 3px solid #245eea;
+    background: #f4f7fb;
+    color: #52657c;
+    font-size: 0.9375rem;
+  }
+  .blog-post-body :global(pre) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 24px;
+    margin: 2em 0;
+    border: 1px solid #dfe7f1;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    line-height: 1.8;
+    tab-size: 2;
+  }
+  .blog-post-body :global(code) {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.875em;
+  }
+  .blog-post-body :global(:not(pre) > code) {
+    padding: 0.15em 0.35em;
+    background: #edf3fb;
+    color: #244a80;
+    border-radius: 3px;
+    overflow-wrap: anywhere;
+  }
+  .blog-post-body :global(pre code) {
+    font-size: inherit;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .blog-post-body :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  .blog-post-body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  .blog-post-body :global(th),
+  .blog-post-body :global(td) {
+    text-align: left;
+    border-bottom: 1px solid #dfe7f1;
+    padding: 12px 16px;
+    min-width: 100px;
+  }
+  .blog-post-body :global(th) {
+    color: #172b46;
+    background: #f4f7fb;
+    font-weight: 600;
+  }
+  .blog-post-body :global(details) {
+    margin: 2em 0;
+    padding: 18px 22px;
+    border: 1px solid #d9e4f2;
+    border-radius: 6px;
+    background: #f7f9fd;
+  }
+  .blog-post-body :global(summary) {
+    min-height: 44px;
+    display: list-item;
+    cursor: pointer;
+    color: #244a80;
+    font-weight: 600;
+  }
+  .blog-post-body :global(.article-note) {
+    padding: 18px 22px;
+    background: #f4f7fb;
+    border-left: 3px solid #245eea;
+    font-size: 0.9375rem;
+    color: #52657c;
+  }
+  .blog-post-footer {
+    margin-top: 48px;
+    border-top: 1px solid #dfe7f1;
+    padding-top: 24px;
+  }
+  .blog-post a:focus-visible,
+  .blog-post-body :global(a:focus-visible),
+  .blog-post-body :global(summary:focus-visible) {
+    outline: 2px solid #245eea;
+    outline-offset: 4px;
+  }
+  @media (max-width: 639px) {
+    .blog-post {
+      padding-top: 32px;
+    }
+    .blog-post-body {
+      font-size: 1rem;
+    }
+    .blog-post-cover {
+      margin-bottom: 32px;
+    }
+    .blog-post-body :global(h2) {
+      font-size: 1.4rem;
+    }
+    .blog-post-body :global(pre) {
+      padding: 18px;
+      font-size: 0.8125rem;
+    }
+  }
+</style>

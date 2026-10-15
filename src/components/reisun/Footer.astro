@@ -1,0 +1,114 @@
+---
+import Logo from '~/components/Logo.astro';
+import { footerData } from '~/navigation';
+const year = new Date().getFullYear();
+---
+
+<footer class="rs-footer">
+  <div class="rs-container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" aria-label="REISUN 首页"><Logo inverse /></a><p>让技术真正服务业务。</p><span
+          >软件定制开发 · 企业数字化解决方案</span
+        >
+      </div>
+      {
+        footerData.links.map((group) => (
+          <div class="footer-group">
+            <>
+              <h2>{group.title}</h2>
+              <ul>
+                {group.links.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          </div>
+        ))
+      }
+    </div>
+    <div class="footer-bottom">
+      <span>© {year} REISUN. 保留所有权利。</span><span>独立开发品牌 · 案例均为演示</span><div>
+        <span>备案信息待配置</span><a href="/rss.xml">RSS 订阅</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<style>
+  .rs-footer {
+    background: #0d2443;
+    color: #acbdd3;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-block: 66px 50px;
+  }
+  .footer-brand p {
+    color: white;
+    margin-top: 23px;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+  }
+  .footer-brand > span {
+    display: block;
+    font-size: 13px;
+    margin-top: 9px;
+  }
+  h2 {
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  ul {
+    display: grid;
+    gap: 3px;
+  }
+  li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    font-size: 13px;
+  }
+  a:hover {
+    color: white;
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding-block: 22px 28px;
+    border-top: 1px solid #ffffff20;
+    font-size: 12px;
+  }
+  .footer-bottom > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-bottom a {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  @media (max-width: 767px) {
+    .footer-top {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 20px;
+      padding-block: 44px 32px;
+    }
+    .footer-brand {
+      grid-column: 1/-1;
+    }
+    .footer-bottom {
+      flex-direction: column;
+    }
+    li a {
+      min-height: 40px;
+    }
+  }
+</style>

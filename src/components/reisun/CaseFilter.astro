@@ -1,0 +1,170 @@
+---
+interface Props {
+  categories: string[];
+  total: number;
+}
+
+const { categories, total } = Astro.props;
+---
+
+<reisun-case-filter>
+  <fieldset class="case-filter-controls" data-filter-controls hidden>
+    <legend>按业务场景筛选</legend>
+    <div class="case-filter-buttons">
+      <button type="button" data-filter="all" aria-pressed="true" aria-controls="case-results">全部案例</button>
+      {
+        categories.map((category) => (
+          <button type="button" data-filter={category} aria-pressed="false" aria-controls="case-results">
+            {category}
+          </button>
+        ))
+      }
+    </div>
+  </fieldset>
+  <p class="case-filter-status" data-filter-status role="status" aria-live="polite" aria-atomic="true">
+    共 {total} 个演示案例
+  </p>
+  <div class="case-filter-grid" id="case-results">
+    <slot />
+  </div>
+  <div class="case-filter-empty" data-filter-empty hidden>
+    <h3>当前分类暂无演示案例</h3>
+    <p>可以查看全部案例，或联系 REISUN 讨论你的业务场景。</p>
+    <button class="rs-button rs-button-secondary" type="button" data-filter="all">查看全部案例</button>
+  </div>
+</reisun-case-filter>
+
+<script>
+  class ReisunCaseFilter extends HTMLElement {
+    connectedCallback() {
+      this.querySelector<HTMLElement>('[data-filter-controls]')?.removeAttribute('hidden');
+      this.addEventListener('click', this.onClick);
+      this.filter(this.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.dataset.filter ?? 'all');
+    }
+    disconnectedCallback() {
+      this.removeEventListener('click', this.onClick);
+    }
+    onClick = (event: Event) => {
+      const button =
+        event.target instanceof Element ? event.target.closest<HTMLButtonElement>('button[data-filter]') : null;
+      if (button && this.contains(button)) this.filter(button.dataset.filter ?? 'all');
+    };
+    filter(category: string) {
+      let visible = 0;
+      this.querySelectorAll<HTMLElement>('[data-case-category]').forEach((card) => {
+        card.hidden = category !== 'all' && card.dataset.caseCategory !== category;
+        if (!card.hidden) visible += 1;
+      });
+      this.querySelectorAll<HTMLButtonElement>('[data-filter-controls] button').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.filter === category));
+      });
+      const status = this.querySelector<HTMLElement>('[data-filter-status]');
+      if (status) status.textContent = `${category === 'all' ? '全部案例' : category}：${visible} 个演示案例`;
+      const empty = this.querySelector<HTMLElement>('[data-filter-empty]');
+      if (empty) empty.hidden = visible > 0;
+    }
+  }
+  if (!customElements.get('reisun-case-filter')) customElements.define('reisun-case-filter', ReisunCaseFilter);
+</script>
+
+<style>
+  reisun-case-filter {
+    display: block;
+    min-width: 0;
+  }
+
+  .case-filter-controls {
+    min-width: 0;
+    margin: 2rem 0 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .case-filter-controls[hidden],
+  .case-filter-empty[hidden],
+  .case-filter-grid :global([data-case-category][hidden]) {
+    display: none;
+  }
+
+  .case-filter-controls legend {
+    margin-bottom: 0.75rem;
+    color: var(--rs-ink, #172b46);
+    font-weight: 650;
+  }
+
+  .case-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .case-filter-buttons button {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--rs-line, #d9e2ef);
+    border-radius: 6px;
+    background: var(--rs-white, #fff);
+    color: var(--rs-ink, #172b46);
+    font: inherit;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .case-filter-buttons button:hover {
+    border-color: var(--rs-blue, #245eea);
+  }
+
+  .case-filter-buttons button[aria-pressed='true'] {
+    border-color: var(--rs-blue, #245eea);
+    background: var(--rs-blue, #245eea);
+    color: #fff;
+  }
+
+  button:focus-visible {
+    outline: 3px solid var(--rs-blue, #245eea);
+    outline-offset: 4px;
+  }
+
+  .case-filter-status {
+    margin: 1.25rem 0;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.9375rem;
+  }
+
+  .case-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.75rem 2rem;
+    min-width: 0;
+  }
+
+  .case-filter-empty {
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border: 1px dashed var(--rs-line, #d9e2ef);
+    border-radius: 8px;
+    background: var(--rs-soft, #f4f7fb);
+  }
+
+  .case-filter-empty h3 {
+    margin: 0 0 0.5rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 1.25rem;
+  }
+
+  .case-filter-empty p {
+    margin: 0 0 1.25rem;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 1023px) {
+    .case-filter-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.25rem;
+    }
+
+    .case-filter-buttons button {
+      padding-inline: 0.8rem;
+      font-size: 0.9375rem;
+    }
+  }
+</style>

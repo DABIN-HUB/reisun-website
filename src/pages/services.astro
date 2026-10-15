@@ -1,272 +1,421 @@
 ---
-import CallToAction from '~/components/widgets/CallToAction.astro';
-import Content from '~/components/widgets/Content.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import Projects from '~/components/widgets/Projects.astro';
-import Testimonials from '~/components/widgets/Testimonials.astro';
+import { Icon } from 'astro-icon/components';
 import Layout from '~/layouts/PageLayout.astro';
+import PageIntro from '~/components/reisun/PageIntro.astro';
+import CTA from '~/components/reisun/CTA.astro';
+import Process from '~/components/reisun/Process.astro';
+import { services } from '~/data/services';
+import { solutions } from '~/data/solutions';
 
 const metadata = {
-  title: 'Services',
+  title: '技术服务｜企业软件、工业物联网与小程序定制开发',
   description:
-    'Services page demo built with AstroWind: showcase what you offer with feature grids, content blocks and testimonials.',
+    'REISUN 提供 Java 企业应用、工业物联网与设备采集、ERP/OA/合同、小程序与移动端、数据集成以及系统升级维护服务。了解适用场景、实施内容与交付边界。',
 };
 ---
 
 <Layout metadata={metadata}>
-  <!-- Hero Widget ******************* -->
-
-  <Hero
-    tagline="Services"
-    title="Elevate your projects with our stunning templates"
-    subtitle="Explore our meticulously crafted templates tailored to various industries and purposes. From captivating presentations to functional website designs, we offer the tools you need to succeed."
-    actions={[{ variant: 'primary', target: '_blank', text: 'Start exploring', href: '/' }]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      alt: 'AstroWind Hero Image',
-    }}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Explore our diverse templates"
-    subtitle="Discover our selection below to streamline and elevate your projects."
-    columns={3}
-    items={[
-      {
-        title: 'Educational',
-        description:
-          'By harmonizing instructional design and visual appeal, templates streamline content creation for varied materials, expediting development and cultivating engaging educational spaces.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Interior Design',
-        description:
-          'Crafting functional, visually appealing spaces for residential and commercial use. Templates emphasize layout, colors, and furniture setups, offering a versatile toolkit for your design vision.',
-        icon: 'tabler:home-star',
-      },
-      {
-        title: 'Photography',
-        description: `Empowering photographers, our templates facilitate captivating storytelling. With a keen focus on layout, galleries, and typography, they cater to both professionals and enthusiasts.`,
-        icon: 'tabler:photo',
-      },
-      {
-        title: 'E-commerce',
-        description:
-          'Developing engaging online stores, our E-commerce templates ensure a dynamic presence to effectively showcase products. Ideal for startups or revamps.',
-        icon: 'tabler:shopping-cart',
-      },
-      {
-        title: 'Blog',
-        description:
-          'With attention to typography, these templates empower effective content presentation for writers at any stage, ensuring visually engaging and user-friendly blogs.',
-        icon: 'tabler:article',
-      },
-      {
-        title: 'Business',
-        description:
-          'Providing polished options for effective visual communication, these templates empower both startups and established companies for a professional brand presence.',
-        icon: 'tabler:building-store',
-      },
-      {
-        title: 'Branding',
-        description:
-          'Offering pre-designed elements for a consistent brand identity, including logos and marketing materials. Ideal for new ventures or revamps.',
-        icon: 'tabler:arrow-big-up-lines',
-      },
-      {
-        title: 'Medical',
-        description: `From presentations to patient forms, these tools enhance communication effectiveness for healthcare professionals. Ideal for medical practices and research pursuits.`,
-        icon: 'tabler:vaccine',
-      },
-      {
-        title: 'Fashion Design',
-        description:
-          'With attention to detail, customization, and contemporary design, they empower designers to showcase ideas cohesively. Ideal for all levels of designers.',
-        icon: 'tabler:tie',
-      },
-    ]}
-  />
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    items={[
-      {
-        title: 'High-Quality Designs',
-        description:
-          'Our templates feature top-tier designs that ensure a professional and polished appearance for your projects.',
-        icon: 'tabler:wand',
-      },
-      {
-        title: 'Customization Tools',
-        description:
-          'Tailor each template to your unique needs with user-friendly customization tools that let you personalize colors, fonts, and content.',
-        icon: 'tabler:settings',
-      },
-      {
-        title: 'Pre-Designed Elements',
-        description:
-          'Save time and effort with our ready-to-use elements, including graphics, icons, and layouts that enhance the visual appeal of your creations.',
-        icon: 'tabler:presentation',
-      },
-      {
-        title: 'Preview and Mockup Views',
-        description:
-          'Visualize the final outcome before making any changes using our preview and mockup views, ensuring your projects meet your expectations.',
-        icon: 'tabler:carousel-horizontal',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1525909002-1b05e0c869d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-      alt: 'Features Image',
-    }}
+  <PageIntro
+    label="技术服务"
+    title="从业务问题出发，把系统做实。"
+    description="新建一个业务平台，连接一批现场设备，或让已有系统继续向前。先厘清需要解决的问题，再确定适合的技术路径与交付范围。"
   >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Main Features</h3>
-    </Fragment>
-  </Content>
+    <Fragment slot="title"
+      ><span class="rs-heading-phrase">从业务问题出发，</span><wbr /><span class="rs-heading-phrase">把系统做实。</span
+      ></Fragment
+    >
+  </PageIntro>
 
-  <!-- Content Widget **************** -->
+  <section class="service-directory" aria-labelledby="service-directory-title">
+    <div class="rs-container">
+      <div class="directory-heading">
+        <h2 id="service-directory-title">找到与你的需求对应的服务</h2>
+        <p>查看具体内容、适用场景和交付说明</p>
+      </div>
+      <nav aria-label="技术服务目录">
+        <ul class="directory-grid">
+          {
+            services.map((service) => (
+              <li>
+                <a href={`/services#${service.id}`}>
+                  <Icon name={service.icon} class="directory-icon" aria-hidden="true" />
+                  <span>{service.title}</span>
+                  <Icon name="tabler:arrow-down" class="directory-arrow" aria-hidden="true" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </section>
 
-  <Content
-    isAfterContent
-    items={[
-      {
-        title: 'Time Savings',
-        description:
-          'Streamline your workflow, enabling you to create stunning materials efficiently and allocate more time to your core tasks.',
-        icon: 'tabler:clock',
-      },
-      {
-        title: 'Professional Appearance',
-        description:
-          'Elevate your projects with the polished and sophisticated look that our templates provide, making a lasting impression on your audience.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Cost-Efficiency',
-        description:
-          'Benefit from cost savings by avoiding the need for custom design work, as our templates offer professional-grade designs at a fraction of the cost.',
-        icon: 'tabler:coin',
-      },
-      {
-        title: 'Instant Download',
-        description:
-          'Enjoy immediate access to your chosen templates upon purchase, enabling you to begin working on your projects without delay.',
-        icon: 'tabler:file-download',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1552664688-cf412ec27db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-      alt: 'Benefits Image',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Benefits</h3>
-    </Fragment>
-  </Content>
+  {
+    services.map((service, index) => (
+      <section
+        id={service.id}
+        class:list={['rs-section', 'service-detail', { 'rs-section-soft': index % 2 === 1 }]}
+        aria-labelledby={`${service.id}-title`}
+      >
+        <div class="rs-container service-layout">
+          <div class="service-overview">
+            <Icon name={service.icon} class="service-icon" aria-hidden="true" />
+            <h2 id={`${service.id}-title`}>{service.title}</h2>
+            <p class="service-summary">{service.summary}</p>
+            <p class="service-description">{service.description}</p>
+            <div class="service-scenarios">
+              <h3>适用场景</h3>
+              <ul>
+                {service.scenarios.map((scenario) => (
+                  <li>{scenario}</li>
+                ))}
+              </ul>
+            </div>
+            <a class="rs-link service-contact" href="/contact">
+              沟通这类需求
+              <Icon name="tabler:arrow-up-right" aria-hidden="true" />
+            </a>
+          </div>
 
-  <!-- Projects Widget *************** -->
+          <div class="service-body">
+            <div class="capability-list">
+              {service.capabilities.map((capability) => (
+                <div class="capability">
+                  <h3>{capability.title}</h3>
+                  <p>{capability.description}</p>
+                </div>
+              ))}
+            </div>
 
-  <Projects
-    id="work"
-    tagline="Case studies"
-    title="Recent work"
-    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla."
-    items={[
-      {
-        title: 'SaaS marketing site',
-        description: 'Nam malesuada urna in enim imperdiet tincidunt. Phasellus non tincidunt nisi, at elementum mi.',
-        image: {
-          src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-          alt: 'People working on laptops',
-        },
-        tags: ['SaaS', 'Landing pages'],
-        result: '+38 % demo requests',
-      },
-      {
-        title: 'Corporate site relaunch',
-        description:
-          'Cras semper nulla leo, eget laoreet erat cursus sed. Praesent faucibus massa in purus iaculis dictum.',
-        image: {
-          src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
-          alt: 'Modern office building',
-        },
-        tags: ['Corporate', 'Blog'],
-        result: 'Lighthouse 100 across the board',
-      },
-      {
-        title: 'Founder portfolio',
-        description: 'Phasellus lacinia cursus velit, eu malesuada magna pretium eu. Etiam aliquet tellus purus.',
-        image: {
-          src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
-          alt: 'A laptop with analytics on a desk',
-        },
-        tags: ['Personal', 'Portfolio'],
-        result: 'Live in one afternoon',
-      },
-    ]}
-  />
+            <div class="service-delivery">
+              <h3>约定交付内容</h3>
+              <ul>
+                {service.deliverables.map((deliverable) => (
+                  <li>
+                    <Icon name="tabler:check" aria-hidden="true" />
+                    <span>{deliverable}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-  <!-- Testimonials Widget *********** -->
+            <div class="technical-direction">
+              <h3>可选技术方向</h3>
+              <ul class="rs-tags" aria-label={`${service.title}技术方向`}>
+                {service.technologies.map((technology) => (
+                  <li class="rs-tag">{technology}</li>
+                ))}
+              </ul>
+            </div>
+            <p class="service-scope">{service.scope}</p>
 
-  <Testimonials
-    title="Words from real customers"
-    testimonials={[
-      {
-        testimonial: `The designs are not only visually appealing but also highly professional. The templates have saved me a significant amount of time while helping me make a lasting impression on my clients.`,
-        rating: 5,
-        name: 'Emily Kennedy',
-        job: 'Front-end developer',
-        image: {
-          src: 'https://images.unsplash.com/photo-1618835962148-cf177563c6c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=930&q=80',
-          alt: 'Emily Kennedy Image',
-        },
-      },
-      {
-        testimonial: `It beautifully showcases my work, with its clean and elegant design that lets my photographs shine. Customization was a breeze, even for a non-tech person like me. The result is a professional and immersive portfolio that's garnered numerous compliments.`,
-        rating: 5,
-        name: 'Sarah Hansen',
-        job: 'Photographer',
-        image: {
-          src: 'https://images.unsplash.com/photo-1561406636-b80293969660?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-          alt: 'Sarah Hansen Image',
-        },
-      },
-      {
-        testimonial: `I discovered these templates and I'm impressed by their variety and quality. They've helped me establish a consistent brand image across my marketing and social platforms, elevating my business's overall appearance.`,
-        rating: 5,
-        name: 'Mark Wilkinson',
-        job: 'Small business owner',
-        image: {
-          src: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=824&q=80',
-          alt: 'Mark Wilkinson Image',
-        },
-      },
-    ]}
-    callToAction={{
-      target: '_blank',
-      text: 'More testimonials...',
-      href: 'https://github.com/arthelokyo/astrowind',
-      icon: 'tabler:chevron-right',
-    }}
-  />
+            <div class="related-solutions">
+              <h3>相关解决方案</h3>
+              <ul>
+                {solutions
+                  .filter((solution) => service.solutionIds.includes(solution.id))
+                  .map((solution) => (
+                    <li>
+                      <a class="rs-link" href={`/solutions/${solution.id}`}>
+                        {solution.title}
+                        <Icon name="tabler:chevron-right" aria-hidden="true" />
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    ))
+  }
 
-  <!-- CallToAction Widget *********** -->
+  <section class="rs-section engagement-note" aria-labelledby="engagement-title">
+    <div class="rs-container engagement-layout">
+      <div>
+        <h2 id="engagement-title">不必一开始就写出完整需求。</h2>
+        <p class="rs-lead">带上你现在的工作方式、已有资料和最想改善的问题，就可以开始讨论。</p>
+      </div>
+      <div class="engagement-content">
+        <p>
+          业务流程图、几张现有页面、设备点位表，或一份经常反复修改的
+          Excel，都可以成为梳理需求的起点。我们会围绕业务目标、现状约束和优先级确认范围，而不是先给出一套固定功能清单。
+        </p>
+        <p>
+          具体功能、技术选型、工期、费用、源码交付与后续维护，以沟通后的范围说明和项目约定为准。涉及第三方平台、现场设备或存量系统的内容，需要先确认接入条件。
+        </p>
+        <a class="rs-button rs-button-secondary" href="/solutions">按业务场景了解方案</a>
+      </div>
+    </div>
+  </section>
 
-  <CallToAction
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Start exploring',
-        href: '/',
-      },
-    ]}
-    title="Dive into our template collection"
-    subtitle="Whether you're in business, design, or education, our templates are here to elevate your projects."
+  <Process />
+  <CTA
+    title="从一个最值得解决的问题开始。"
+    description="告诉我们你的业务场景、现有系统和希望达成的目标，一起明确下一步。"
   />
 </Layout>
+
+<style>
+  .service-directory {
+    padding-block: 1rem 3.5rem;
+    background: var(--rs-white, #fff);
+  }
+  .directory-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .directory-heading h2 {
+    color: var(--rs-ink, #172b46);
+    font-size: 1.05rem;
+    font-weight: 650;
+  }
+  .directory-heading p {
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.875rem;
+  }
+  .directory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 2rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .directory-grid a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 5rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rs-line, #dce4ef);
+    color: var(--rs-ink, #172b46);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .directory-grid a:hover,
+  .directory-grid a:focus-visible {
+    color: var(--rs-blue, #245eea);
+  }
+  .directory-icon {
+    width: 1.45rem;
+    height: 1.45rem;
+    flex: 0 0 auto;
+    color: var(--rs-blue, #245eea);
+  }
+  .directory-arrow {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: var(--rs-muted, #5b6b80);
+  }
+  .service-detail {
+    scroll-margin-top: 7rem;
+  }
+  .service-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.5fr);
+    gap: clamp(2.5rem, 7vw, 7rem);
+    align-items: start;
+  }
+  .service-icon {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--rs-blue, #245eea);
+  }
+  .service-overview h2,
+  .engagement-layout h2 {
+    color: var(--rs-ink, #172b46);
+    font-size: clamp(1.65rem, 2.8vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.035em;
+  }
+  .service-summary {
+    margin-top: 1.25rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  .service-description,
+  .capability p,
+  .engagement-content p {
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.85;
+  }
+  .service-description {
+    margin-top: 1rem;
+  }
+  .service-scenarios {
+    margin-top: 2rem;
+  }
+  .service-scenarios h3,
+  .service-delivery h3,
+  .technical-direction h3,
+  .related-solutions h3 {
+    margin-bottom: 0.75rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+  .service-scenarios ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    list-style: disc;
+    color: var(--rs-muted, #5b6b80);
+    line-height: 1.95;
+  }
+  .service-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    margin-top: 1.5rem;
+  }
+  .service-contact :global(svg),
+  .related-solutions :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+  }
+  .capability {
+    padding-block: 1.35rem;
+    border-top: 1px solid var(--rs-line, #dce4ef);
+  }
+  .capability:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .capability h3 {
+    margin-bottom: 0.5rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 1.15rem;
+    font-weight: 650;
+  }
+  .service-delivery {
+    margin-top: 0.75rem;
+    padding: 1.5rem;
+    border-left: 3px solid var(--rs-blue, #245eea);
+    background: var(--rs-white, #fff);
+  }
+  .service-detail:not(.rs-section-soft) .service-delivery {
+    background: var(--rs-soft, #f4f7fb);
+  }
+  .service-delivery ul {
+    display: grid;
+    gap: 0.65rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .service-delivery li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    color: var(--rs-ink, #172b46);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+  .service-delivery :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-top: 0.35rem;
+    color: var(--rs-blue, #245eea);
+  }
+  .technical-direction {
+    margin-top: 1.75rem;
+  }
+  .technical-direction ul {
+    list-style: none;
+    padding: 0;
+  }
+  .service-scope {
+    margin-top: 1rem;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.875rem;
+    line-height: 1.85;
+  }
+  .related-solutions {
+    margin-top: 1.5rem;
+  }
+  .related-solutions ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .related-solutions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    min-height: 2.75rem;
+    font-size: 0.875rem;
+  }
+  .engagement-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 2rem 5rem;
+  }
+  .engagement-layout .rs-lead {
+    margin-top: 1rem;
+  }
+  .engagement-content p + p {
+    margin-top: 1rem;
+  }
+  .engagement-content a {
+    display: inline-flex;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .directory-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .service-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 2rem;
+    }
+    .engagement-layout {
+      gap: 2rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .service-directory {
+      padding-bottom: 2.5rem;
+    }
+    .directory-grid {
+      grid-template-columns: 1fr;
+    }
+    .directory-grid a {
+      min-height: 4rem;
+    }
+    .service-layout,
+    .engagement-layout {
+      grid-template-columns: 1fr;
+    }
+    .service-icon {
+      margin-bottom: 1rem;
+    }
+    .service-scenarios {
+      margin-top: 1.5rem;
+    }
+    .capability:first-child {
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--rs-line, #dce4ef);
+    }
+    .service-delivery {
+      padding: 1.25rem;
+    }
+  }
+</style>

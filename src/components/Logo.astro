@@ -1,9 +1,49 @@
 ---
-import { SITE } from 'astrowind:config';
+export interface Props {
+  inverse?: boolean;
+}
+const { inverse = false } = Astro.props;
 ---
 
-<span
-  class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
->
-  🚀 {SITE?.name}
+<span class:list={['rs-logo', { inverse }]}>
+  <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"
+    ><path d="M4 30V6h16l12 12-12 12H4Z" fill="currentColor"></path><path
+      d="M12 24V12h7l6 6-6 6h-7Z"
+      fill="var(--rs-white)"></path><path d="m17 18 9 12h-9l-5-7v-5h5Z" fill="currentColor"></path></svg
+  >
+  <span>REISUN</span>
 </span>
+<style>
+  .rs-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--rs-blue);
+  }
+  svg {
+    width: 34px;
+    height: 34px;
+  }
+  .rs-logo > span {
+    color: var(--rs-ink);
+    font-size: 25px;
+    font-weight: 780;
+    letter-spacing: 0.025em;
+    line-height: 1;
+  }
+  .inverse {
+    color: var(--rs-cyan);
+  }
+  .inverse > span {
+    color: white;
+  }
+  @media (max-width: 375px) {
+    svg {
+      width: 29px;
+      height: 29px;
+    }
+    .rs-logo > span {
+      font-size: 22px;
+    }
+  }
+</style>
