@@ -10,7 +10,7 @@ tags:
   - Docker
   - 工程实践
   - 系统架构
-author: 'REISUN 技术笔记'
+author: '小斌opc 技术笔记'
 draft: false
 ---
 
@@ -31,7 +31,7 @@ draft: false
 ```yaml
 services:
   app:
-    image: registry.example.com/reisun/demo-app:${APP_RELEASE:?APP_RELEASE must be set}
+    image: registry.example.com/example/demo-app:${APP_RELEASE:?APP_RELEASE must be set}
     env_file:
       - ./app.env
     volumes:

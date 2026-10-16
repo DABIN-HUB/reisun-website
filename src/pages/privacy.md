@@ -2,7 +2,7 @@
 title: '演示页面隐私说明'
 layout: '~/layouts/MarkdownLayout.astro'
 metadata:
-  description: 'REISUN 本地内容审核与演示表单的数据处理说明，不是正式上线隐私政策。'
+  description: '小斌opc 本地内容审核与演示表单的数据处理说明，不是正式上线隐私政策。'
   robots:
     index: false
 ---

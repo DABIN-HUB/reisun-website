@@ -1,5 +1,5 @@
 site:
-  name: REISUN
+  name: 小斌opc
   site: 'https://reisun.cn'
   base: '/'
   trailingSlash: false
@@ -7,15 +7,15 @@ site:
 
 metadata:
   title:
-    default: REISUN｜Java 软件定制开发与工业数据采集
-    template: '%s｜REISUN'
-  description: 'REISUN 软件开发与技术服务，面向企业 Java 应用、工业数据采集、ERP/OA、微信小程序和系统集成需求。了解业务场景、开发范围、概念方案与合作准备。'
+    default: 小斌opc｜Java 软件定制开发与工业数据采集
+    template: '%s｜小斌opc'
+  description: '小斌opc 软件开发与技术服务，面向企业 Java 应用、工业数据采集、ERP/OA、微信小程序和系统集成需求。了解业务场景、开发范围、概念方案与合作准备。'
   # 第一阶段仅本地 UI 演示，正式上线前再确认索引策略。
   robots:
     index: false
     follow: true
   openGraph:
-    site_name: REISUN
+    site_name: 小斌opc
     images:
       - url: '/images/reisun-og.png'
         width: 1200

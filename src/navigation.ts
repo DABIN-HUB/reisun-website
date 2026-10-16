@@ -30,7 +30,7 @@ export const footerData = {
       ],
     },
     {
-      title: '了解 REISUN',
+      title: '了解 小斌opc',
       links: [
         { text: '项目案例', href: '/cases' },
         { text: '技术文章', href: '/blog' },
@@ -41,5 +41,5 @@ export const footerData = {
   ],
   secondaryLinks: [],
   socialLinks: [{ ariaLabel: '订阅技术文章 RSS', icon: 'tabler:rss', href: '/rss.xml' }],
-  footNote: 'REISUN 软件开发与技术服务。当前为本地内容审核，案例均为概念演示。',
+  footNote: '小斌opc 软件开发与技术服务。当前为本地内容审核，部分案例为概念演示。',
 };

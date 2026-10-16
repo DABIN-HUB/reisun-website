@@ -10,7 +10,7 @@ tags:
   - Java
   - 工业数据
   - 系统架构
-author: 'REISUN 技术笔记'
+author: '小斌opc 技术笔记'
 draft: false
 ---
 
