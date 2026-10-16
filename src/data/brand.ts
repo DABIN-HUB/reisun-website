@@ -42,11 +42,11 @@ export const brand: BrandData = {
   confirmed: { legalName: false, location: false, icpNumber: false, github: false },
   contact: {
     configured: true,
-    confirmed: { phone: false, email: true, wechat: true, wechatQrCode: false },
+    confirmed: { phone: false, email: true, wechat: true, wechatQrCode: true },
     phone: null,
     email: '958070007@qq.com',
     wechat: 'TBHGS2020',
-    wechatQrCode: null,
+    wechatQrCode: '/images/wechat-contact-qr.png',
     notice: '请通过下方微信或邮箱交流开发需求。在线表单仅作演示，不发送或保存填写内容。',
     formMode: 'demo',
     formNotice: '当前为演示模式，暂未开通在线提交，请通过正式联系方式联系。',
