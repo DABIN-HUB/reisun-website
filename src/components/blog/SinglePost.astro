@@ -1,5 +1,7 @@
 ---
 import { APP_BLOG } from 'astrowind:config';
+import type { MarkdownHeading } from 'astro';
+import { getEntry, render } from 'astro:content';
 import Image from '~/components/common/Image.astro';
 import PostTags from '~/components/blog/Tags.astro';
 import { getPermalink } from '~/utils/permalinks';
@@ -9,9 +11,15 @@ import { formatChineseDate, formatReadingTime } from './format';
 export interface Props {
   post: Post;
   url: string | URL;
+  headings?: MarkdownHeading[];
 }
-const { post } = Astro.props;
+const { post, headings } = Astro.props;
 const readingTime = formatReadingTime(post.readingTime);
+// The route's normalized Post does not include headings. Read the same native
+// collection entry at build time; never derive anchor IDs from title strings.
+const entry = headings === undefined ? await getEntry('post', post.id) : undefined;
+const articleHeadings = headings ?? (entry ? (await render(entry)).headings : []);
+const tocHeadings = articleHeadings.filter((heading) => (heading.depth === 2 || heading.depth === 3) && heading.slug);
 ---
 
 <section class="blog-post rs-container">
@@ -20,7 +28,11 @@ const readingTime = formatReadingTime(post.readingTime);
       {
         post.category &&
           (APP_BLOG.category.isEnabled ? (
-            <a class="blog-post-category" href={getPermalink(post.category.slug, 'category')}>
+            <a
+              class="blog-post-category"
+              href={getPermalink(post.category.slug, 'category')}
+              aria-label={`浏览分类：${post.category.title}`}
+            >
               {post.category.title}
             </a>
           ) : (
@@ -30,7 +42,7 @@ const readingTime = formatReadingTime(post.readingTime);
       <h1>{post.title}</h1>
       {post.excerpt && <p class="blog-post-summary">{post.excerpt}</p>}
       <div class="blog-post-meta">
-        <time datetime={post.publishDate.toISOString()}>{formatChineseDate(post.publishDate)}</time>
+        <span>发布于 <time datetime={post.publishDate.toISOString()}>{formatChineseDate(post.publishDate)}</time></span>
         {post.author && <span>{post.author}</span>}
         {readingTime && <span>{readingTime}</span>}
         {
@@ -51,7 +63,7 @@ const readingTime = formatReadingTime(post.readingTime);
             width={1200}
             height={750}
             widths={[400, 760, 1000, 1200]}
-            sizes="(min-width: 1100px) 1000px, 100vw"
+            sizes="(min-width: 1024px) 880px, calc(100vw - 40px)"
             format="webp"
             loading="eager"
             fetchpriority="high"
@@ -60,8 +72,26 @@ const readingTime = formatReadingTime(post.readingTime);
         </figure>
       )
     }
+    {
+      tocHeadings.length > 1 && (
+        <details class="blog-post-toc">
+          <summary>
+            本文目录<span>按章节阅读</span>
+          </summary>
+          <nav aria-label="本文章节目录">
+            <ol>
+              {tocHeadings.map((heading) => (
+                <li class:list={{ 'blog-toc-nested': heading.depth === 3 }}>
+                  <a href={`#${encodeURIComponent(heading.slug)}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
+      )
+    }
     <div class="blog-post-body rs-prose"><slot /></div>
-    <footer class="blog-post-footer"><PostTags tags={post.tags} title="继续浏览话题" /></footer>
+    <footer class="blog-post-footer"><PostTags tags={post.tags} title="继续浏览技术标签" /></footer>
   </article>
 </section>
 
@@ -91,7 +121,7 @@ const readingTime = formatReadingTime(post.readingTime);
     letter-spacing: -0.035em;
     font-weight: 650;
     margin: 12px 0 20px;
-    text-wrap: pretty;
+    text-wrap: balance;
     overflow-wrap: anywhere;
   }
   .blog-post-summary {
@@ -110,8 +140,8 @@ const readingTime = formatReadingTime(post.readingTime);
     font-size: 0.8125rem;
   }
   .blog-post-cover {
-    max-width: 1000px;
-    margin: 0 auto 48px;
+    max-width: 880px;
+    margin: 0 auto 36px;
   }
   .blog-post-cover :global(img) {
     display: block;
@@ -127,12 +157,65 @@ const readingTime = formatReadingTime(post.readingTime);
     text-align: center;
     line-height: 1.8;
   }
+  .blog-post-toc,
   .blog-post-body,
   .blog-post-footer {
     width: 100%;
     max-width: 760px;
     min-width: 0;
     margin-inline: auto;
+  }
+  .blog-post-toc {
+    margin-block: 0 32px;
+    padding: 8px 20px;
+    border: 1px solid var(--rs-line);
+    border-radius: 6px;
+    background: var(--rs-soft);
+  }
+  .blog-post-toc summary {
+    min-height: 44px;
+    padding-block: 9px;
+    color: var(--rs-navy);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .blog-post-toc summary span {
+    margin-left: 16px;
+    color: var(--rs-muted);
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+  .blog-post-toc nav {
+    max-height: 24rem;
+    overflow-y: auto;
+    padding-block: 8px;
+    border-top: 1px solid var(--rs-line);
+  }
+  .blog-post-toc ol {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .blog-post-toc a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 4px;
+    color: var(--rs-ink);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+  .blog-post-toc a:hover {
+    color: var(--rs-blue);
+    text-decoration: underline;
+  }
+  .blog-toc-nested {
+    margin-left: 18px;
+    padding-left: 12px;
+    border-left: 1px solid var(--rs-line);
   }
   .blog-post-body {
     font-size: 1.0625rem;
@@ -209,6 +292,21 @@ const readingTime = formatReadingTime(post.readingTime);
     font-size: 0.875rem;
     line-height: 1.8;
     tab-size: 2;
+    scrollbar-color: #b6c8e1 transparent;
+  }
+  .blog-post-body :global(pre[data-language]::before) {
+    content: attr(data-language);
+    display: block;
+    width: fit-content;
+    margin-bottom: 16px;
+    font-family: var(--aw-font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--rs-muted);
+  }
+  .blog-post-body :global(pre[data-language='text']) {
+    line-height: 2;
   }
   .blog-post-body :global(code) {
     font-family: 'Cascadia Code', 'Consolas', monospace;
@@ -232,8 +330,26 @@ const readingTime = formatReadingTime(post.readingTime);
     height: auto;
     border-radius: 6px;
   }
+  .blog-post-body :global(figure) {
+    max-width: 100%;
+    margin: 2em 0;
+  }
+  .blog-post-body :global(figcaption) {
+    margin-top: 12px;
+    font-size: 0.8125rem;
+    line-height: 1.8;
+    color: var(--rs-muted);
+  }
+  .blog-post-body :global(div:has(> table)) {
+    max-width: 100%;
+    margin: 2em 0;
+    border: 1px solid var(--rs-line);
+    border-radius: 6px;
+    overscroll-behavior-x: contain;
+  }
   .blog-post-body :global(table) {
     width: 100%;
+    min-width: 420px;
     border-collapse: collapse;
     font-size: 0.9375rem;
   }
@@ -270,13 +386,18 @@ const readingTime = formatReadingTime(post.readingTime);
     font-size: 0.9375rem;
     color: #52657c;
   }
+  .blog-post-body :global(.article-component-note p) {
+    margin: 0;
+  }
   .blog-post-footer {
     margin-top: 48px;
     border-top: 1px solid #dfe7f1;
     padding-top: 24px;
   }
   .blog-post a:focus-visible,
+  .blog-post-toc summary:focus-visible,
   .blog-post-body :global(a:focus-visible),
+  .blog-post-body :global(pre:focus-visible),
   .blog-post-body :global(summary:focus-visible) {
     outline: 2px solid #245eea;
     outline-offset: 4px;
@@ -290,6 +411,10 @@ const readingTime = formatReadingTime(post.readingTime);
     }
     .blog-post-cover {
       margin-bottom: 32px;
+    }
+    .blog-post-toc {
+      padding-inline: 16px;
+      margin-bottom: 24px;
     }
     .blog-post-body :global(h2) {
       font-size: 1.4rem;

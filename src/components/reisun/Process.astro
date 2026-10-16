@@ -1,4 +1,8 @@
 ---
+export interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
 const steps = [
   ['需求沟通', '理解业务目标，梳理使用场景与项目边界。'],
   ['方案设计', '明确功能清单、技术路径与阶段交付。'],
@@ -9,7 +13,7 @@ const steps = [
 ];
 ---
 
-<section class="rs-section rs-process">
+<section class:list={['rs-section', 'rs-process', { compact }]}>
   <div class="rs-container">
     <div class="rs-section-heading">
       <div>
@@ -115,6 +119,37 @@ const steps = [
       padding-top: 6px;
       margin-top: 0;
       margin-bottom: 6px;
+    }
+  }
+  @media (max-width: 599px) {
+    .compact {
+      padding-block: 40px;
+    }
+    .compact .rs-section-heading {
+      margin-bottom: 24px;
+    }
+    .compact li {
+      padding-left: 54px;
+      padding-bottom: 18px;
+      min-height: 82px;
+    }
+    .compact li:last-child {
+      padding-bottom: 0;
+      min-height: 0;
+    }
+    .compact .step-number {
+      width: 36px;
+      height: 36px;
+      font-size: 12px;
+    }
+    .compact li:not(:last-child)::after {
+      top: 42px;
+      left: 17px;
+      bottom: 6px;
+    }
+    .compact h3 {
+      padding-top: 2px;
+      margin-bottom: 5px;
     }
   }
 </style>

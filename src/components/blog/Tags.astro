@@ -16,13 +16,18 @@ const enabled = isCategory ? APP_BLOG.category.isEnabled : APP_BLOG.tag.isEnable
 
 {
   tags?.length ? (
-    <div class:list={['blog-tags', className]}>
+    <div class:list={['blog-tags', className, { 'blog-tags-category': isCategory }]}>
       {title && <span class="blog-tags-label">{title}</span>}
       <ul aria-label={title || (isCategory ? '文章分类' : '文章标签')}>
         {tags.map((tag) => (
           <li>
             {enabled ? (
-              <a href={getPermalink(tag.slug, isCategory ? 'category' : 'tag')}>{tag.title}</a>
+              <a
+                href={getPermalink(tag.slug, isCategory ? 'category' : 'tag')}
+                aria-label={`浏览${isCategory ? '分类' : '标签'}：${tag.title}`}
+              >
+                {tag.title}
+              </a>
             ) : (
               <span>{tag.title}</span>
             )}
@@ -42,7 +47,8 @@ const enabled = isCategory ? APP_BLOG.category.isEnabled : APP_BLOG.tag.isEnable
   }
   .blog-tags-label {
     color: #5b6b80;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    flex-shrink: 0;
   }
   .blog-tags ul {
     display: flex;
@@ -68,7 +74,11 @@ const enabled = isCategory ? APP_BLOG.category.isEnabled : APP_BLOG.tag.isEnable
   .blog-tags li > span::before {
     content: '#';
     margin-right: 4px;
-    color: #8293a8;
+    color: #64758a;
+  }
+  .blog-tags-category a::before,
+  .blog-tags-category li > span::before {
+    content: none;
   }
   .blog-tags a:hover {
     color: #245eea;

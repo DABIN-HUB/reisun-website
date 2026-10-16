@@ -11,15 +11,22 @@ export interface Props {
   post: Post;
   featured?: boolean;
   headingLevel?: 'h2' | 'h3';
+  compact?: boolean;
 }
 
-const { post, featured = false, headingLevel: Heading = 'h2' } = Astro.props;
+const { post, featured = false, headingLevel: Heading = 'h2', compact = false } = Astro.props;
 const image = await findImage(post.image);
 const link = APP_BLOG.post.isEnabled ? getPermalink(post.permalink, 'post') : undefined;
 const readingTime = formatReadingTime(post.readingTime);
+const titlePhrases = post.title.split(/(?<=[：，])/u);
 ---
 
-<article class:list={['blog-card', { 'blog-card-featured': featured }]}>
+<article
+  class:list={[
+    'blog-card',
+    { 'blog-card-featured': featured, 'blog-card-compact': compact, 'blog-card-no-cover': !image },
+  ]}
+>
   {
     image && (
       <a
@@ -33,11 +40,13 @@ const readingTime = formatReadingTime(post.readingTime);
           alt={post.imageAlt || post.title}
           width={1200}
           height={750}
-          widths={[400, 640, 900, 1200]}
+          widths={[160, 240, 400, 640, 900, 1200]}
           sizes={
-            featured
-              ? '(min-width: 900px) 650px, (min-width: 640px) 50vw, 100vw'
-              : '(min-width: 900px) 570px, (min-width: 640px) 50vw, 100vw'
+            compact
+              ? '(min-width: 1024px) 380px, (min-width: 768px) 45vw, 84px'
+              : featured
+                ? '(min-width: 900px) 650px, (min-width: 640px) 50vw, 100vw'
+                : '(min-width: 900px) 570px, (min-width: 640px) 50vw, 100vw'
           }
           format="webp"
           loading={featured ? 'eager' : 'lazy'}
@@ -52,7 +61,11 @@ const readingTime = formatReadingTime(post.readingTime);
       {
         post.category &&
           (APP_BLOG.category.isEnabled ? (
-            <a class="blog-card-category" href={getPermalink(post.category.slug, 'category')}>
+            <a
+              class="blog-card-category"
+              href={getPermalink(post.category.slug, 'category')}
+              aria-label={`浏览分类：${post.category.title}`}
+            >
               {post.category.title}
             </a>
           ) : (
@@ -60,20 +73,30 @@ const readingTime = formatReadingTime(post.readingTime);
           ))
       }
       <time datetime={post.publishDate.toISOString()}>{formatChineseDate(post.publishDate)}</time>
+      {readingTime && <span class="blog-card-time">{readingTime}</span>}
     </div>
-    <Heading class="blog-card-title">{link ? <a href={link}>{post.title}</a> : post.title}</Heading>
+    <Heading class="blog-card-title"
+      >{
+        link ? (
+          <a href={link}>
+            {compact ? titlePhrases.map((phrase) => <span class="blog-title-phrase">{phrase}</span>) : post.title}
+          </a>
+        ) : (
+          post.title
+        )
+      }</Heading
+    >
     {post.excerpt && <p class="blog-card-excerpt">{post.excerpt}</p>}
     <div class="blog-card-bottom">
-      {readingTime && <span class="blog-card-time">{readingTime}</span>}
       {
         link && (
           <a class="blog-card-read" href={link} aria-label={`阅读全文：${post.title}`}>
-            阅读全文<span aria-hidden="true"> ↗</span>
+            阅读全文<span aria-hidden="true"> →</span>
           </a>
         )
       }
     </div>
-    <PostTags tags={post.tags} />
+    <div class="blog-card-tags"><PostTags tags={post.tags} title="标签" /></div>
   </div>
 </article>
 
@@ -104,7 +127,7 @@ const readingTime = formatReadingTime(post.readingTime);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px 18px;
+    gap: 4px 14px;
     font-size: 0.8125rem;
     color: #5b6b80;
     margin-bottom: 10px;
@@ -123,6 +146,7 @@ const readingTime = formatReadingTime(post.readingTime);
     letter-spacing: -0.025em;
     font-weight: 650;
     overflow-wrap: anywhere;
+    text-wrap: pretty;
   }
   .blog-card-title a {
     color: inherit;
@@ -141,13 +165,16 @@ const readingTime = formatReadingTime(post.readingTime);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 6px 16px;
     margin-top: 12px;
   }
   .blog-card-time {
     color: #586a80;
     font-size: 0.8125rem;
+  }
+  .blog-card-tags {
+    margin-top: 6px;
   }
   .blog-card-read {
     min-height: 44px;
@@ -173,12 +200,16 @@ const readingTime = formatReadingTime(post.readingTime);
     border: 0;
     border-radius: 0;
   }
+  .blog-card-featured .blog-card-cover :global(img) {
+    object-fit: contain;
+  }
   .blog-card-featured .blog-card-content {
     padding: 24px;
   }
   .blog-card-featured .blog-card-title {
     font-size: clamp(1.5rem, 2.5vw, 2.1rem);
   }
+
   @media (min-width: 900px) {
     .blog-card-featured {
       display: grid;
@@ -193,6 +224,58 @@ const readingTime = formatReadingTime(post.readingTime);
     .blog-card-featured .blog-card-content {
       padding: 32px 40px;
       align-self: center;
+    }
+  }
+  @media (max-width: 767px) {
+    .blog-card-compact {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr);
+      align-items: start;
+      gap: 16px;
+      padding-block: 20px;
+      border-top: 1px solid var(--rs-line);
+      height: auto;
+    }
+    .blog-card-compact.blog-card-no-cover {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .blog-card-compact .blog-card-cover {
+      margin-top: 4px;
+      aspect-ratio: 1;
+      border-radius: 5px;
+    }
+    .blog-card-compact .blog-card-content {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 0;
+    }
+    .blog-card-compact .blog-card-title {
+      order: -1;
+      font-size: 1rem;
+      line-height: 1.65;
+      letter-spacing: -0.015em;
+    }
+    .blog-card-compact .blog-title-phrase {
+      display: inline-block;
+      max-width: 100%;
+    }
+    .blog-card-compact .blog-card-meta {
+      gap: 0 12px;
+      margin: 4px 0 0;
+      font-size: 0.75rem;
+      line-height: 1.7;
+    }
+    .blog-card-compact .blog-card-category {
+      min-height: 44px;
+    }
+    .blog-card-compact .blog-card-time {
+      font-size: inherit;
+    }
+    .blog-card-compact .blog-card-excerpt,
+    .blog-card-compact .blog-card-bottom,
+    .blog-card-compact .blog-card-tags {
+      display: none;
     }
   }
   @media (max-width: 380px) {

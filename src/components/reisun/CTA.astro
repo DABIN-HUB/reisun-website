@@ -1,12 +1,13 @@
 ---
 import Button from '~/components/ui/Button.astro';
+import { hasConfirmedContact } from '~/data/brand';
 export interface Props {
   title?: string;
   description?: string;
 }
 const {
   title = '有软件开发需求？\n欢迎交流项目方案。',
-  description = '从一个业务问题开始，一起梳理目标、边界与合适的实现路径。',
+  description = '准备业务流程、现有系统或设备资料，先了解开发范围、合作条件与下一步。',
 } = Astro.props;
 ---
 
@@ -14,7 +15,9 @@ const {
   <div class="rs-container cta-inner">
     <div><h2>{title}</h2><p>{description}</p></div>
     <div class="cta-action">
-      <Button href="/contact" text="聊聊你的项目" class="rs-button cta-button" /><span>先理解业务，再讨论技术</span>
+      <Button href="/contact" text="了解合作方式" class="rs-button cta-button" /><span
+        >{hasConfirmedContact() ? '请通过已确认的正式渠道联系' : '正式渠道待配置，本站暂不接收咨询'}</span
+      >
     </div>
   </div>
 </section>

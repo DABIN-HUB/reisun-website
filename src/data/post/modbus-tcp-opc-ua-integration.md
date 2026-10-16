@@ -1,5 +1,6 @@
 ---
 publishDate: 2026-10-14T00:00:00Z
+updateDate: 2026-10-16T00:00:00Z
 title: 'Modbus TCP 与 OPC UA 接入：统一模型，不抹平差异'
 excerpt: '接入前先确认点表、节点语义与安全边界。用同一套业务数据模型承接不同设备，同时保留协议特有的质量与诊断信息。'
 image: '/images/articles/modbus-tcp-opc-ua-integration.png'
@@ -15,9 +16,11 @@ draft: false
 
 > 本文为中文技术演示，不代表任何现场的已交付集成。协议行为以官方规范、设备文档与实际配置为准，不提供可直接套用的生产参数。
 
+读完后，你可以整理一份能交给设备方核对的地址、类型、质量与证书清单。下文的映射和实施顺序是设计建议，不是 REISUN 驱动能力或现场兼容性证明。
+
 ## 接入之前，先拿到完整资料
 
-面对不同设备，先确认可用接口、网络访问条件、设备型号与固件说明，再讨论驱动实现。Modbus 相关规范与 TCP/IP 实施指南由 [Modbus Organization](https://www.modbus.org/modbus-specifications) 发布；OPC UA 的信息建模与安全机制可从 [OPC Foundation 的介绍](https://opcfoundation.org/about/opc-technologies/opc-ua/) 开始阅读。规范用于理解协议，设备文档用于确认现场具体开放了什么，两者不能互相替代。
+面对不同设备，先确认可用接口、网络访问条件、设备型号与固件说明，再讨论驱动实现。Modbus 地址表示可对照 Schneider Electric 的说明；OPC UA 的信息建模与安全机制可从 OPC Foundation 的介绍开始阅读。[8][16] 协议资料用于理解机制，设备文档用于确认现场具体开放了什么，两者不能互相替代。
 
 建议和设备负责人一起填写接入清单：业务点位、读写权限、访问入口、数据类型、单位、更新节奏，以及允许的维护窗口。不要仅凭“设备支持某协议”就假定全部点位或功能都能够访问。
 
@@ -25,21 +28,28 @@ draft: false
 
 需要逐项核对寄存器区域、地址表示、读取长度与设备侧的编码约定。文档显示的地址编号与客户端需要传入的偏移量可能采用不同表示，应通过设备说明和已知数值对照确认，而不是凭经验统一加减。
 
-多寄存器值的组合、符号、倍率与单位也应记录在映射配置中。下面只是业务映射示意，不是某个客户端库的标准配置格式；其中的偏移量与倍率都是演示值，不能直接用于设备。
+例如常见参考编号 `40001` 表示第一个保持寄存器，对应报文数据地址 `0`；但某些客户端接受参考编号，另一些接受零基偏移，不能把 `40001` 原样当成所有库的地址参数。[8] 点表还应列明功能码和 Unit Identifier 的现场约定，尤其是经 TCP 网关访问下游设备时。
+
+寄存器是 16 位数据单元，不等于业务类型已经确定。符号整数、无符号整数、位域和浮点数需要不同解释；32 位值通常跨两个寄存器。还要单独确认这两个寄存器的高低字顺序，不能把“单寄存器的字节顺序”当成“32 位字序”。厂商设备手册应是具体点位编码的依据，某一型号的高字在前约定不能推广到全部设备。[8][9]
+
+下面只是业务映射示意，不是某个客户端库的标准配置格式；其中的偏移量与倍率都是演示值，不能直接用于设备。这里将倍率明确定义为“工程值 = 解码后的原始值 × scale”，设备点表可能采用相反的倍率写法，需要先转换口径。
 
 ```yaml
 point: workshop.temperature
 source:
   protocol: modbus-tcp
   area: holding-register
-  offset: 0 # 示例，按设备点表确认
+  offset: 0 # 示例，零基数据地址，按设备点表和客户端 API 确认
+  registerCount: 1
 mapping:
-  valueType: integer
-  scale: 0.1 # 示例，按设备说明确认
+  valueType: int16 # 示例，先按有符号 16 位整数解码
+  scale: 0.1 # 示例，工程值 = 原始值 * scale
   unit: celsius
 ```
 
 一次读取成功后，还要与现场仪表或可信参考值比对。仅看通信没有报错，无法发现倍率错误或点表解释错误。先做只读接入，涉及控制指令时再单独确认授权、确认提示与失败处置。
+
+普通 Modbus TCP 不能被当作已具备加密和对端身份认证的安全通道；Modbus Security 是另行结合 TLS 与证书的协议方案，不是打开普通 TCP 端口后自动拥有的能力。[18] 建议限制在受控网络、按需放行来源与只读访问，远程接入另行评估安全网关；不要直接暴露到公网，也不要用“只读客户端”代替设备侧和网络侧授权。点表或客户端配置错误仍需联调发现。
 
 ## OPC UA：保留节点语义和安全边界
 
@@ -47,8 +57,32 @@ mapping:
 
 节点标识、名称空间与数据类型需要形成可维护的映射，并在设备调整后复核。采用读取还是订阅，应结合服务端能力、更新需求与运维条件决定。不要为了快速连通就把关闭安全校验作为默认交付方式；应把证书信任、更新和故障排查纳入维护流程。
 
+应用证书信任和用户操作权限应分别确认：证书受信任不表示用户能读写任意节点。证书维护应核对信任链、有效期、服务端主机名与应用 URI 等检查项，并约定更新和吊销处置；不要把自动信任所有证书作为默认配置。[15] 安全策略和消息安全模式也要和服务端实际启用项核对，不能仅凭“OPC UA”名称判断通信已加密。[16]
+
+读取或订阅结果要处理完整 DataValue：至少检查 StatusCode 的 Good、Uncertain、Bad 严重级别，再决定数值是否可用于业务；Bad 值不能当有效读数。源时间和服务端时间含义不同，源时间可能为空，不应替换成客户端接收时间后仍称为设备时间。[3] 建议另外记录本地接收时间、原始状态码与最后成功样本；订阅没有数值变化通知时，不应仅据此判定设备离线，应结合会话、订阅和链路诊断。
+
 ## 统一业务数据，但留下诊断出口
 
 业务层可以统一使用设备、点位、值、质量、采集时间与来源等字段。协议适配器负责把原始响应映射到这个模型，必要时额外保留原始质量码和诊断原因。这样上层报表不需要了解每个寄存器，但排查问题时仍能回到具体来源。
 
 实施顺序可以从少量已确认点位开始，先核对数值、类型与时间，再扩展范围。将通信失败、权限不足、映射错误和数据过期分别展示，避免全部归为“设备离线”。统一模型的目标不是隐藏差异，而是让业务使用一致，让工程人员仍然解释得清楚。
+
+## 相关方案与下一步
+
+可用[工业物联网与设备采集服务](/services#industrial-iot)和[工业接入方案](/solutions/industrial)梳理点表、读写边界及证书责任；[工业采集概念案例](/cases/industrial-iot-monitoring)是静态流程展示，不代表上述协议已实现或通过现场验收。[通过微信或邮箱交流相关需求](/contact)。在线表单仅作演示，不接收提交。
+
+## 官方参考
+
+- [OPC Foundation：DataValue、状态与时间][3]
+- [Schneider Electric：Modbus 地址与编码说明][8]
+- [Schneider Electric：具体设备的数据类型与字序示例][9]
+- [OPC Foundation：证书验证][15]
+- [OPC Foundation：OPC UA 架构与安全机制][16]
+- [Schneider Electric：Modbus Security 与 TLS][18]
+
+[3]: https://reference.opcfoundation.org/specs/OPC-10000-4/7.11
+[8]: https://www.se.com/nl/en/faqs/FA168406
+[9]: https://productinfo.se.com/i-o_smart_link_user_guide/doca0302-i-o-smartlink-user-guide/English/DOCA0302_Smartlink_Modbus_Plus_User_Guide_0001141942.xml/$/SLMB_Modbus_Table_Formats_0001141927
+[15]: https://reference.opcfoundation.org/specs/OPC-10000-4/6.1.3
+[16]: https://opcfoundation.org/about/opc-technologies/opc-ua
+[18]: https://blog.se.com/industry/machine-and-process-management/2018/08/30/modbus-security-new-protocol-to-improve-control-system-security

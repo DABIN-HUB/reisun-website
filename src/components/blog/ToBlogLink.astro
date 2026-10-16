@@ -2,10 +2,16 @@
 import { getBlogPermalink } from '~/utils/permalinks';
 ---
 
-<div class="rs-container blog-back"><a href={getBlogPermalink()}>返回全部文章</a></div>
+<div class="rs-container blog-back">
+  <div class="blog-back-inner"><a href={getBlogPermalink()}>返回全部文章</a></div>
+</div>
 <style>
   .blog-back {
     padding-bottom: 48px;
+  }
+  .blog-back-inner {
+    max-width: 760px;
+    margin-inline: auto;
   }
   .blog-back a {
     display: inline-flex;

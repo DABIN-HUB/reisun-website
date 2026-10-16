@@ -8,7 +8,7 @@ export const headerData = {
     { text: '关于我们', href: '/about' },
     { text: '联系合作', href: '/contact' },
   ],
-  actions: [{ text: '咨询合作', href: '/contact' }],
+  actions: [{ text: '合作方式', href: '/contact' }],
 };
 
 export const footerData = {
@@ -41,5 +41,5 @@ export const footerData = {
   ],
   secondaryLinks: [],
   socialLinks: [{ ariaLabel: '订阅技术文章 RSS', icon: 'tabler:rss', href: '/rss.xml' }],
-  footNote: 'REISUN 独立软件开发品牌。当前为官网 UI 演示。',
+  footNote: 'REISUN 软件开发与技术服务。当前为本地内容审核，案例均为概念演示。',
 };

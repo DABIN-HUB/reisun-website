@@ -21,7 +21,6 @@ import type { MetaData } from '~/types';
 import RelatedPosts from '~/components/blog/RelatedPosts.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
-import { SITE } from 'astrowind:config';
 
 export const prerender = true;
 
@@ -50,7 +49,6 @@ const metadata = merge(
       article: {
         publishedTime: post.publishDate.toISOString(),
         modifiedTime: (post.updateDate ?? post.publishDate).toISOString(),
-        ...(post.author ? { authors: [post.author] } : {}),
         ...(post.category ? { section: post.category.title } : {}),
         ...(post.tags?.length ? { tags: post.tags.map((tag) => tag.title) } : {}),
       },
@@ -72,8 +70,6 @@ const articleSchema = {
   description: post.excerpt,
   datePublished: post.publishDate.toISOString(),
   dateModified: (post.updateDate ?? post.publishDate).toISOString(),
-  ...(post.author ? { author: { '@type': 'Organization', name: post.author } } : {}),
-  publisher: { '@type': 'Organization', name: SITE?.name },
   ...(imageUrl ? { image: imageUrl.startsWith('http') ? imageUrl : new URL(imageUrl, Astro.site).toString() } : {}),
   ...(post.category ? { articleSection: post.category.title } : {}),
   ...(post.tags?.length ? { keywords: post.tags.map((tag) => tag.title).join(', ') } : {}),

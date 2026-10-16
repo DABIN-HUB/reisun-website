@@ -7,18 +7,24 @@ import CTA from '~/components/reisun/CTA.astro';
 import { solutions } from '~/data/solutions';
 
 const metadata = {
-  title: '解决方案｜工业采集、业务协同、合同审批与小程序',
+  title: '解决方案概念演示｜工业采集、业务协同、合同与小程序',
   description:
-    '了解 REISUN 的四类软件定制方案：工业设备采集与监控、ERP/OA 业务协同、合同管理与审批、小程序与互联网平台。查看业务问题、逻辑架构、功能模块与交付边界。',
+    '查看工业采集、ERP / OA、合同与小程序四类定制开发的概念方案：从具体问题、拟开发模块到按项目约定的交付、准备资料与集成前提。页面为静态演示，不是已实施产品或客户交付记录。',
 };
 ---
 
 <Layout metadata={metadata}>
   <PageIntro
+    variant="solutions"
     label="解决方案"
     title="让技术路径，对应真实业务。"
     description="从现场设备到部门协作，从合同审批到移动服务。用完整的业务链路组织系统，而不只是罗列功能。"
-  />
+  >
+    <Fragment slot="title"
+      ><span class="rs-heading-phrase">让技术路径，</span><wbr /><span class="rs-heading-phrase">对应真实业务。</span
+      ></Fragment
+    >
+  </PageIntro>
 
   <div class="rs-container solution-directory">
     <nav aria-label="按业务场景选择方案">
@@ -36,7 +42,9 @@ const metadata = {
         }
       </ul>
     </nav>
-    <p class="directory-note">以下为定制开发的方案说明与概念演示，不是现成产品，也不代表真实客户部署。</p>
+    <p class="directory-note">
+      以下为定制开发的概念方案。架构与技术栈均为拟选设计，不是现成产品、已核实的后端实现或客户部署记录。
+    </p>
   </div>
 
   {
@@ -72,7 +80,7 @@ const metadata = {
             </div>
             <figcaption>{solution.previewCaption}</figcaption>
             <div class="solution-module-line">
-              <span>方案包含</span>
+              <span>拟开发模块 · 按项目确认</span>
               <ul>
                 {solution.modules.map((module) => (
                   <li>{module.title}</li>
@@ -102,7 +110,7 @@ const metadata = {
 
   <CTA
     title="从你的业务链路，找到合适的切入点。"
-    description="可以先说一个具体问题，也可以带上现有系统、流程或设备资料。方案从实际条件开始。"
+    description="可先整理业务问题和脱敏资料，通过联系页的微信或邮箱交流。在线表单仅作演示，不接收提交。"
   />
 </Layout>
 

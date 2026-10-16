@@ -1,0 +1,612 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  variant: 'industrial' | 'enterprise' | 'mobile';
+  compact?: boolean;
+}
+
+const { variant, compact = false } = Astro.props;
+const titles = {
+  industrial: '从现场设备到告警处理',
+  enterprise: '从业务单据到可追溯汇总',
+  mobile: '用户操作，有后台接续办理',
+};
+---
+
+<figure class:list={['service-scenario', `scenario-${variant}`, { compact }]} aria-label={titles[variant]}>
+  <div class="scenario-heading">
+    <strong>{titles[variant]}</strong>
+    <span>业务链路示意</span>
+  </div>
+  {
+    variant === 'industrial' && (
+      <>
+        <ol class="industrial-chain" aria-label="设备、采集、监控与告警的数据流向">
+          <li class="field-node">
+            <div class="machine-drawing" aria-hidden="true">
+              <span />
+              <i />
+              <i />
+              <i />
+            </div>
+            <strong>现场设备</strong>
+            <p>PLC / 仪表 / 传感器</p>
+          </li>
+          <li class="collector-node">
+            <Icon name="tabler:cpu" class="node-icon" aria-hidden="true" />
+            <strong>数据采集</strong>
+            <p>协议适配、点位映射</p>
+          </li>
+          <li class="monitor-node">
+            <div class="signal-drawing" aria-hidden="true">
+              <svg viewBox="0 0 100 40" fill="none">
+                <path d="M0 32h100M0 16h100" stroke="currentColor" opacity=".18" />
+                <path d="m3 29 17-5 13 3 13-14 14 6 17-12 20 4" stroke="currentColor" stroke-width="2" />
+              </svg>
+            </div>
+            <strong>监控与趋势</strong>
+            <p>数值、单位、采集质量</p>
+          </li>
+          <li class="alert-node">
+            <Icon name="tabler:bell" class="node-icon" aria-hidden="true" />
+            <strong>告警与处理</strong>
+            <p>规则判断、处理留痕</p>
+          </li>
+        </ol>
+        <div class="chain-foundation">
+          <span>链路边界</span>
+          <p>保留来源与时间戳；离线、读取失败与业务异常分别识别。</p>
+        </div>
+      </>
+    )
+  }
+  {
+    variant === 'enterprise' && (
+      <>
+        <div class="enterprise-flow">
+          <div class="document-stack">
+            <Icon name="tabler:file-description" class="node-icon" aria-hidden="true" />
+            <strong>业务单据</strong>
+            <ul aria-label="业务单据示例">
+              <li>采购申请</li>
+              <li>入库记录</li>
+              <li>合同台账</li>
+            </ul>
+          </div>
+          <div class="approval-route">
+            <p class="route-label">关联单据，按规则流转</p>
+            <ol aria-label="审批与业务汇总顺序">
+              <li>
+                <>
+                  <strong>岗位审批</strong>
+                  <span>发起、审核、退回</span>
+                </>
+              </li>
+              <li>
+                <>
+                  <strong>业务执行</strong>
+                  <span>入库、交付、履约</span>
+                </>
+              </li>
+              <li>
+                <>
+                  <strong>经营汇总</strong>
+                  <span>按统一口径查询</span>
+                </>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="trace-back">
+          <Icon name="tabler:corner-up-left" aria-hidden="true" />
+          <p>从汇总回到原始单据，保留审批意见与操作记录。</p>
+        </div>
+      </>
+    )
+  }
+  {
+    variant === 'mobile' && (
+      <>
+        <div class="mobile-flow">
+          <div class="task-phone">
+            <span class="phone-speaker" aria-hidden="true" />
+            <strong>小程序用户</strong>
+            <ol aria-label="用户操作路径">
+              <li>选择服务</li>
+              <li>填写并提交</li>
+              <li>查询办理进度</li>
+            </ol>
+          </div>
+          <div class="mobile-handoff" aria-hidden="true">
+            <Icon name="tabler:arrow-right" />
+          </div>
+          <div class="handling-desk">
+            <div class="desk-heading">
+              <>
+                <Icon name="tabler:layout-dashboard" aria-hidden="true" />
+                <strong>后台办理</strong>
+              </>
+            </div>
+            <ol aria-label="后台办理路径">
+              <li>
+                <>
+                  <span>受理</span>
+                  <p>核对申请与资料</p>
+                </>
+              </li>
+              <li>
+                <>
+                  <span>处理</span>
+                  <p>分派任务并跟进</p>
+                </>
+              </li>
+              <li>
+                <>
+                  <span>反馈</span>
+                  <p>更新同一业务记录</p>
+                </>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="chain-foundation">
+          <>
+            <span>前后台一致</span>
+            <p>提交不是完成；业务状态随实际办理进展更新。</p>
+          </>
+        </div>
+      </>
+    )
+  }
+  <figcaption>原创静态业务示意，非真实项目成果；具体流程与接入范围按项目确认。</figcaption>
+</figure>
+
+<style>
+  .service-scenario {
+    container-type: inline-size;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: clamp(18px, 3vw, 28px);
+    border: 1px solid var(--rs-line, #dfe6ef);
+    border-radius: 8px;
+    color: var(--rs-ink, #172b46);
+    background: var(--rs-soft, #f4f7fb);
+    font-family: var(--aw-font-sans, sans-serif);
+    line-height: 1.65;
+  }
+  .scenario-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-bottom: 24px;
+  }
+  .scenario-heading strong {
+    color: var(--rs-navy, #102b50);
+    font-size: 17px;
+    font-weight: 650;
+  }
+  .scenario-heading > span {
+    font-size: 13px;
+    color: var(--rs-muted, #5b6b80);
+  }
+  ol,
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .industrial-chain {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .industrial-chain > li {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 18px 10px;
+    border: 1px solid var(--rs-line, #dfe6ef);
+    border-radius: 5px;
+    background: var(--rs-white, #fff);
+    text-align: center;
+  }
+  .industrial-chain > li:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -23px;
+    top: calc(50% - 14px);
+    color: var(--rs-blue, #245eea);
+    font-size: 20px;
+  }
+  .industrial-chain strong,
+  .document-stack strong,
+  .approval-route strong,
+  .task-phone strong,
+  .desk-heading strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 650;
+  }
+  .industrial-chain p {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--rs-muted, #5b6b80);
+  }
+  .node-icon {
+    display: block;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 14px;
+    color: var(--rs-blue, #245eea);
+  }
+  .machine-drawing {
+    position: relative;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 4px;
+    width: 58px;
+    height: 38px;
+    margin-bottom: 14px;
+    padding: 6px;
+    border: 2px solid var(--rs-navy, #102b50);
+    border-radius: 3px;
+    color: var(--rs-blue, #245eea);
+  }
+  .machine-drawing span {
+    width: 16px;
+    height: 18px;
+    margin-right: 3px;
+    border: 1px solid currentColor;
+    background: var(--rs-soft, #f4f7fb);
+  }
+  .machine-drawing i {
+    height: 10px;
+    width: 3px;
+    background: currentColor;
+  }
+  .signal-drawing {
+    height: 38px;
+    width: 80px;
+    margin-bottom: 14px;
+    color: var(--rs-blue, #245eea);
+  }
+  .signal-drawing svg {
+    width: 100%;
+    height: 100%;
+  }
+  .chain-foundation {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 5px 16px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rs-line, #dfe6ef);
+    font-size: 13px;
+  }
+  .chain-foundation > span {
+    color: var(--rs-navy, #102b50);
+    font-weight: 650;
+  }
+  .chain-foundation p,
+  .trace-back p {
+    text-wrap: balance;
+  }
+  .chain-foundation p,
+  figcaption {
+    color: var(--rs-muted, #5b6b80);
+  }
+  figcaption {
+    margin-top: 18px;
+    font-size: 13px;
+    line-height: 1.8;
+    text-align: left;
+  }
+  .enterprise-flow {
+    display: grid;
+    grid-template-columns: minmax(140px, 0.7fr) minmax(0, 1.3fr);
+    gap: 32px;
+    align-items: center;
+  }
+  .document-stack {
+    position: relative;
+    padding: 20px;
+    border: 1px solid var(--rs-line, #dfe6ef);
+    border-top: 3px solid var(--rs-blue, #245eea);
+    background: var(--rs-white, #fff);
+    box-shadow:
+      5px 5px 0 var(--rs-soft, #f4f7fb),
+      6px 6px 0 var(--rs-line, #dfe6ef);
+  }
+  .document-stack ul {
+    display: grid;
+    gap: 7px;
+    margin-top: 12px;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 14px;
+  }
+  .document-stack li {
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rs-line, #dfe6ef);
+  }
+  .route-label {
+    color: var(--rs-muted, #5b6b80);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .approval-route ol {
+    border-left: 1px solid var(--rs-blue, #245eea);
+    padding-left: 22px;
+  }
+  .approval-route li {
+    position: relative;
+    padding-bottom: 17px;
+  }
+  .approval-route li:last-child {
+    padding-bottom: 0;
+  }
+  .approval-route li::before {
+    content: '';
+    position: absolute;
+    left: -27px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--rs-blue, #245eea);
+  }
+  .approval-route span {
+    color: var(--rs-muted, #5b6b80);
+    font-size: 14px;
+  }
+  .trace-back {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rs-blue, #245eea);
+    color: var(--rs-muted, #5b6b80);
+    font-size: 13px;
+  }
+  .trace-back :global(svg) {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--rs-blue, #245eea);
+  }
+  .mobile-flow {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.85fr) 28px minmax(0, 1.15fr);
+    gap: 18px;
+    align-items: center;
+  }
+  .task-phone {
+    padding: 12px 16px 20px;
+    border: 3px solid var(--rs-navy, #102b50);
+    border-radius: 20px;
+    background: var(--rs-white, #fff);
+  }
+  .phone-speaker {
+    display: block;
+    width: 34px;
+    height: 4px;
+    margin: 0 auto 17px;
+    border-radius: 2px;
+    background: var(--rs-navy, #102b50);
+  }
+  .task-phone strong {
+    margin-bottom: 14px;
+  }
+  .task-phone li {
+    padding: 9px 0;
+    border-top: 1px solid var(--rs-line, #dfe6ef);
+    color: var(--rs-muted, #5b6b80);
+    font-size: 14px;
+  }
+  .task-phone li:nth-child(2) {
+    padding-inline: 9px;
+    border-color: transparent;
+    border-radius: 3px;
+    background: var(--rs-blue, #245eea);
+    color: #fff;
+  }
+  .mobile-handoff :global(svg) {
+    width: 28px;
+    height: 28px;
+    color: var(--rs-blue, #245eea);
+  }
+  .handling-desk {
+    align-self: stretch;
+    border: 1px solid var(--rs-line, #dfe6ef);
+    background: var(--rs-white, #fff);
+    border-radius: 5px;
+  }
+  .desk-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rs-line, #dfe6ef);
+  }
+  .desk-heading :global(svg) {
+    width: 20px;
+    height: 20px;
+    color: var(--rs-blue, #245eea);
+  }
+  .handling-desk ol {
+    padding: 5px 16px;
+  }
+  .handling-desk li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 13px;
+    font-size: 14px;
+  }
+  .handling-desk li + li {
+    border-top: 1px solid var(--rs-line, #dfe6ef);
+  }
+  .handling-desk li > span {
+    color: var(--rs-blue, #245eea);
+    font-weight: 600;
+  }
+  .handling-desk p {
+    color: var(--rs-muted, #5b6b80);
+  }
+  .compact {
+    padding: 20px;
+  }
+  .compact .scenario-heading {
+    margin-bottom: 18px;
+  }
+  .compact .industrial-chain > li {
+    padding-block: 14px;
+  }
+  @container (max-width: 650px) {
+    .industrial-chain {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 22px;
+    }
+    .industrial-chain > li {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      gap: 3px 14px;
+      padding: 14px;
+      text-align: left;
+    }
+    .industrial-chain .node-icon,
+    .machine-drawing,
+    .signal-drawing {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      justify-self: center;
+      margin-bottom: 0;
+    }
+    .industrial-chain p {
+      margin: 0;
+    }
+    .industrial-chain > li:not(:last-child)::after {
+      content: '↓';
+      top: auto;
+      right: auto;
+      left: 50%;
+      bottom: -25px;
+      transform: translateX(-50%);
+    }
+    .enterprise-flow {
+      gap: 26px;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    }
+    .document-stack {
+      padding: 16px 12px;
+    }
+    .mobile-flow {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+    .task-phone {
+      width: min(100%, 230px);
+      justify-self: center;
+    }
+    .mobile-handoff {
+      justify-self: center;
+      transform: rotate(90deg);
+    }
+    .handling-desk {
+      width: 100%;
+    }
+  }
+  @container (max-width: 650px) {
+    .compact .scenario-heading {
+      margin-bottom: 12px;
+    }
+    .compact .scenario-heading strong {
+      font-size: 16px;
+    }
+    .compact .scenario-heading > span,
+    .compact .chain-foundation,
+    .compact figcaption {
+      display: none;
+    }
+    .compact .industrial-chain {
+      gap: 14px;
+    }
+    .compact .industrial-chain > li {
+      grid-template-columns: 38px minmax(0, 1fr);
+      padding: 10px 12px;
+      gap: 2px 12px;
+    }
+    .compact .industrial-chain > li:not(:last-child)::after {
+      bottom: -21px;
+      font-size: 16px;
+    }
+    .compact .industrial-chain strong {
+      font-size: 14px;
+    }
+    .compact .industrial-chain p {
+      font-size: 12px;
+    }
+    .compact .node-icon {
+      width: 27px;
+      height: 27px;
+    }
+    .compact .machine-drawing {
+      width: 38px;
+      height: 27px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .compact .machine-drawing span {
+      width: 10px;
+      height: 15px;
+      margin-right: 1px;
+    }
+    .compact .machine-drawing i {
+      width: 2px;
+      height: 8px;
+    }
+    .compact .signal-drawing {
+      width: 38px;
+      height: 27px;
+    }
+  }
+  @container (max-width: 300px) {
+    .industrial-chain > li {
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 3px 10px;
+      padding: 12px 10px;
+    }
+    .signal-drawing {
+      width: 58px;
+    }
+    .compact .industrial-chain > li {
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 2px 12px;
+    }
+    .compact .signal-drawing {
+      width: 38px;
+    }
+    .enterprise-flow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .document-stack {
+      box-shadow: none;
+    }
+    .document-stack ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      font-size: 13px;
+      gap: 6px;
+    }
+    .document-stack .node-icon {
+      display: none;
+    }
+  }
+</style>

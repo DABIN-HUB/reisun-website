@@ -33,10 +33,11 @@ const tags = [
 ---
 
 <div class="blog-archive">
-  <PageIntro title={title} description={description} label="技术与思考" />
+  <PageIntro title={title} description={description} label="技术与思考" variant="articles" />
   <section class="rs-container blog-archive-body" aria-label="技术文章">
     <div class="blog-archive-tools">
       <nav class="blog-categories" aria-label="按文章分类浏览">
+        <span class="blog-filter-label">文章分类</span>
         <a href={getBlogPermalink()} aria-current={!category && !tag ? 'page' : undefined}>全部文章</a>
         {
           APP_BLOG.category.isEnabled &&
@@ -55,21 +56,26 @@ const tags = [
     {
       APP_BLOG.tag.isEnabled && tags.length > 0 && (
         <nav class="blog-topics" aria-label="按技术标签浏览">
-          <span>技术话题</span>
-          <ul>
-            {tags.map((item) => (
-              <li>
-                <a href={getPermalink(item.slug, 'tag')} aria-current={tag?.slug === item.slug ? 'page' : undefined}>
-                  {item.title}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <details open={Boolean(tag)}>
+            <summary>
+              技术标签<span>{tag ? `当前：${tag.title}` : '按具体技术与话题查找'}</span>
+            </summary>
+            <ul>
+              {tags.map((item) => (
+                <li>
+                  <a href={getPermalink(item.slug, 'tag')} aria-current={tag?.slug === item.slug ? 'page' : undefined}>
+                    <span aria-hidden="true">#</span>
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
         </nav>
       )
     }
     <p class="blog-demo-notice">
-      以下为中文技术演示内容，用于交流设计方法与实施思路，不代表真实客户项目、交付记录或性能承诺。
+      以下文章交流技术方法与设计建议。示例不是可直接投产的完整实现，也不代表真实客户交付记录或性能承诺。
     </p>
     <List posts={posts} featured={!category && !tag && currentPage === 1} />
     <Pagination {prevUrl} {nextUrl} {currentPage} {lastPage} />
@@ -119,6 +125,11 @@ const tags = [
     font-size: 0.9375rem;
     text-decoration: none;
   }
+  .blog-filter-label {
+    color: var(--rs-muted);
+    font-size: 0.8125rem;
+    margin-right: 8px;
+  }
   .blog-categories a[aria-current='page'] {
     background: #102b50;
     color: #fff;
@@ -133,16 +144,25 @@ const tags = [
     color: #5b6b80;
   }
   .blog-topics {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 22px;
     margin: 16px 0;
     font-size: 0.8125rem;
   }
-  .blog-topics > span {
-    color: #5b6b80;
-    flex-shrink: 0;
+  .blog-topics details {
+    border-bottom: 1px solid var(--rs-line);
+    padding-bottom: 8px;
+  }
+  .blog-topics summary {
+    min-height: 44px;
+    padding-block: 10px;
+    color: var(--rs-ink);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .blog-topics summary span {
+    display: inline-block;
+    color: var(--rs-muted);
+    font-weight: 400;
+    margin-left: 16px;
   }
   .blog-topics ul {
     display: flex;
@@ -158,6 +178,7 @@ const tags = [
     min-height: 44px;
     color: #52657c;
     text-decoration: none;
+    gap: 4px;
   }
   .blog-topics a:hover,
   .blog-topics a[aria-current='page'] {
@@ -191,7 +212,8 @@ const tags = [
     text-decoration: underline;
     text-underline-offset: 4px;
   }
-  .blog-archive-body a:focus-visible {
+  .blog-archive-body a:focus-visible,
+  .blog-topics summary:focus-visible {
     outline: 2px solid #245eea;
     outline-offset: 4px;
   }
@@ -201,6 +223,10 @@ const tags = [
     }
     .blog-categories a {
       padding-inline: 12px;
+    }
+    .blog-filter-label {
+      flex-basis: 100%;
+      margin-right: 0;
     }
   }
 </style>

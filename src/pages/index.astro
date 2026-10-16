@@ -5,6 +5,7 @@ import { Icon } from 'astro-icon/components';
 import StructuredData from '~/components/common/StructuredData.astro';
 import HeroGraphic from '~/components/reisun/HeroGraphic.astro';
 import SystemPreview from '~/components/reisun/SystemPreview.astro';
+import ServiceScenario from '~/components/reisun/ServiceScenario.astro';
 import Process from '~/components/reisun/Process.astro';
 import CTA from '~/components/reisun/CTA.astro';
 import BlogGrid from '~/components/blog/Grid.astro';
@@ -12,14 +13,14 @@ import { services } from '~/data/services';
 import { solutions } from '~/data/solutions';
 import { cases } from '~/data/cases';
 import { findLatestPosts } from '~/utils/blog';
-import { SITE, I18N } from 'astrowind:config';
+import { SITE, I18N, METADATA } from 'astrowind:config';
+import { brand } from '~/data/brand';
 
 const posts = await findLatestPosts({ count: 3 });
 const featuredSolution = solutions[0];
 const metadata = {
-  title: 'REISUN｜专业软件定制开发与企业数字化解决方案',
-  description:
-    '专注 Java 企业应用、工业物联网与设备数据采集、ERP/OA、微信小程序和企业系统集成。了解 REISUN 的开发服务、演示方案与技术实践。',
+  title: 'REISUN｜Java 软件定制开发与工业数据采集',
+  description: brand.description ?? undefined,
   ignoreTitleTemplate: true,
 };
 const websiteSchema = {
@@ -28,7 +29,7 @@ const websiteSchema = {
   name: SITE.name,
   url: SITE.site,
   inLanguage: I18N.language,
-  description: metadata.description,
+  description: METADATA.description,
 };
 ---
 
@@ -40,14 +41,14 @@ const websiteSchema = {
         <p class="hero-kicker"><span></span>软件定制开发与企业数字化</p>
         <h1>专业软件定制开发，<br />让技术真正服务业务</h1>
         <p class="hero-description">
-          从工业设备的数据连接，到企业管理的高效协同。<br
+          面向企业 Java 应用与工业数据采集需求。<br
             class="desktop-break"
-          />以扎实的工程能力，把业务想法变成可靠的软件。
+          />从业务流程、设备点位到系统接口，先明确范围，再讨论实现。
         </p>
         <div class="hero-actions">
-          <Button href="/contact" text="咨询开发需求" class="rs-button" /><Button
+          <Button href="/contact" text="了解合作方式" class="rs-button" /><Button
             href="/cases"
-            text="查看项目案例"
+            text="查看概念案例"
             class="rs-button rs-button-secondary hero-secondary"
           />
         </div>
@@ -58,7 +59,7 @@ const websiteSchema = {
     <div class="hero-bottom">
       <div class="rs-container hero-principles">
         <span><i></i>围绕业务设计</span><span><i></i>重视系统可靠性</span><span><i></i>关注持续演进</span><span
-          class="hero-brand-note">REISUN · 独立软件开发品牌</span
+          class="hero-brand-note">REISUN · 软件开发与技术服务</span
         >
       </div>
     </div>
@@ -72,7 +73,7 @@ const websiteSchema = {
             <span class="rs-heading-phrase">从业务需求出发，</span><wbr /><span class="rs-heading-phrase"
               >构建合适的软件</span
             >
-          </h2><p>不止于功能实现，更关心软件如何融入日常工作，解决真正的问题。</p>
+          </h2><p>流程靠表格接力、设备数据难汇集，或系统之间信息不通？从具体问题找到开发方向。</p>
         </div><a class="rs-link" href="/services">了解开发服务 <Icon name="tabler:arrow-up-right" /></a>
       </div>
       <div class="service-grid">
@@ -84,12 +85,14 @@ const websiteSchema = {
                   <Icon name={service.icon} />
                 </div>
                 <h3>
-                  <a href={`/services#${service.id}`}>{service.title}</a>
+                  <a href={`/services#${service.id}`}>
+                    <>
+                      <span>{service.title}</span>
+                      <Icon name="tabler:chevron-right" aria-hidden="true" />
+                    </>
+                  </a>
                 </h3>
                 <p>{service.summary}</p>
-                <a class="rs-link" href={`/services#${service.id}`} aria-label={`了解${service.title}`}>
-                  服务详情 <Icon name="tabler:chevron-right" />
-                </a>
               </>
             </article>
           ))
@@ -103,17 +106,17 @@ const websiteSchema = {
       <div class="rs-section-heading">
         <div>
           <h2>
-            <span class="rs-heading-phrase">让技术能力，</span><wbr /><span class="rs-heading-phrase"
-              >落在具体的业务场景里</span
+            <span class="rs-heading-phrase">从业务问题，</span><wbr /><span class="rs-heading-phrase"
+              >梳理系统的协作关系</span
             >
-          </h2><p>连接现场、整合数据、协同流程，让不同系统成为一条完整的业务链路。</p>
+          </h2><p>围绕设备点位、业务单据和移动操作，展示可讨论的分层设计与接入条件。</p>
         </div><a class="rs-link" href="/solutions">浏览解决方案 <Icon name="tabler:arrow-up-right" /></a>
       </div>
       <div class="solution-layout">
         <div class="featured-solution">
           <span class="solution-label">重点场景 · 工业物联网</span><h3>{featuredSolution.title}</h3><p>
             {featuredSolution.summary}
-          </p><SystemPreview variant="industrial" compact /><a
+          </p><ServiceScenario variant="industrial" compact /><a
             class="rs-link"
             href={`/solutions/${featuredSolution.id}`}>探索设备数据方案 <Icon name="tabler:chevron-right" /></a
           >
@@ -137,12 +140,12 @@ const websiteSchema = {
                   <div>
                     <>
                       <h3>
-                        <a href={`/solutions/${solution.id}`}>{solution.title}</a>
+                        <a href={`/solutions/${solution.id}`}>
+                          {solution.title}
+                          <Icon name="tabler:arrow-up-right" aria-hidden="true" />
+                        </a>
                       </h3>
                       <p>{solution.summary}</p>
-                      <a href={`/solutions/${solution.id}`} class="rs-link">
-                        查看方案 <Icon name="tabler:chevron-right" />
-                      </a>
                     </>
                   </div>
                 </>
@@ -151,7 +154,9 @@ const websiteSchema = {
           }
         </div>
       </div>
-      <p class="solution-disclaimer">方案与界面均为能力演示，实际范围与技术选型需结合项目需求确认。</p>
+      <p class="solution-disclaimer">
+        方案与界面均为概念演示，不是已交付产品；实际开发范围、技术选型与兼容性需单独确认。
+      </p>
     </div>
   </section>
 
@@ -160,10 +165,10 @@ const websiteSchema = {
       <div class="rs-section-heading">
         <div>
           <h2>
-            <span class="rs-heading-phrase">把能力讲清楚，</span><wbr /><span class="rs-heading-phrase"
-              >不如把系统展示出来</span
+            <span class="rs-heading-phrase">用概念设计，</span><wbr /><span class="rs-heading-phrase"
+              >说明系统的实现思路</span
             >
-          </h2><p>通过四个演示项目，了解从现场数据到企业运营的实现思路。</p>
+          </h2><p>四个虚拟场景、四种系统设计，帮助讨论业务模型与实现边界，不代表客户交付。</p>
         </div><a class="rs-link" href="/cases">查看全部案例 <Icon name="tabler:arrow-up-right" /></a>
       </div>
       <div class="rs-grid-2 case-grid">
@@ -204,14 +209,15 @@ const websiteSchema = {
     </div>
   </section>
 
-  <div class="rs-section-soft"><Process /></div>
+  <div class="rs-section-soft"><Process compact /></div>
 
   <section class="rs-section home-about">
     <div class="rs-container about-layout">
       <div><p class="about-brand">关于 REISUN</p><h2>理解业务的细节，<br />也尊重技术的边界。</h2></div><div>
         <p>
-          REISUN
-          是一个专注软件定制开发的独立品牌，关注企业应用、工业互联与系统集成。我们相信，好的软件不必堆砌技术，而应让业务流程更清晰，让系统长期可维护。
+          {brand.name}
+          {brand.positioning}。面向企业 Java
+          系统、工业数据采集与多端业务需求，先明确流程、资料与系统边界，再约定开发范围。这里展示的是服务方向与概念方案，不以演示界面代替真实项目证据。
         </p><div class="about-method">
           <span>清晰的需求边界</span><span>务实的技术选择</span><span>可持续的工程交付</span>
         </div><a class="rs-link" href="/about">了解品牌与工作方式 <Icon name="tabler:arrow-up-right" /></a>
@@ -224,12 +230,12 @@ const websiteSchema = {
       <div class="rs-section-heading">
         <div>
           <h2>
-            <span class="rs-heading-phrase">分享技术实践，</span><wbr /><span class="rs-heading-phrase"
+            <span class="rs-heading-phrase">分享技术方法，</span><wbr /><span class="rs-heading-phrase"
               >也分享解决问题的思路</span
             >
           </h2><p>关于 Java、工业通信、系统架构与数字化建设的中文技术笔记。</p>
         </div><a class="rs-link" href="/blog">阅读全部文章 <Icon name="tabler:arrow-up-right" /></a>
-      </div><BlogGrid posts={posts} />
+      </div><BlogGrid posts={posts} compact />
     </div>
   </section>
   <CTA />
@@ -359,6 +365,19 @@ const websiteSchema = {
     font-weight: 650;
     line-height: 1.6;
   }
+  .home-service h3 a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+  }
+  .home-service h3 a :global(svg) {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    color: var(--rs-blue);
+  }
   .home-service h3 a:hover {
     color: var(--rs-blue);
   }
@@ -445,6 +464,22 @@ const websiteSchema = {
     line-height: 1.55;
     font-weight: 600;
   }
+  .solution-list h3 a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+  }
+  .solution-list h3 a :global(svg) {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    color: #9bc9ff;
+  }
+  .solution-list h3 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
   .solution-list p {
     color: #b7c9df;
     font-size: 14px;
@@ -514,8 +549,8 @@ const websiteSchema = {
     margin-top: 18px;
   }
   .case-detail {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
     color: var(--rs-blue);
@@ -701,13 +736,36 @@ const websiteSchema = {
       gap: 0 24px;
     }
     .home-service {
-      padding-block: 24px 18px;
+      padding-block: 18px 16px;
+    }
+    .home-services,
+    .home-cases,
+    .home-about,
+    .home-articles {
+      padding-block: 40px;
+    }
+    .home-solutions {
+      padding-block: 44px;
+    }
+    .home-services .rs-section-heading,
+    .home-cases .rs-section-heading,
+    .home-articles .rs-section-heading {
+      margin-bottom: 20px;
+    }
+    .home-services .rs-section-heading > .rs-link,
+    .home-cases .rs-section-heading > .rs-link,
+    .home-articles .rs-section-heading > .rs-link {
+      min-height: 44px;
+    }
+    .home-service h3 a {
+      min-height: 44px;
     }
     .home-service h3 {
       font-size: 17px;
     }
     .home-service p {
-      font-size: 13px;
+      font-size: 14px;
+      line-height: 1.85;
       min-height: 0;
     }
     .service-icon {
@@ -720,7 +778,7 @@ const websiteSchema = {
       gap: 0;
     }
     .solution-list article {
-      padding-block: 24px;
+      padding-block: 19px;
       display: flex;
       gap: 17px;
     }
@@ -734,7 +792,7 @@ const websiteSchema = {
       font-size: 21px;
     }
     .case-grid {
-      gap: 34px;
+      gap: 28px;
     }
     .home-case h3 {
       font-size: 21px;
@@ -752,7 +810,7 @@ const websiteSchema = {
     }
     .home-articles :global(.blog-grid) {
       grid-template-columns: minmax(0, 1fr);
-      gap: 32px;
+      gap: 0;
     }
   }
   @media (max-width: 479px) {
@@ -765,7 +823,7 @@ const websiteSchema = {
       gap: 0 15px;
     }
     .service-icon {
-      grid-row: 1 / 4;
+      grid-row: 1 / 3;
       margin: 0;
     }
     .home-service p {

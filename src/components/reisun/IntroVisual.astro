@@ -1,0 +1,517 @@
+---
+export type IntroVariant = 'services' | 'solutions' | 'cases' | 'articles' | 'about' | 'contact';
+export interface Props {
+  variant: IntroVariant;
+}
+const { variant } = Astro.props;
+---
+
+<div class:list={['intro-visual', `visual-${variant}`]} aria-hidden="true">
+  {
+    variant === 'services' && (
+      <div class="delivery-sheet">
+        <div class="sheet-heading">
+          <>
+            <span>从需求到交付</span>
+            <i>工程方法</i>
+          </>
+        </div>
+        <div class="delivery-nodes">
+          <>
+            <span>需求边界</span>
+            <span>模块实现</span>
+            <span>文档交接</span>
+          </>
+        </div>
+        <div class="sheet-lines">
+          <>
+            <span />
+            <span />
+            <span />
+          </>
+        </div>
+        <p>业务目标 · 技术路径 · 交付范围</p>
+      </div>
+    )
+  }
+  {
+    variant === 'solutions' && (
+      <div class="business-chain">
+        <span class="visual-caption">让数据沿业务流动</span>
+        <div class="chain-nodes">
+          <>
+            <span>现场业务</span>
+            <i>→</i>
+            <span>数据连接</span>
+            <i>→</i>
+            <span>流程协同</span>
+          </>
+        </div>
+        <div class="chain-return">
+          <span />
+          围绕场景组织系统
+          <span />
+        </div>
+      </div>
+    )
+  }
+  {
+    variant === 'cases' && (
+      <div class="portfolio-stack">
+        {['设备数据', '企业协同', '移动业务'].map((text, index) => (
+          <div class:list={['portfolio-window', `portfolio-${index}`]}>
+            <div>
+              <i />
+              <span>{text}</span>
+            </div>
+            <span class="portfolio-rule" />
+            <span class="portfolio-rule short" />
+            <b>概念演示</b>
+          </div>
+        ))}
+      </div>
+    )
+  }
+  {
+    variant === 'articles' && (
+      <div class="reading-sheet">
+        <p>关于连接、架构与业务</p>
+        {['工业连接', '工程实践', '数字化思考'].map((text, index) => (
+          <span>
+            <i>{String(index + 1).padStart(2, '0')}</i>
+            {text}
+            <b>↗</b>
+          </span>
+        ))}
+      </div>
+    )
+  }
+  {
+    variant === 'about' && (
+      <div class="brand-principle">
+        <>
+          <span class="brand-word">
+            REISUN<span>独立软件开发品牌</span>
+          </span>
+          <div>
+            <>
+              <span>理解业务</span>
+              <span>务实选择</span>
+              <span>持续演进</span>
+            </>
+          </div>
+        </>
+      </div>
+    )
+  }
+  {
+    variant === 'contact' && (
+      <div class="conversation-sheet">
+        <>
+          <span class="sheet-fold" />
+          <p>一次交流，从这里开始</p>
+          <div>
+            <>
+              <span>
+                <i>01</i>业务现状
+              </span>
+              <span>
+                <i>02</i>核心问题
+              </span>
+              <span>
+                <i>03</i>优先范围
+              </span>
+            </>
+          </div>
+        </>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .intro-visual {
+    width: 100%;
+    min-width: 0;
+    justify-self: end;
+    color: var(--rs-ink);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .delivery-sheet {
+    padding: 22px;
+    background: white;
+    border: 1px solid #d5e2f2;
+    box-shadow: 10px 10px 0 #e9eff8;
+  }
+  .sheet-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 650;
+  }
+  .sheet-heading i {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    color: var(--rs-muted);
+  }
+  .delivery-nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .delivery-nodes span {
+    border: 1px solid #c9dafa;
+    background: #f2f6ff;
+    padding: 9px 2px;
+    text-align: center;
+    color: #204f9c;
+    font-size: 11px;
+  }
+  .sheet-lines {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .sheet-lines span {
+    height: 3px;
+    background: #b8ccef;
+    flex: 1;
+  }
+  .sheet-lines span:last-child {
+    background: #89cbd4;
+  }
+  .delivery-sheet p {
+    margin-top: 18px;
+    color: var(--rs-muted);
+    font-size: 10px;
+  }
+  .visual-caption {
+    color: #c2d8ed;
+    font-size: 12px;
+  }
+  .chain-nodes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+    margin-top: 20px;
+  }
+  .chain-nodes > span {
+    background: #204368;
+    border: 1px solid #527298;
+    border-radius: 4px;
+    padding: 14px 10px;
+    color: white;
+    white-space: nowrap;
+  }
+  .chain-nodes i {
+    color: var(--rs-cyan);
+    font-style: normal;
+  }
+  .chain-return {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #a8d8e5;
+    font-size: 11px;
+    margin-top: 24px;
+  }
+  .chain-return span {
+    height: 1px;
+    background: #4a718f;
+    flex: 1;
+  }
+  .portfolio-stack {
+    height: 176px;
+    position: relative;
+  }
+  .portfolio-window {
+    position: absolute;
+    width: 190px;
+    background: white;
+    border: 1px solid #cedbee;
+    border-radius: 5px;
+    padding: 13px 15px;
+    box-shadow: 0 8px 20px #1737580a;
+  }
+  .portfolio-window > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: #355475;
+    font-weight: 550;
+  }
+  .portfolio-window i {
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background: #5c89e9;
+  }
+  .portfolio-window b {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 400;
+    color: #526881;
+    border: 1px solid #dce5f2;
+    padding: 1px 6px;
+    margin-top: 9px;
+  }
+  .portfolio-rule {
+    display: block;
+    height: 4px;
+    background: #e6edf7;
+    width: 85%;
+    margin-top: 10px;
+  }
+  .portfolio-rule.short {
+    width: 60%;
+    margin-top: 6px;
+  }
+  .portfolio-0 {
+    top: 0;
+    right: 50px;
+    background: #f8fbff;
+  }
+  .portfolio-1 {
+    top: 28px;
+    right: 25px;
+  }
+  .portfolio-2 {
+    top: 56px;
+    right: 0;
+  }
+  .portfolio-2 i {
+    background: #238494;
+  }
+  .reading-sheet {
+    border-top: 3px solid var(--rs-blue);
+    padding: 16px 0 0;
+  }
+  .reading-sheet > p {
+    font-size: 11px;
+    color: var(--rs-muted);
+    margin-bottom: 9px;
+  }
+  .reading-sheet > span {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #d5dfed;
+  }
+  .reading-sheet i {
+    font-size: 10px;
+    color: #687d96;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+  }
+  .reading-sheet b {
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 400;
+    color: #527298;
+  }
+  .brand-word {
+    display: block;
+    font-size: 35px;
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    color: var(--rs-navy);
+  }
+  .brand-word > span {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--rs-muted);
+    margin-top: 12px;
+  }
+  .brand-principle > div {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #c7d8ed;
+    font-size: 11px;
+  }
+  .brand-principle > div span:not(:first-child) {
+    border-left: 1px solid #c7d8ed;
+    padding-left: 14px;
+  }
+  .conversation-sheet {
+    position: relative;
+    padding: 22px 24px;
+    background: white;
+    border: 1px solid #d4dfee;
+    border-radius: 3px;
+  }
+  .sheet-fold {
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    width: 19px;
+    height: 19px;
+    border-bottom: 1px solid #c5d6ef;
+    border-left: 1px solid #c5d6ef;
+    background: #edf3ff;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+  }
+  .conversation-sheet p {
+    font-weight: 550;
+    color: #2e4c70;
+  }
+  .conversation-sheet > div {
+    display: grid;
+    gap: 11px;
+    margin-top: 17px;
+  }
+  .conversation-sheet > div span {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    color: #526881;
+  }
+  .conversation-sheet i {
+    font-size: 10px;
+    font-style: normal;
+    color: var(--rs-blue);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 1023px) {
+    .intro-visual {
+      max-width: 260px;
+    }
+    .delivery-sheet {
+      padding: 16px;
+    }
+    .chain-nodes > span {
+      padding: 11px 7px;
+    }
+  }
+  @media (max-width: 767px) {
+    .intro-visual {
+      max-width: none;
+      margin-top: 22px;
+    }
+    .delivery-sheet {
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+    .sheet-heading,
+    .sheet-lines,
+    .delivery-sheet p {
+      display: none;
+    }
+    .delivery-nodes {
+      display: flex;
+      gap: 10px;
+      margin-top: 0;
+    }
+    .delivery-nodes span {
+      padding: 7px 12px;
+      font-size: 11px;
+    }
+    .visual-caption,
+    .chain-return {
+      display: none;
+    }
+    .chain-nodes {
+      justify-content: flex-start;
+      gap: 9px;
+      margin-top: 0;
+    }
+    .chain-nodes > span {
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+    .portfolio-stack {
+      display: flex;
+      gap: 8px;
+      height: auto;
+    }
+    .portfolio-window {
+      position: static;
+      flex: 1;
+      min-width: 0;
+      width: auto;
+      padding: 8px 9px;
+      box-shadow: none;
+    }
+    .portfolio-window > div {
+      font-size: 11px;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .portfolio-rule,
+    .portfolio-window b {
+      display: none;
+    }
+    .reading-sheet {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 20px;
+      border-top: 1px solid #c8d7eb;
+      padding-top: 12px;
+    }
+    .reading-sheet > p,
+    .reading-sheet b {
+      display: none;
+    }
+    .reading-sheet > span {
+      padding: 0;
+      border: 0;
+      gap: 7px;
+      font-size: 11px;
+    }
+    .brand-word {
+      display: none;
+    }
+    .brand-principle > div {
+      margin-top: 0;
+      padding-top: 12px;
+      font-size: 12px;
+    }
+    .conversation-sheet {
+      border: 0;
+      background: none;
+      padding: 0;
+    }
+    .sheet-fold,
+    .conversation-sheet p {
+      display: none;
+    }
+    .conversation-sheet > div {
+      margin: 0;
+      display: flex;
+      gap: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #c8d7eb;
+    }
+    .conversation-sheet > div span {
+      gap: 6px;
+      font-size: 11px;
+    }
+  }
+  @media (max-width: 359px) {
+    .chain-nodes {
+      gap: 6px;
+    }
+    .chain-nodes > span {
+      padding-inline: 8px;
+    }
+    .conversation-sheet > div {
+      gap: 10px;
+    }
+    .portfolio-window {
+      padding-inline: 6px;
+    }
+  }
+</style>

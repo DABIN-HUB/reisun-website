@@ -3,20 +3,32 @@ import Item from '~/components/blog/GridItem.astro';
 import type { Post } from '~/types';
 export interface Props {
   posts: Array<Post>;
+  compact?: boolean;
 }
-const { posts } = Astro.props;
+const { posts, compact = false } = Astro.props;
 ---
 
-<div class="blog-grid">{posts.map((post) => <Item post={post} />)}</div>
+<div class:list={['blog-grid', { 'blog-grid-compact': compact }]}>
+  {posts.map((post) => <Item post={post} compact={compact} />)}
+</div>
 <style>
   .blog-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 36px;
   }
-  @media (max-width: 639px) {
+  @media (min-width: 1024px) {
+    .blog-grid-compact {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+  }
+  @media (max-width: 767px) {
     .blog-grid {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .blog-grid-compact {
+      gap: 0;
     }
   }
 </style>

@@ -5,6 +5,11 @@ import PageIntro from '~/components/reisun/PageIntro.astro';
 import CTA from '~/components/reisun/CTA.astro';
 import SystemPreview from '~/components/reisun/SystemPreview.astro';
 import { cases, caseDemoNotice } from '~/data/cases';
+import { evidenceLabels } from '~/data/evidence';
+import { services } from '~/data/services';
+import { solutions } from '~/data/solutions';
+import { findPostsBySlugs, isBlogEnabled, isBlogPostRouteEnabled } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
 
 export const getStaticPaths = (() =>
   cases.map((caseStudy) => ({
@@ -16,6 +21,10 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { caseStudy } = Astro.props;
 const relatedCases = cases.filter((item) => item.id !== caseStudy.id);
+const relatedServices = services.filter((item) => caseStudy.serviceIds?.includes(item.id));
+const relatedSolutions = solutions.filter((item) => caseStudy.solutionIds?.includes(item.id));
+const relatedPosts = isBlogEnabled && isBlogPostRouteEnabled ? await findPostsBySlugs(caseStudy.postSlugs ?? []) : [];
+const hasRelatedResources = relatedServices.length > 0 || relatedSolutions.length > 0 || relatedPosts.length > 0;
 const chapters = [
   { id: 'background', title: '项目背景' },
   { id: 'challenges', title: '业务痛点' },
@@ -26,8 +35,8 @@ const chapters = [
   { id: 'value', title: '项目价值' },
 ];
 const metadata = {
-  title: `${caseStudy.title}｜软件定制开发演示案例`,
-  description: `${caseStudy.summary}了解这个${caseStudy.category}演示案例的项目背景、业务痛点、实现方案、核心功能与技术架构。全部为虚拟场景和模拟数据，不代表真实客户项目。`,
+  title: `${caseStudy.title}｜软件定制开发概念演示案例`,
+  description: `${caseStudy.summary}了解虚拟场景的背景、痛点、方案、功能和架构选型。技术组合为设计规划，价值为预期目标，不代表客户交付或测得成果。`,
 };
 ---
 
@@ -53,7 +62,9 @@ const metadata = {
         </div>
         <div>
           <dt>内容性质</dt>
-          <dd>自主设计演示 / 全部模拟数据</dd>
+          <dd>
+            {caseStudy.evidence ? evidenceLabels[caseStudy.evidence.status] : caseStudy.label} / 全部模拟数据
+          </dd>
         </div>
         <div>
           <dt>方案范围</dt>
@@ -64,7 +75,7 @@ const metadata = {
           </dd>
         </div>
         <div>
-          <dt>技术组合规划</dt>
+          <dt>技术设计选型（非使用记录）</dt>
           <dd>
             <ul class="rs-tags">
               {caseStudy.stack.map((technology) => <li class="rs-tag">{technology}</li>)}
@@ -90,7 +101,13 @@ const metadata = {
             }
           </ul>
         </nav>
-        <a class="rs-button rs-button-secondary case-directory-contact" href="/contact">讨论类似需求</a>
+        {
+          hasRelatedResources && (
+            <a class="rs-button rs-button-secondary case-directory-contact" href="#case-related-resources">
+              查看相关内容
+            </a>
+          )
+        }
       </aside>
 
       <div class="case-detail-content">
@@ -130,6 +147,7 @@ const metadata = {
 
         <section class="case-chapter" id="features" aria-labelledby="features-title">
           <h2 id="features-title">核心功能</h2>
+          <p class="case-section-intro">以下为拟设计的功能范围，不是当前可操作功能或已实现产品清单。</p>
           <div class="rs-grid-2 case-feature-grid">
             {
               caseStudy.features.map((feature) => (
@@ -145,7 +163,8 @@ const metadata = {
         <section class="case-chapter" id="architecture" aria-labelledby="architecture-title">
           <h2 id="architecture-title">技术架构</h2>
           <p class="case-section-intro">
-            这是概念性的分层与技术选型。实际选型需要结合业务规模、现有系统与安全要求，不代表已部署服务。
+            以下技术栈与分层均为概念方案的设计选型，不是实际使用记录。本站界面由 Astro
+            静态组件呈现，不运行这些业务后端；实际选型需另行评估。
           </p>
           <ul class="case-architecture">
             {
@@ -165,7 +184,7 @@ const metadata = {
         <section class="case-chapter" id="screens" aria-labelledby="screens-title">
           <h2 id="screens-title">页面展示</h2>
           <p class="case-section-intro">
-            先通过原创概念示意了解系统的信息组织，再查看页面规划。示意不是实际交付截图，也不连接业务系统。
+            下方为代表性的原创概念示意，后续文字说明页面规划，并非每项规划都已有对应界面。示意不是实际交付截图，也不连接业务系统。
           </p>
           <figure class="case-screen-figure">
             <SystemPreview variant={caseStudy.variant} />
@@ -190,7 +209,9 @@ const metadata = {
 
         <section class="case-chapter" id="value" aria-labelledby="value-title">
           <h2 id="value-title">项目价值</h2>
-          <p class="case-section-intro">以下是方案希望支持的业务方向，不是已经验证的效率提升、收益或客户成果。</p>
+          <p class="case-section-intro">
+            以下为预期设计目标，不是测得成果；本轮未获得足够证据确认真实效率提升、收益或客户交付。
+          </p>
           <ul class="case-point-list">
             {
               caseStudy.value.map((point) => (
@@ -203,8 +224,59 @@ const metadata = {
           </ul>
           <aside class="case-boundary" aria-labelledby="case-boundary-title">
             <h3 id="case-boundary-title">演示范围与边界</h3>
+            {caseStudy.evidence && <p>{caseStudy.evidence.summary}</p>}
             <p>{caseStudy.boundary}</p>
           </aside>
+          {
+            hasRelatedResources && (
+              <nav class="case-resources" id="case-related-resources" aria-labelledby="case-resources-title">
+                <h3 id="case-resources-title">相关服务、方案与文稿</h3>
+                <p>用于继续了解拟讨论范围与设计思路，不作为本案例已实现或商业交付的证据。</p>
+                {relatedServices.length > 0 && (
+                  <div>
+                    <h4>开发服务</h4>
+                    <ul>
+                      {relatedServices.map((service) => (
+                        <li>
+                          <a class="rs-link" href={`/services#${service.id}`}>
+                            {service.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {relatedSolutions.length > 0 && (
+                  <div>
+                    <h4>关联解决方案</h4>
+                    <ul>
+                      {relatedSolutions.map((solution) => (
+                        <li>
+                          <a class="rs-link" href={`/solutions/${solution.id}`}>
+                            {solution.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {relatedPosts.length > 0 && (
+                  <div>
+                    <h4>延伸阅读</h4>
+                    <ul>
+                      {relatedPosts.map((post) => (
+                        <li>
+                          <a class="rs-link" href={getPermalink(post.permalink, 'post')}>
+                            {post.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </nav>
+            )
+          }
         </section>
       </div>
     </div>
@@ -501,6 +573,33 @@ const metadata = {
     padding: 1.25rem;
     border-left: 3px solid var(--rs-blue, #245eea);
     background: var(--rs-soft, #f4f7fb);
+  }
+
+  .case-boundary p + p {
+    margin-top: 0.75rem;
+  }
+
+  .case-resources {
+    margin-top: 2rem;
+    scroll-margin-top: 7rem;
+  }
+
+  .case-resources h4 {
+    margin: 1.25rem 0 0.5rem;
+    font-weight: 650;
+  }
+
+  .case-resources ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-resources a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    overflow-wrap: anywhere;
   }
 
   .case-related-heading {

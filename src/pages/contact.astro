@@ -1,18 +1,25 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import PageIntro from '~/components/reisun/PageIntro.astro';
-import { brand } from '~/data/brand';
+import { brand, getConfirmedContact, getConfirmedProfile, hasConfirmedContact } from '~/data/brand';
+
+const phone = getConfirmedContact('phone');
+const email = getConfirmedContact('email');
+const wechat = getConfirmedContact('wechat');
+const wechatQrCode = getConfirmedContact('wechatQrCode');
+const github = getConfirmedProfile('github');
+const channelsReady = hasConfirmedContact();
 
 const metadata = {
-  title: '联系 REISUN｜需求沟通与项目咨询',
+  title: '联系合作与开发需求准备',
   description:
-    '了解与 REISUN 沟通软件开发需求时可以准备的信息。当前联系方式待配置，需求表单仅为前端演示，不发送或保存输入内容。',
+    '通过微信或邮箱联系 REISUN，交流软件开发需求与技术方案。了解沟通前可准备的资料；在线表单仅作演示，不发送或保存填写内容。',
 };
 
 const preparation = [
-  { title: '正在做什么', description: '业务场景、使用角色，以及目前的处理方式。' },
-  { title: '哪里需要改变', description: '最影响效率的环节，或现有系统的具体卡点。' },
-  { title: '期望怎样开始', description: '优先功能、已有资料，以及大致的时间安排。' },
+  { title: '现状与目标', description: '说明使用角色、当前流程和优先问题，可先整理脱敏页面或业务单据。' },
+  { title: '技术与接入资料', description: '按方向准备设备型号与点表、已有系统接口说明或移动端业务路径。' },
+  { title: '范围与实施约束', description: '列出优先功能、时间预算、部署条件和验收预期，不在演示表单提交真实资料。' },
 ];
 
 const projectTypes = [
@@ -27,6 +34,7 @@ const projectTypes = [
 
 <Layout metadata={metadata}>
   <PageIntro
+    variant="contact"
     label="联系 REISUN"
     title="从一个具体需求开始。"
     description="不必先写好一份完整的需求文档。说说业务现状、当前卡点和想要改变的事，就是一个清晰的起点。"
@@ -39,28 +47,28 @@ const projectTypes = [
           <circle cx="12" cy="12" r="9"></circle><path d="M12 11v6m0-10v1"></path>
         </svg>
         <div>
-          <h2 id="contact-heading">联系渠道尚待配置</h2>
+          <h2 id="contact-heading">{channelsReady ? '通过正式渠道联系' : '联系渠道尚待配置'}</h2>
           <p>{brand.contact.notice}</p>
-          <p>此页面用于展示沟通方式与表单交互，目前暂不能通过本站发起真实咨询。</p>
+          <p>请通过微信或邮件沟通实际需求，不要在演示表单填写敏感资料。</p>
         </div>
       </div>
 
+      <section class="requirements-guide" aria-labelledby="guide-heading">
+        <h2 id="guide-heading">可以先想清楚这几件事</h2>
+        <dl class="preparation-list">
+          {
+            preparation.map((item) => (
+              <div>
+                <dt>{item.title}</dt>
+                <dd>{item.description}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
       <div class="contact-layout">
         <div class="contact-main">
-          <section class="requirements-guide" aria-labelledby="guide-heading">
-            <h2 id="guide-heading">可以先想清楚这几件事</h2>
-            <dl class="preparation-list">
-              {
-                preparation.map((item) => (
-                  <div>
-                    <dt>{item.title}</dt>
-                    <dd>{item.description}</dd>
-                  </div>
-                ))
-              }
-            </dl>
-          </section>
-
           <reisun-contact-demo data-demo-message={brand.contact.formNotice}>
             <section class="request-panel" aria-labelledby="request-heading">
               <div class="request-heading">
@@ -85,7 +93,7 @@ const projectTypes = [
                         id="request-contact"
                         name="contact"
                         type="text"
-                        placeholder="邮箱、电话或微信（演示用）"
+                        placeholder="邮箱或微信（仅演示，请使用示例内容）"
                         aria-describedby="contact-field-note"
                       />
                       <p id="contact-field-note" class="field-note">当前不会据此联系您，无需填写真实信息。</p>
@@ -114,8 +122,7 @@ const projectTypes = [
               </form>
               <noscript>
                 <p class="no-script-note">
-                  浏览器未启用
-                  JavaScript，演示表单已停用，以避免误传输入内容。正式联系方式也尚未配置，请待联系信息更新后再联系。
+                  浏览器未启用 JavaScript，演示表单已停用，以避免误传输入内容。请通过本页公开的微信或邮箱联系。
                 </p>
               </noscript>
               <p
@@ -134,18 +141,27 @@ const projectTypes = [
 
         <aside class="contact-aside" aria-labelledby="channels-heading">
           <section class="channels-panel">
-            <h2 id="channels-heading">正式联系方式</h2>
-            <p class="channels-intro">以下均为待配置占位，暂不可拨打、发送邮件或添加微信。</p>
+            <div class="channels-heading">
+              <h2 id="channels-heading">正式联系方式</h2>
+              <span>{channelsReady ? '微信 / 邮箱' : '暂未提供'}</span>
+            </div>
+            <p class="channels-intro">可发送邮件，或在微信中搜索下方微信号。</p>
             <dl class="contact-channels">
-              <div>
-                <dt>
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
-                    ><path d="m5 3 4 1 1 5-2 2a14 14 0 0 0 5 5l2-2 5 1 1 4c-1 3-5 3-8 1S4 14 3 9s-1-5 2-6Z"></path></svg
-                  >
-                  电话
-                </dt>
-                <dd>{brand.contact.phone}</dd>
-              </div>
+              {
+                phone && (
+                  <div>
+                    <dt>
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="m5 3 4 1 1 5-2 2a14 14 0 0 0 5 5l2-2 5 1 1 4c-1 3-5 3-8 1S4 14 3 9s-1-5 2-6Z" />
+                      </svg>
+                      电话
+                    </dt>
+                    <dd>
+                      <a href={`tel:${phone}`}>{phone}</a>
+                    </dd>
+                  </div>
+                )
+              }
               <div>
                 <dt>
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
@@ -153,7 +169,17 @@ const projectTypes = [
                   >
                   邮箱
                 </dt>
-                <dd>{brand.contact.email}</dd>
+                <dd>
+                  {
+                    email ? (
+                      <a class="rs-link" href={`mailto:${email}`}>
+                        {email}
+                      </a>
+                    ) : (
+                      '待配置'
+                    )
+                  }
+                </dd>
               </div>
               <div>
                 <dt>
@@ -163,38 +189,40 @@ const projectTypes = [
                   >
                   微信
                 </dt>
-                <dd>{brand.contact.wechat}</dd>
+                <dd>{wechat ?? '待配置'}</dd>
               </div>
             </dl>
+            {
+              github && (
+                <p class="channels-intro">
+                  <a class="rs-link" href={github} target="_blank" rel="noopener noreferrer">
+                    查看已确认的 GitHub 主页
+                  </a>
+                </p>
+              )
+            }
           </section>
 
-          <figure class="wechat-panel">
-            {
-              brand.contact.wechatQrCode ? (
+          {
+            wechatQrCode && (
+              <figure class="wechat-panel">
                 <img
                   class="wechat-image"
-                  src={brand.contact.wechatQrCode}
+                  src={wechatQrCode}
                   alt="REISUN 正式联系微信二维码"
                   width="192"
                   height="192"
                   loading="lazy"
                 />
-              ) : (
-                <div class="wechat-placeholder" role="img" aria-label="微信二维码待配置，此图不是二维码，无法扫描">
-                  <svg viewBox="0 0 80 80" fill="none" aria-hidden="true">
-                    <rect x="17" y="17" width="46" height="46" rx="10" />
-                    <path d="M29 33h22M29 41h14M13 67l54-54" />
-                  </svg>
-                  <strong>二维码待配置</strong>
-                  <span>此处不是可扫描二维码</span>
-                </div>
-              )
-            }
-            <figcaption>
-              <strong>微信沟通</strong>
-              <span>正式二维码将在联系渠道配置后展示。</span>
-            </figcaption>
-          </figure>
+                <figcaption>
+                  <>
+                    <strong>微信沟通</strong>
+                    <span>可扫描经确认的微信二维码联系。</span>
+                  </>
+                </figcaption>
+              </figure>
+            )
+          }
 
           <div class="scope-note">
             <h3>先确认范围，再讨论实现</h3>
@@ -258,10 +286,10 @@ const projectTypes = [
     align-items: flex-start;
     gap: 14px;
     padding: 20px 24px;
-    margin-bottom: 42px;
+    margin-bottom: 36px;
     border: 1px solid #cad9f5;
-    border-radius: 8px;
-    background: #f1f5ff;
+    border-radius: 6px;
+    background: #f4f7fb;
     color: #294972;
   }
   .contact-notice > svg {
@@ -287,14 +315,16 @@ const projectTypes = [
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(0, 0.9fr);
     align-items: start;
-    gap: clamp(28px, 5vw, 64px);
+    gap: clamp(28px, 4vw, 48px);
   }
   .contact-main,
   .contact-aside {
     min-width: 0;
   }
   .requirements-guide {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rs-line, #dce4ef);
   }
   .requirements-guide h2,
   .request-heading h2,
@@ -306,21 +336,23 @@ const projectTypes = [
   }
   .preparation-list {
     display: grid;
-    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
     margin-top: 22px;
   }
   .preparation-list > div {
-    display: grid;
-    grid-template-columns: minmax(112px, 0.55fr) minmax(0, 1.7fr);
-    gap: 16px;
+    min-width: 0;
+    padding-left: 16px;
+    border-left: 2px solid #cad9f5;
   }
   .preparation-list dt {
     color: var(--rs-ink, #172b46);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.8;
   }
   .preparation-list dd {
+    margin-top: 7px;
     color: var(--rs-muted, #5b6b80);
     font-size: 14px;
     line-height: 1.8;
@@ -330,6 +362,7 @@ const projectTypes = [
   }
   .request-panel {
     border: 1px solid var(--rs-line, #dce4ef);
+    border-top: 3px solid var(--rs-blue, #245eea);
     border-radius: 12px;
     padding: 30px;
     background: white;
@@ -352,8 +385,11 @@ const projectTypes = [
     line-height: 1.7;
   }
   .form-explanation {
+    text-wrap: balance;
     margin: 14px 0 26px;
-    color: var(--rs-muted, #5b6b80);
+    padding-left: 12px;
+    border-left: 2px solid #cad9f5;
+    color: #405a7d;
     font-size: 14px;
     line-height: 1.85;
   }
@@ -432,6 +468,8 @@ const projectTypes = [
   }
   .form-actions {
     margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rs-line, #dce4ef);
   }
   .form-actions button {
     min-width: 160px;
@@ -483,16 +521,31 @@ const projectTypes = [
   }
   .channels-panel {
     padding: 28px;
-    background: var(--rs-navy, #102b50);
+    background: var(--rs-soft, #f4f7fb);
+    border: 1px solid var(--rs-line, #dce4ef);
     border-radius: 10px;
   }
+  .channels-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .channels-heading > span {
+    padding: 2px 8px;
+    border: 1px dashed #a9bbd2;
+    border-radius: 4px;
+    color: #4f6581;
+    font-size: 12px;
+    line-height: 1.8;
+  }
   .channels-panel h2 {
-    color: white;
+    color: var(--rs-ink, #172b46);
     font-size: 22px;
   }
   .channels-intro {
     margin-top: 10px;
-    color: #c8d8ec;
+    color: var(--rs-muted, #5b6b80);
     font-size: 14px;
     line-height: 1.85;
   }
@@ -500,8 +553,13 @@ const projectTypes = [
     margin-top: 24px;
   }
   .contact-channels > div {
-    padding: 18px 0;
-    border-top: 1px solid #365173;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rs-line, #dce4ef);
   }
   .contact-channels > div:last-child {
     padding-bottom: 0;
@@ -510,65 +568,36 @@ const projectTypes = [
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #c8d8ec;
+    color: #405a7d;
     font-size: 14px;
   }
   .contact-channels svg {
     flex: 0 0 20px;
     width: 20px;
     height: 20px;
-    stroke: #86dbe8;
+    stroke: #657c9a;
     stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
   .contact-channels dd {
-    margin-top: 8px;
-    padding-left: 30px;
-    color: white;
-    font-size: 18px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: #e7edf5;
+    color: #4f6581;
+    font-size: 14px;
     line-height: 1.6;
     overflow-wrap: anywhere;
   }
   .wechat-panel {
     display: grid;
     justify-items: center;
-    gap: 20px;
+    gap: 16px;
     margin: 24px 0 0;
-    padding: 28px 20px;
+    padding: 20px;
     border: 1px solid var(--rs-line, #dce4ef);
     border-radius: 10px;
-    background: var(--rs-soft, #f4f7fb);
-  }
-  .wechat-placeholder {
-    display: grid;
-    justify-items: center;
-    align-content: center;
-    gap: 8px;
-    width: min(100%, 216px);
-    min-height: 216px;
-    padding: 16px;
-    border: 1px dashed #a9bbd2;
-    border-radius: 8px;
     background: white;
-    color: #4f6581;
-  }
-  .wechat-placeholder svg {
-    width: 72px;
-    height: 72px;
-    stroke: #95abc6;
-    stroke-width: 2;
-    stroke-linecap: round;
-  }
-  .wechat-placeholder strong {
-    font-size: 16px;
-    font-weight: 600;
-  }
-  .wechat-placeholder > span {
-    color: #64758b;
-    font-size: 12px;
-    line-height: 1.8;
-    text-align: center;
   }
   .wechat-image {
     width: min(100%, 192px);
@@ -577,7 +606,7 @@ const projectTypes = [
   figcaption {
     display: grid;
     gap: 6px;
-    text-align: center;
+    width: 100%;
   }
   figcaption strong {
     color: var(--rs-ink, #172b46);
@@ -637,12 +666,29 @@ const projectTypes = [
       padding: 18px;
       gap: 12px;
     }
+    .requirements-guide {
+      margin-bottom: 28px;
+      padding-bottom: 26px;
+    }
+    .preparation-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .preparation-list > div {
+      display: grid;
+      grid-template-columns: minmax(112px, 0.55fr) minmax(0, 1.7fr);
+      gap: 12px;
+    }
+    .preparation-list dd {
+      margin-top: 0;
+    }
     .form-fields {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .contact-aside {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 20px;
     }
     .wechat-panel {

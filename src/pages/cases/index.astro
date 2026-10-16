@@ -5,19 +5,21 @@ import CTA from '~/components/reisun/CTA.astro';
 import CaseFilter from '~/components/reisun/CaseFilter.astro';
 import SystemPreview from '~/components/reisun/SystemPreview.astro';
 import { cases, caseCategories, caseDemoNotice } from '~/data/cases';
+import { evidenceLabels } from '~/data/evidence';
 
 const metadata = {
-  title: '软件定制开发演示案例｜工业物联网、ERP、合同流程与小程序',
+  title: '软件定制开发概念演示｜工业物联网、ERP、合同流程与小程序',
   description:
-    '查看 REISUN 的工业物联网、ERP 企业运营、合同审批和小程序业务演示案例，了解业务背景、实现思路、功能与技术架构。所有页面均为模拟数据与原创概念示意，不代表真实客户项目。',
+    '查看工业物联网、ERP、合同审批与小程序的四个概念演示案例，了解虚拟场景、功能规划和架构选型。技术组合不是实际使用记录，价值不是测得成果，不代表真实客户交付。',
 };
 ---
 
 <PageLayout metadata={metadata}>
   <PageIntro
+    variant="cases"
     label="案例中心"
-    title="从业务场景，看系统如何落地"
-    description="围绕设备、经营、流程与移动服务，展示不同系统的设计思路。先看要解决的问题，再看功能与架构如何组织。"
+    title="从业务场景，看系统设计思路"
+    description="围绕虚拟的设备、经营、流程与移动服务场景，展示四个概念演示。先看设计问题，再看拟议功能与架构，不将示意当作交付记录。"
   />
 
   <section class="rs-section cases-section" aria-labelledby="case-library-title">
@@ -38,11 +40,13 @@ const metadata = {
               <div class="case-study-body">
                 <div class="case-study-meta">
                   <span class="case-study-label">{item.label}</span>
+                  {item.evidence && <span>{evidenceLabels[item.evidence.status]}</span>}
                   <span>{item.category}</span>
                 </div>
                 <h3 id={`case-${item.id}-title`}>{item.title}</h3>
                 <p class="case-study-summary">{item.summary}</p>
-                <ul class="rs-tags case-study-stack" aria-label="方案技术组合">
+                <p class="case-study-selection">技术设计选型，非实际使用记录</p>
+                <ul class="rs-tags case-study-stack" aria-label="概念方案技术设计选型，非实际使用记录">
                   {item.stack.map((technology) => (
                     <li class="rs-tag">{technology}</li>
                   ))}
@@ -76,6 +80,7 @@ const metadata = {
   .cases-disclaimer {
     max-width: 86ch;
     line-height: 1.85;
+    text-wrap: balance;
   }
 
   .case-study {
@@ -130,9 +135,16 @@ const metadata = {
   }
 
   .case-study-stack {
-    margin-top: 1.125rem;
+    margin-top: 0.5rem;
     padding: 0;
     list-style: none;
+  }
+
+  .case-study-selection {
+    margin: 1.125rem 0 0;
+    color: var(--rs-muted, #5b6b80);
+    font-size: 0.875rem;
+    line-height: 1.8;
   }
 
   .case-study-stack li {

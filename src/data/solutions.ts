@@ -1,3 +1,5 @@
+import { evidenceStatus, type ContentEvidence } from '~/data/evidence';
+
 export type SolutionVariant = 'industrial' | 'enterprise' | 'contract' | 'mobile';
 
 export interface SolutionPoint {
@@ -34,6 +36,10 @@ export interface Solution {
   boundaries: string[];
   technologies: string[];
   serviceIds: string[];
+  preparation?: string[];
+  caseIds?: string[];
+  postSlugs?: string[];
+  evidence?: ContentEvidence;
   previewCaption: string;
 }
 
@@ -41,13 +47,13 @@ export const solutions: Solution[] = [
   {
     id: 'industrial',
     title: '工业设备采集与监控方案',
-    summary: '从设备点位到业务看板，建立可追踪的数据采集链路。',
+    summary: '规划从设备点位到监控看板的采集链路，先确认读数含义与接入条件。',
     variant: 'industrial',
     icon: 'tabler:cpu',
     audience: '需要设备联网、产线监测、能耗汇集的制造与设备管理团队。',
     introduction:
-      '设备能联网，并不意味着数据已经可用。方案围绕现场协议、点位含义、采集质量与业务用途组织链路，让设备数据进入平台后仍保留清楚的来源和状态。',
-    startingPoint: '先选一组有代表性的设备和点位，确认接入条件与业务口径，再逐步扩展覆盖范围。',
+      '针对 PLC、仪表与网关数据分散、异常难定位的问题，提出只读采集、质量标记、历史趋势与告警处理的分层设计。本页是静态方案演示，协议适配与现场可用性需另行开发、联调和确认。',
+    startingPoint: '先选代表设备与少量关键点位，约定只读权限、读数比对方法和异常恢复条件，再评估扩展批次。',
     problems: [
       {
         title: '设备类型多，接入条件不一致',
@@ -64,7 +70,7 @@ export const solutions: Solution[] = [
     ],
     architecture: {
       title: '从现场接入，到业务使用',
-      description: '按数据流向分层，采集服务与业务应用各自承担清楚的职责。',
+      description: '拟将现场读取、边缘调度、数据处理与业务展示分层；传输和存储方式按网络、点位规模及保留期评估。',
       layers: [
         {
           title: '现场设备',
@@ -106,51 +112,72 @@ export const solutions: Solution[] = [
     modules: [
       {
         title: '设备与点位管理',
-        description: '把现场信息整理成可以维护的接入配置。',
+        description: '拟将设备、连接与点位分开建模，保存点位来源和转换口径。',
         features: ['设备分组与基本资料', '连接参数与点位映射', '数据类型、单位与采集周期'],
       },
       {
         title: '采集运行与监测',
-        description: '让运行状态、异常原因和最后有效数据可以区分。',
+        description: '拟分别记录任务运行、连接、读取结果与最后有效时间，不把缺失读数当作零。',
         features: ['连接与读取状态', '采集质量与最后更新时间', '错误记录与重连策略'],
       },
       {
         title: '数据应用与联动',
-        description: '从看见数据，延伸到日常查询和问题处理。',
+        description: '拟围绕点位来源与质量组织趋势、告警确认和外部系统读取接口。',
         features: ['实时值与历史趋势', '告警规则与处理记录', '报表导出与业务接口'],
       },
     ],
     workflow: [
       { title: '确认接入条件', description: '收集设备型号、协议资料、点位表与现场网络条件。' },
-      { title: '完成代表设备联调', description: '验证读数、单位、时间戳和异常恢复，明确可接入范围。' },
-      { title: '建立数据链路', description: '串联采集、存储、规则与展示，保留运行记录。' },
-      { title: '分批扩展与交接', description: '按设备批次扩展，移交配置、文档与运行维护方法。' },
+      { title: '代表设备联调', description: '按约定比对读数、单位、字节序和时间戳，记录断连恢复结果与未覆盖条件。' },
+      { title: '开发数据链路', description: '按确认范围开发采集、存储、规则与展示，约定数据过期、缓存和补传策略。' },
+      {
+        title: '分批验收与交接',
+        description: '按设备批次和约定工况验收，移交配置、运行记录与维护方法，不外推至未验设备。',
+      },
     ],
     deliverables: [
-      '设备与点位清单、协议接入说明',
-      '采集服务与管理平台源码',
-      '数据模型、业务接口与配置文档',
-      '联调记录、部署与故障恢复说明',
+      '约定设备与点位清单、协议适配范围和验收口径',
+      '约定模块的采集服务、管理界面源码与配置',
+      '数据模型、字段映射、业务接口与保留策略说明',
+      '约定工况的联调记录、部署步骤与故障恢复说明',
     ],
     boundaries: [
       '页面为方案与界面演示，数值不来自真实设备，也不表示已有客户部署。',
-      '协议能力、设备数量、采集周期与数据保留期，需要结合现场环境和设备授权评估。',
-      '硬件采购、工业网络改造、现场施工及设备写入控制不默认包含，需单独确认范围。',
+      '协议名称仅表示拟评估方向；设备型号、固件、协议版本、点位和采集周期以资料与联调结果为准，不承诺全厂商兼容或数据零丢失。',
+      '默认讨论只读采集。硬件采购、工业网络改造、现场施工及写入控制不默认包含，不替代设备安全控制系统。',
     ],
     technologies: ['Java', 'Modbus / OPC UA / MQTT（按设备评估）', 'Vue', '关系型 / 时序数据存储'],
     serviceIds: ['industrial-iot', 'data-integration', 'java-enterprise'],
+    preparation: [
+      '设备型号、固件与协议版本；寄存器或节点表、数据类型、字节序、单位和换算规则。',
+      '网络拓扑、读权限与设备授权说明；联调设备、现场联系人和允许的联调窗口，不在本站提交账号或密钥。',
+      '采集周期、历史保留期、允许延迟与断网处理要求；用于比对的脱敏样例及告警阈值。',
+      '拟对接系统的接口说明、字段口径、访问限制与验收工况，逐设备确认接入范围。',
+    ],
+    caseIds: ['industrial-iot-monitoring'],
+    postSlugs: ['java-industrial-collection-architecture', 'modbus-tcp-opc-ua-integration'],
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '本站仅展示采集链路设计和模拟界面，未提供可运行的 Java 采集服务或现场协议验收证据。',
+      sources: [
+        'src/data/solutions.ts',
+        'src/components/reisun/SystemPreview.astro',
+        'src/components/reisun/SolutionArchitecture.astro',
+      ],
+      pending: ['获授权的协议实现与运行记录', '具体设备、固件及点位的联调结论', '接入规模、采集周期和异常恢复验收口径'],
+    },
     previewCaption: '演示界面用于说明设备概览、趋势与采集状态的组织方式，不连接真实设备。',
   },
   {
     id: 'enterprise',
     title: 'ERP / OA 业务协同方案',
-    summary: '围绕单据、审批与台账，把跨部门协作接成一条线。',
+    summary: '以采购、审批与入库为切入点，规划可追溯的跨部门单据链。',
     variant: 'enterprise',
     icon: 'tabler:building-community',
     audience: '需要统一采购、库存、项目与办公审批的企业业务与管理团队。',
     introduction:
-      '当业务靠表格、聊天和多个系统接力时，信息经常在交接处丢失。方案从主数据、单据关系与岗位职责入手，建立适合自身作业方式的业务平台，而不是要求团队先适应一套庞杂流程。',
-    startingPoint: '选择采购到入库、项目到费用等一条高频业务链，先形成可使用、可对账的闭环。',
+      '针对基础资料重复维护、审批与执行脱节、台账难对账的问题，提出从主数据、单据状态和岗位权限入手的定制设计。本页不提供现成 ERP / OA 产品，业务规则、开发模块与集成范围需按项目确认。',
+    startingPoint: '选择采购到入库或项目到费用的一条高频业务链，用脱敏单据明确状态、责任人和对账口径。',
     problems: [
       {
         title: '同一份信息在多处重复维护',
@@ -167,7 +194,8 @@ export const solutions: Solution[] = [
     ],
     architecture: {
       title: '以业务单据连接部门协作',
-      description: '从统一基础资料出发，通过规则与流程把操作转化为可追溯的业务记录。',
+      description:
+        '拟以岗位工作台连接单据模块，共享主数据、权限与流程规则；明确已有 ERP 的数据归属、同步方向和对账责任。',
       layers: [
         { title: '统一入口', description: '按岗位组织工作', items: ['业务工作台', '审批待办', '移动填报'] },
         { title: '业务模块', description: '围绕单据协同', items: ['采购与库存', '项目与费用', '办公审批', '查询报表'] },
@@ -197,51 +225,69 @@ export const solutions: Solution[] = [
     modules: [
       {
         title: '基础资料与权限',
-        description: '建立统一的数据入口和职责边界。',
+        description: '拟统一业务编码和维护责任，区分菜单、操作与组织数据范围。',
         features: ['组织、岗位与角色', '客户、供应商和物料资料', '操作权限与数据范围'],
       },
       {
         title: '业务单据与审批',
-        description: '把申请、审批和执行放进同一条业务链。',
+        description: '拟关联申请、审批与库存流水，明确退回、撤回、冲销和重复操作规则。',
         features: ['采购、入库与库存台账', '项目协作与费用申请', '条件审批、退回与处理记录'],
       },
       {
         title: '查询报表与系统集成',
-        description: '让汇总可追溯，让跨系统流转可核对。',
+        description: '拟按来源单据汇总，定义同步失败、重复接收与对账差异的处理入口。',
         features: ['单据关联与业务查询', '指标口径与报表导出', '接口同步、失败处理与对账'],
       },
     ],
     workflow: [
       { title: '梳理业务闭环', description: '确认角色、单据、状态和原有系统的职责。' },
       { title: '统一资料与规则', description: '整理编码、审批条件、数据权限与报表口径。' },
-      { title: '分模块实施', description: '按主业务链组织页面、接口与存量数据迁移。' },
-      { title: '试运行与交接', description: '围绕真实作业核对流程，移交使用与维护文档。' },
+      { title: '分模块开发与联调', description: '按业务链开发页面和接口，用脱敏样例核对单据、库存及同步结果。' },
+      { title: '试运行与交接', description: '按约定场景核对审批、冲销、权限与对账，迁移前确认备份、窗口和回退步骤。' },
     ],
     deliverables: [
-      '业务流程、单据与权限设计说明',
-      '管理平台前后端源码与数据库结构',
-      '数据导入模板、接口与报表口径文档',
-      '迁移、部署、操作和维护说明',
+      '约定业务链的流程、单据状态与权限矩阵',
+      '约定模块的前后端源码、数据库结构与流程配置',
+      '数据导入模板、接口映射、报表口径及对账说明',
+      '约定场景的验收记录、迁移回退步骤与使用维护文档',
     ],
     boundaries: [
       '页面为业务协同方案演示，不是现成 ERP 产品的功能或价格承诺。',
-      '实施模块、组织层级、存量数据质量与第三方接口范围需共同确认。',
+      '模块、组织层级、库存与费用口径、存量数据质量需共同确认；第三方接口需有合法授权、可用说明和联调条件。',
       '专业财务核算、税务申报和第三方软件授权不默认包含，相关接口另行评估。',
     ],
     technologies: ['Java / Spring Boot', 'Vue', 'MySQL / PostgreSQL', '工作流与消息服务（按需）'],
     serviceIds: ['enterprise-management', 'java-enterprise', 'data-integration'],
+    preparation: [
+      '现行流程、脱敏单据与报表样例；明确采购、入库、费用等首期业务范围及负责人。',
+      '组织岗位、审批条件、职责分离要求与数据权限矩阵，包括退回、撤销和冲销规则。',
+      '客户、供应商、物料等主数据编码及存量数据样例；约定清洗责任、迁移窗口和回退条件。',
+      '已有 ERP、财务或身份系统的接口文档、授权方式、调用限制和联调环境，不提供生产凭据。',
+    ],
+    caseIds: ['enterprise-erp'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'enterprise-digital-transformation'],
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '本站仅展示业务协同的逻辑设计与模拟单据，不证明 ERP / OA 后端实现、真实库存或客户交付。',
+      sources: [
+        'src/data/solutions.ts',
+        'src/components/reisun/SystemPreview.astro',
+        'src/components/reisun/SolutionArchitecture.astro',
+      ],
+      pending: ['实际业务规则与授权材料', '可公开的后端实现及权限验证记录', '迁移、同步与对账的验收范围'],
+    },
     previewCaption: '演示界面用于呈现业务待办、单据和协同工作台结构，不包含真实企业经营数据。',
   },
   {
     id: 'contract',
     title: '合同管理与审批方案',
-    summary: '让合同从起草、审批到履约，每一步都有清楚的状态与责任人。',
+    summary: '规划合同台账、文件版本与审批关联，让履约事项有明确责任人。',
     variant: 'contract',
     icon: 'tabler:file-description',
     audience: '需要规范合同审批、版本归档和履约跟进的业务、法务与管理团队。',
     introduction:
-      '合同不应只是一份通过聊天传递的附件。方案以合同台账为主线，把相对方、版本、审批意见、履约节点和归档材料关联起来，让不同角色在同一份业务记录上协作。',
-    startingPoint: '先确认合同类型、审批权限与履约节点，选择一类高频合同建立从申请到归档的完整流程。',
+      '针对附件版本散落、审批依据不明、签订后缺少跟进的问题，提出合同台账、版本快照、条件审批与履约事项的关联设计。本页仅为软件方案演示，不提供法律审查或可用的电子签约服务。',
+    startingPoint: '选择一类高频合同，先用脱敏模板约定审批版本、退回规则、履约责任与归档要求。',
     problems: [
       {
         title: '版本散落，难判断哪份有效',
@@ -258,7 +304,7 @@ export const solutions: Solution[] = [
     ],
     architecture: {
       title: '一份台账，贯穿合同全流程',
-      description: '以合同记录关联文件版本、流程实例和履约事项，保留关键变更上下文。',
+      description: '拟以合同记录关联文件版本、流程实例与履约事项；审批绑定明确版本，签章和财务作为独立的可选集成边界。',
       layers: [
         { title: '角色工作台', description: '按职责协作', items: ['业务发起', '法务审阅', '审批处理', '履约跟进'] },
         {
@@ -292,17 +338,17 @@ export const solutions: Solution[] = [
     modules: [
       {
         title: '合同台账与文件版本',
-        description: '给合同业务和文档一个统一的归属。',
+        description: '拟将合同元数据与文件分开管理，保留版本快照、变更说明和访问范围。',
         features: ['合同分类、编号与相对方', '金额、期限与关联业务', '附件版本、变更说明和归档'],
       },
       {
         title: '审批流与审阅记录',
-        description: '清楚记录谁在什么版本上做了什么决定。',
+        description: '拟绑定审批实例与文本版本，定义改版、退回和重新提交后的权限与状态。',
         features: ['按类型与金额配置流程', '审阅意见、退回与重新提交', '审批版本关联和操作留痕'],
       },
       {
         title: '履约与提醒',
-        description: '把合同约定转化为可跟进的工作事项。',
+        description: '拟将交付、付款和到期事项关联到责任角色，区分提醒发送与实际处理结果。',
         features: ['交付与收付款计划', '到期、续签和事项提醒', '履约记录、检索与报表'],
       },
     ],
@@ -310,33 +356,58 @@ export const solutions: Solution[] = [
       { title: '定义合同规则', description: '确认合同类型、编号方式、金额口径与访问权限。' },
       { title: '设计审批路径', description: '梳理审阅职责、审批分支、退回与版本变更规则。' },
       { title: '串联履约事项', description: '设置交付、付款、到期节点与对应责任人。' },
-      { title: '整理归档与交接', description: '确认存量导入、文件访问、查询和维护方式。' },
+      {
+        title: '验收归档与交接',
+        description: '按约定核对改版重审、越权访问、提醒失败与归档查询，移交迁移和维护文档。',
+      },
     ],
     deliverables: [
-      '合同数据模型、权限与审批规则说明',
-      '合同管理平台源码与文件存储配置',
-      '台账导入模板、接口和操作文档',
-      '部署、归档与维护说明',
+      '约定合同类型的数据模型、权限矩阵与审批版本规则',
+      '约定模块的管理平台源码、流程与文件存储配置',
+      '台账导入模板、可选集成接口与操作说明',
+      '约定场景的验收记录、部署步骤与归档维护文档',
     ],
     boundaries: [
       '页面为合同管理方案演示，不提供法律意见，也不替代专业合同审查。',
-      '电子签章、实名认证、证据保全与法律效力取决于合规服务商、实际流程及相关要求，均需单独评估。',
+      '电子签章、实名认证与证据保全不默认包含；需单独确认服务商、主体授权、接口与相关要求，不承诺法律效力。',
       '提醒渠道、文件存储周期、历史资料迁移和第三方服务费用按项目范围确认。',
     ],
     technologies: ['Java / Spring Boot', 'Vue', '关系型数据库', '文件存储', '工作流引擎（按需）'],
     serviceIds: ['enterprise-management', 'java-enterprise', 'data-integration'],
+    preparation: [
+      '脱敏合同模板、合同类别、编号与金额口径；不要通过演示表单上传真实合同或相对方资料。',
+      '审阅、审批与代理授权矩阵；版本变更、退回、撤回和重新审批的制度要求。',
+      '履约事项、提醒渠道、责任岗位、文件保留期与下载导出权限要求。',
+      '如需签章或财务对接，准备服务商接口资料、主体授权与联调条件，单独确认费用和验收范围。',
+    ],
+    caseIds: ['contract-workflow'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'enterprise-digital-transformation'],
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '本站仅展示合同版本、审批和履约的概念关联；未接入真实合同、电子签章、实名认证或通知服务。',
+      sources: [
+        'src/data/solutions.ts',
+        'src/components/reisun/SystemPreview.astro',
+        'src/components/reisun/SolutionArchitecture.astro',
+      ],
+      pending: [
+        '合同规则、授权制度与资料公开许可',
+        '流程及文件访问控制的实际实现证据',
+        '签章、通知和财务服务的接入条件',
+      ],
+    },
     previewCaption: '演示界面中的合同名称、金额与审批状态均为示意，不包含真实合同或签署记录。',
   },
   {
     id: 'mobile',
     title: '小程序与互联网平台方案',
-    summary: '连接用户入口与运营后台，把一次操作接到完整的服务流程。',
+    summary: '以预约、申请或查询为起点，规划移动入口与后台受理的状态闭环。',
     variant: 'mobile',
     icon: 'tabler:device-mobile',
     audience: '需要预约服务、会员运营、订单管理或移动业务入口的产品与运营团队。',
     introduction:
-      '移动端的提交只是业务开始。方案同时考虑用户如何找到服务、完成操作、获得进度反馈，以及后台如何受理、履约和维护内容，避免只做前台页面而留下运营断点。',
-    startingPoint: '明确一条核心用户路径和对应的后台处理流程，先完成可运营的业务闭环，再扩展增长与会员能力。',
+      '针对移动提交后靠人工接单、预约容量不一致、用户无法查询进度的问题，提出小程序或 H5、Java 业务接口与管理后台的协同设计。本页是网页概念演示，不是已发布小程序，也未接入登录、订单或支付。',
+    startingPoint: '先选预约、业务申请或移动填报的一条核心路径，明确用户、后台责任人、取消规则与反馈状态。',
     problems: [
       {
         title: '入口很多，核心操作不清楚',
@@ -353,7 +424,8 @@ export const solutions: Solution[] = [
     ],
     architecture: {
       title: '用户侧与运营侧，共用业务闭环',
-      description: '以同一套业务接口与状态规则连接移动入口和管理后台。',
+      description:
+        '拟让移动入口和后台通过统一业务接口处理同一记录；容量、权限与重复提交由服务端校验，平台能力按授权逐项评估。',
       layers: [
         { title: '用户入口', description: '适配使用场景', items: ['微信小程序', '移动 H5', '服务与进度查询'] },
         {
@@ -387,39 +459,67 @@ export const solutions: Solution[] = [
     modules: [
       {
         title: '移动端服务入口',
-        description: '让用户快速理解服务并完成核心操作。',
+        description: '拟围绕服务选择、提交确认与记录查询组织页面，覆盖无可用时段和网络失败提示。',
         features: ['服务展示、内容与搜索', '预约、下单或业务申请', '个人中心、进度与记录查询'],
       },
       {
         title: '业务接口与平台能力',
-        description: '把前台动作转化为可信的业务记录。',
+        description: '拟在服务端校验容量、权限和状态，设计重复提交、改期与取消的处理规则。',
         features: ['登录授权与访问控制', '提交校验、状态与防重复处理', '订阅消息与支付能力评估'],
       },
       {
         title: '运营与管理后台',
-        description: '给团队日常运营所需的维护和处理入口。',
+        description: '拟以岗位工作台承接受理、排期与服务跟进，仅开放业务必需的个人资料。',
         features: ['服务与内容维护', '订单、预约和申请处理', '角色权限、运营查询与导出'],
       },
     ],
     workflow: [
       { title: '确认用户与平台', description: '明确核心用户、使用场景、主体资质和平台能力。' },
       { title: '梳理核心业务路径', description: '串联用户提交、运营受理、履约与进度反馈。' },
-      { title: '联动前后台实现', description: '共同实现移动端、接口和运营后台，处理异常分支。' },
-      { title: '准备发布与交接', description: '整理配置、隐私说明所需信息与审核材料，移交运营文档。' },
+      {
+        title: '前后台开发与联调',
+        description: '按约定开发移动端、接口和后台，核对重复提交、容量冲突、取消与失败恢复。',
+      },
+      {
+        title: '发布准备与交接',
+        description: '按约定移交配置、隐私资料清单和审核材料；源码验收与平台审核、正式运营分别确认。',
+      },
     ],
     deliverables: [
-      '用户路径、页面与前后台业务设计',
-      '小程序或 H5、接口和管理后台源码',
-      '数据库结构、平台配置与接口文档',
-      '发布资料清单、运营和维护说明',
+      '约定用户路径、页面、状态流转与个人信息清单',
+      '约定终端的小程序或 H5、业务接口与后台模块源码',
+      '数据库结构、平台配置说明与接口契约',
+      '约定场景的联调记录、发布资料清单与运营维护文档',
     ],
     boundaries: [
       '页面为小程序与平台概念演示，不是真实可交易应用，不接收订单或支付。',
-      '平台认证、类目资质、支付开通、隐私要求与审核结果由相应平台及实际主体情况决定。',
+      '登录、订阅消息、支付等仅为可选集成项；主体认证、类目资质、隐私要求和审核条件需按项目与平台要求确认。',
       '短信、支付、云资源和第三方服务费用另行确认，不承诺用户增长、审核时效或经营收益。',
     ],
     technologies: ['微信小程序 / uni-app（按需）', 'Vue / H5', 'Java API', '关系型数据库', '文件存储'],
     serviceIds: ['miniapp-mobile', 'java-enterprise', 'data-integration'],
+    preparation: [
+      '目标用户、核心操作路径、服务目录与脱敏表单样例；确认预约、申请或查询的首期范围。',
+      '后台受理岗位、排期容量、改期取消与异常处理规则；已有系统的状态映射和接口说明。',
+      '拟发布平台、主体与类目资料、账号归属和域名准备情况，仅提供清单，不在本站填写凭据。',
+      '个人信息使用目的、字段与保留期；如需登录、通知或支付，另行核实授权、服务费用与联调条件。',
+    ],
+    caseIds: ['mobile-service'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'docker-deployment-practice'],
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '本站仅展示移动入口和后台处理路径的静态示意，不是可运行小程序，也不证明真实账号、消息或支付集成。',
+      sources: [
+        'src/data/solutions.ts',
+        'src/components/reisun/SystemPreview.astro',
+        'src/components/reisun/SolutionArchitecture.astro',
+      ],
+      pending: [
+        '实际小程序及 Java 接口的实现与联调证据',
+        '发布主体、类目及平台能力授权',
+        '个人信息范围、运营规则与发布验收条件',
+      ],
+    },
     previewCaption: '演示界面用于说明用户入口、服务卡片与业务进度，不连接真实账号、订单或支付能力。',
   },
 ];

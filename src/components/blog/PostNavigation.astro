@@ -2,6 +2,7 @@
 import type { Post } from '~/types';
 import { fetchPosts } from '~/utils/blog';
 import { getPermalink } from '~/utils/permalinks';
+import { formatChineseDate } from './format';
 export interface Props {
   post: Post;
 }
@@ -18,7 +19,10 @@ const next = index > 0 ? posts[index - 1] : undefined;
       <nav class="blog-post-navigation" aria-label="相邻文章">
         {previous ? (
           <a href={getPermalink(previous.permalink, 'post')} rel="prev">
-            <span>上一篇</span>
+            <span class="blog-adjacent-meta">
+              <span>上一篇</span>
+              <time datetime={previous.publishDate.toISOString()}>{formatChineseDate(previous.publishDate)}</time>
+            </span>
             <strong>{previous.title}</strong>
           </a>
         ) : (
@@ -26,7 +30,10 @@ const next = index > 0 ? posts[index - 1] : undefined;
         )}
         {next ? (
           <a href={getPermalink(next.permalink, 'post')} rel="next">
-            <span>下一篇</span>
+            <span class="blog-adjacent-meta">
+              <span>下一篇</span>
+              <time datetime={next.publishDate.toISOString()}>{formatChineseDate(next.publishDate)}</time>
+            </span>
             <strong>{next.title}</strong>
           </a>
         ) : (
@@ -43,24 +50,35 @@ const next = index > 0 ? posts[index - 1] : undefined;
     max-width: 760px;
     gap: 32px;
     margin: 0 auto 40px;
-    padding-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rs-line);
   }
   .blog-post-navigation a {
     display: block;
     padding: 16px 0;
+    min-width: 0;
     text-decoration: none;
   }
-  .blog-post-navigation span {
-    display: block;
-    margin-bottom: 8px;
+  .blog-adjacent-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 16px;
+    margin-bottom: 10px;
     color: #586a80;
     font-size: 0.8125rem;
+  }
+  .blog-adjacent-meta > span {
+    color: var(--rs-blue);
+    font-weight: 600;
   }
   .blog-post-navigation strong {
     color: #172b46;
     font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.8;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
   }
   .blog-post-navigation a:hover strong {
     color: #245eea;
@@ -73,6 +91,9 @@ const next = index > 0 ? posts[index - 1] : undefined;
     .blog-post-navigation {
       grid-template-columns: minmax(0, 1fr);
       gap: 4px;
+    }
+    .blog-post-navigation a + a {
+      border-top: 1px solid var(--rs-line);
     }
     .blog-post-navigation > div {
       display: none;

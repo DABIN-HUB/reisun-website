@@ -1,6 +1,8 @@
 ---
 import Logo from '~/components/Logo.astro';
 import { footerData } from '~/navigation';
+import { brand, getConfirmedProfile } from '~/data/brand';
+const icpNumber = getConfirmedProfile('icpNumber');
 const year = new Date().getFullYear();
 ---
 
@@ -8,9 +10,7 @@ const year = new Date().getFullYear();
   <div class="rs-container">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="/" aria-label="REISUN 首页"><Logo inverse /></a><p>让技术真正服务业务。</p><span
-          >软件定制开发 · 企业数字化解决方案</span
-        >
+        <a href="/" aria-label="REISUN 首页"><Logo inverse /></a><p>{brand.tagline}</p><span>{brand.positioning}</span>
       </div>
       {
         footerData.links.map((group) => (
@@ -30,8 +30,8 @@ const year = new Date().getFullYear();
       }
     </div>
     <div class="footer-bottom">
-      <span>© {year} REISUN. 保留所有权利。</span><span>独立开发品牌 · 案例均为演示</span><div>
-        <span>备案信息待配置</span><a href="/rss.xml">RSS 订阅</a>
+      <span>© {year} {brand.name}. 原创内容版权保留。</span><span>案例均为概念演示，第三方资源保留原许可</span><div>
+        <span>{icpNumber ?? '备案信息待配置'}</span><a href="/rss.xml">RSS 订阅</a>
       </div>
     </div>
   </div>

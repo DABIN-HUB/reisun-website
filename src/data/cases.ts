@@ -1,3 +1,5 @@
+import { evidenceStatus, type ContentEvidence } from '~/data/evidence';
+
 export type CaseVariant = 'industrial' | 'enterprise' | 'contract' | 'mobile';
 
 export interface CasePoint {
@@ -10,9 +12,14 @@ export interface CaseStudy {
   title: string;
   category: string;
   summary: string;
+  /** 概念方案的设计选型，不是项目实际使用记录。 */
   stack: string[];
   variant: CaseVariant;
   label: '演示案例';
+  evidence?: ContentEvidence;
+  solutionIds?: string[];
+  serviceIds?: string[];
+  postSlugs?: string[];
   scope: string[];
   background: string[];
   painPoints: CasePoint[];
@@ -28,22 +35,36 @@ export interface CaseStudy {
     description: string;
     highlights: string[];
   }[];
+  /** 预期设计目标，不是已测得的业务成果。 */
   value: CasePoint[];
   boundary: string;
 }
 
 export const caseDemoNotice =
-  '本栏目均为 REISUN 自主设计的演示案例，业务背景为虚拟场景，页面使用模拟数据与原创概念示意，不代表真实客户、已交付项目或商业成效。';
+  '本栏目均为 REISUN 自主设计的演示案例，业务背景为虚拟场景，页面使用模拟数据与原创概念示意。技术标签与架构仅为设计选型，价值仅为预期目标，不代表实际使用记录、真实客户、已交付项目或测得成效。';
 
 export const cases: CaseStudy[] = [
   {
     id: 'industrial-iot-monitoring',
     title: '工业物联网采集与监控平台',
     category: '工业物联网',
-    summary: '从设备接入、点位采集到告警处理，把现场数据与运行状态放进同一个工作台。',
+    summary: '以虚拟产线为背景，演示设备、点位与告警工作台的设计思路，不连接真实设备。',
     stack: ['Java / Spring Boot', 'Vue 3 / TypeScript', 'PostgreSQL', 'MQTT / Modbus TCP'],
     variant: 'industrial',
     label: '演示案例',
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '可核实的是本站的工业概念界面与方案说明；本轮未获得足够的采集后端、协议联调或客户交付证据。',
+      sources: [
+        'src/data/cases.ts#industrial-iot-monitoring',
+        'src/components/reisun/SystemPreview.astro (industrial)',
+        'src/pages/cases/[slug].astro',
+      ],
+      pending: ['获授权的采集实现材料', '脱敏的设备型号、协议范围与联调记录', '客户案例公开授权及可追溯成果依据'],
+    },
+    solutionIds: ['industrial'],
+    serviceIds: ['industrial-iot', 'data-integration', 'java-enterprise'],
+    postSlugs: ['java-industrial-collection-architecture', 'modbus-tcp-opc-ua-integration'],
     scope: ['设备与点位建模', '采集运行工作台', '告警与历史追溯'],
     background: [
       '设定场景是一处包含多条产线的虚拟制造现场。设备来自不同批次，现场人员希望在一个入口查看设备档案、采集点位、运行状态和告警记录，而不是在多个工具间反复核对。',
@@ -99,12 +120,14 @@ export const cases: CaseStudy[] = [
       {
         layer: '采集与应用层',
         technology: 'Java / Spring Boot',
-        description: '组织设备配置、任务调度、数据标准化与告警规则，分别记录配置状态和运行状态。',
+        description:
+          '拟用此选型组织设备配置、任务调度、数据标准化与告警规则；这里只说明分层职责，未提供采集后端实现记录。',
       },
       {
         layer: '数据层',
         technology: 'PostgreSQL / 历史数据分区设计',
-        description: '管理设备主数据、点位定义、告警记录与时间序列；历史存储方案需按采集规模另行评估。',
+        description:
+          '拟管理设备主数据、点位定义、告警记录与时间序列；这不是本站数据库，历史存储方案需按采集规模另行评估。',
       },
       {
         layer: '操作界面',
@@ -132,15 +155,17 @@ export const cases: CaseStudy[] = [
     value: [
       {
         title: '形成统一的现场语境',
-        description: '设备、连接和点位使用一致的对象模型，为后续接入不同现场设备提供可讨论的边界。',
+        description: '预期通过一致的设备、连接和点位模型形成共同语境；能否适配目标设备，仍需实现与联调证据。',
       },
       {
         title: '让异常有可解释的入口',
-        description: '分层状态与数据时间能帮助使用者区分配置问题、通信问题和过期数据，而不是依赖一个状态灯。',
+        description:
+          '设计目标是通过分层状态与数据时间区分配置、通信和过期数据问题；尚无真实运维效率或故障恢复成效记录。',
       },
       {
         title: '为后续集成保留接口',
-        description: '采集、存储和业务呈现分层，便于在真实项目中进一步评估 MES、能源管理或运维系统的对接。',
+        description:
+          '预期按采集、存储和业务呈现分层，为 MES、能源管理或运维系统的对接留下讨论边界，不代表已有集成成果。',
       },
     ],
     boundary:
@@ -150,10 +175,23 @@ export const cases: CaseStudy[] = [
     id: 'enterprise-erp',
     title: 'ERP 企业运营协同系统',
     category: '企业管理',
-    summary: '围绕订单、采购、库存与经营台账，设计可追溯的业务流转与跨角色协作。',
+    summary: '以虚拟企业为背景，演示订单、采购、库存与岗位协作的信息结构，不使用真实经营数据。',
     stack: ['Java / Spring Boot', 'Vue 3 / TypeScript', 'PostgreSQL', '角色与数据权限'],
     variant: 'enterprise',
     label: '演示案例',
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '可核实的是本站的单据协同概念界面与业务设计；本轮未获得足够的 ERP 实现、库存一致性或客户交付证据。',
+      sources: [
+        'src/data/cases.ts#enterprise-erp',
+        'src/components/reisun/SystemPreview.astro (enterprise)',
+        'src/pages/cases/[slug].astro',
+      ],
+      pending: ['获授权的业务模块实现材料', '脱敏的单据规则、权限与库存核对记录', '客户案例公开授权及可追溯成果依据'],
+    },
+    solutionIds: ['enterprise'],
+    serviceIds: ['enterprise-management', 'java-enterprise', 'data-integration'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'enterprise-digital-transformation'],
     scope: ['订单与采购协同', '库存与出入库', '经营台账与权限'],
     background: [
       '设定场景是一家兼有销售、采购与仓储环节的虚拟企业。不同岗位分别记录订单、收发货与结算信息，需要一个围绕业务单据组织协作的管理系统。',
@@ -200,12 +238,12 @@ export const cases: CaseStudy[] = [
       {
         layer: '业务工作台',
         technology: 'Vue 3 / TypeScript',
-        description: '按岗位组织待办、单据与查询界面，共享同一套单据状态和权限表达。',
+        description: '拟按岗位组织待办、单据与查询界面；Vue 仅为方案选型，本站示意由 Astro 静态组件呈现。',
       },
       {
         layer: '应用服务',
         technology: 'Java / Spring Boot',
-        description: '按订单、采购和库存划分业务模块，在应用边界校验操作条件与数据范围。',
+        description: '拟按订单、采购和库存划分业务模块，在应用边界校验操作条件与数据范围；不表示已有可运行的业务后端。',
       },
       {
         layer: '数据与事务',
@@ -238,15 +276,15 @@ export const cases: CaseStudy[] = [
     value: [
       {
         title: '减少口径歧义',
-        description: '统一主数据和单据定义，为不同岗位讨论同一笔业务建立基础，而不是让更多表格叠加在一起。',
+        description: '预期通过统一主数据和单据定义减少岗位间的口径歧义，是否减少重复录入需由真实业务使用记录验证。',
       },
       {
         title: '让协作能够追溯',
-        description: '以来源单据与业务流水串联变化，便于在真实项目中定位责任环节与数据差异。',
+        description: '设计目标是按来源单据与业务流水追溯变化；示意不证明真实库存准确性，也没有测得协作效率提升。',
       },
       {
         title: '按业务边界逐步扩展',
-        description: '可以从订单与库存切入，再依据真实流程评估采购、成本或财务集成，不预设一次替换全部系统。',
+        description: '预期从订单与库存逐步扩展到所需模块，不预设一次替换全部系统；实施成本与收益仍需结合实际流程评估。',
       },
     ],
     boundary:
@@ -256,10 +294,27 @@ export const cases: CaseStudy[] = [
     id: 'contract-workflow',
     title: '合同审批与履约流程平台',
     category: '流程协同',
-    summary: '将合同起草、版本审核、节点审批与履约事项连接起来，让流程和文件保持一致。',
+    summary: '以虚拟审批场景，演示合同版本、流程节点与履约事项的关联设计，不包含真实合同记录。',
     stack: ['Java / Spring Boot', 'Vue 3 / TypeScript', 'PostgreSQL', '流程状态机'],
     variant: 'contract',
     label: '演示案例',
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '可核实的是本站的审批节点概念界面与版本关联设计；本轮未获得足够的流程实现、签章接入或客户交付证据。',
+      sources: [
+        'src/data/cases.ts#contract-workflow',
+        'src/components/reisun/SystemPreview.astro (contract, approvalSteps)',
+        'src/pages/cases/[slug].astro',
+      ],
+      pending: [
+        '获授权且不含合同原件的技术说明',
+        '脱敏的版本关联、审批权限与流程核验记录',
+        '案例文字和示意素材的公开授权',
+      ],
+    },
+    solutionIds: ['contract'],
+    serviceIds: ['enterprise-management', 'java-enterprise', 'data-integration'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'enterprise-digital-transformation'],
     scope: ['合同资料与版本', '条件审批流程', '履约事项与归档'],
     background: [
       '设定场景是一个需要业务、法务和财务共同审核合同的虚拟团队。合同文本经多次修改，审批意见通过不同渠道传递，履约事项则在审批结束后另行整理。',
@@ -310,12 +365,12 @@ export const cases: CaseStudy[] = [
       {
         layer: '协作界面',
         technology: 'Vue 3 / TypeScript',
-        description: '围绕起草、审核和履约组织角色视图，保持合同版本和流程上下文一致。',
+        description: '拟围绕起草、审核和履约组织角色视图；Vue 为设计选型，不是此静态示意的实际框架记录。',
       },
       {
         layer: '流程与业务',
         technology: 'Java / Spring Boot / 流程状态机',
-        description: '规划合同状态、条件节点、审批操作与履约事项；状态变更由业务规则校验。',
+        description: '拟以业务规则校验合同状态、条件节点与审批操作；本页没有执行状态机或真实审批。',
       },
       {
         layer: '资料与记录',
@@ -348,15 +403,15 @@ export const cases: CaseStudy[] = [
     value: [
       {
         title: '明确审批依据',
-        description: '版本与流程实例绑定，使参与者能够讨论具体文本和对应意见，而不是一个不断被覆盖的文件。',
+        description: '预期通过版本与流程实例绑定明确审批依据；是否能还原真实审核过程，需以获授权的实现与核验记录确认。',
       },
       {
         title: '让规则可被讨论',
-        description: '显式的条件和状态为业务、法务与技术共同梳理审批边界提供工具，不替代组织内部授权制度。',
+        description: '设计目标是让业务、法务与技术共同讨论审批边界；不替代组织内部授权制度，也不表示已降低合规风险。',
       },
       {
         title: '持续关注履约事项',
-        description: '把合同通过之后的计划也纳入设计范围，便于在真实项目中进一步评估提醒和归档策略。',
+        description: '预期将审批后的计划纳入跟进范围；提醒与归档仍为设计方向，没有真实履约完成率或处理时效记录。',
       },
     ],
     boundary:
@@ -366,10 +421,23 @@ export const cases: CaseStudy[] = [
     id: 'mobile-service',
     title: '小程序预约与服务管理',
     category: '小程序应用',
-    summary: '连接用户预约、门店排期和服务跟进，用轻量移动入口衔接后台业务。',
+    summary: '以虚拟门店为背景，演示预约、排期与服务跟进的概念流程，不是可运行的小程序。',
     stack: ['微信小程序 / TypeScript', 'Java / Spring Boot', 'PostgreSQL', 'Vue 3 管理端'],
     variant: 'mobile',
     label: '演示案例',
+    evidence: {
+      status: evidenceStatus.concept,
+      summary: '可核实的是本站的移动入口与后台协同示意；本轮未获得足够的小程序运行、预约服务或客户交付证据。',
+      sources: [
+        'src/data/cases.ts#mobile-service',
+        'src/components/reisun/SystemPreview.astro (mobile)',
+        'src/pages/cases/[slug].astro',
+      ],
+      pending: ['获授权的小程序与预约后端材料', '脱敏的容量、幂等及平台接入核验记录', '平台主体及案例素材公开授权'],
+    },
+    solutionIds: ['mobile'],
+    serviceIds: ['miniapp-mobile', 'java-enterprise'],
+    postSlugs: ['spring-boot-enterprise-architecture', 'docker-deployment-practice'],
     scope: ['移动预约入口', '门店排期工作台', '服务记录与跟进'],
     background: [
       '设定场景是一个提供到店服务的虚拟品牌。用户需要了解服务内容、选择门店与时段，并在预约后查看进度；门店人员需要管理可约时段、接待安排和服务记录。',
@@ -391,7 +459,7 @@ export const cases: CaseStudy[] = [
     ],
     approach: [
       {
-        title: '围绕真实任务组织移动页面',
+        title: '围绕预约任务组织移动页面',
         description: '让用户按服务、门店与时段完成选择，在确认前展示预约内容和取消规则，不用后台结构直接堆叠手机页面。',
       },
       {
@@ -427,7 +495,7 @@ export const cases: CaseStudy[] = [
       {
         layer: '预约应用服务',
         technology: 'Java / Spring Boot',
-        description: '组织身份边界、容量校验、幂等提交与状态流转，避免由客户端单独决定预约结果。',
+        description: '拟由后端处理身份边界、容量校验、幂等提交与状态流转；官网没有执行预约逻辑或接入业务 API。',
       },
       {
         layer: '业务数据',
@@ -460,15 +528,15 @@ export const cases: CaseStudy[] = [
     value: [
       {
         title: '降低移动操作的理解负担',
-        description: '按用户预约任务安排信息与反馈，为真实项目中的页面简化和可用性评估提供原型基础。',
+        description: '预期按预约任务安排信息与反馈，供后续可用性评估；尚无真实用户研究或转化率提升记录。',
       },
       {
         title: '让前台与后台共享规则',
-        description: '预约容量和状态由统一业务模型描述，便于讨论用户操作与门店执行之间的边界。',
+        description: '设计目标是用统一业务模型描述预约容量和状态；是否避免超约、重复提交需由实际实现与核验确认。',
       },
       {
         title: '按需连接平台能力',
-        description: '把登录、通知和支付作为独立集成项，先确认业务和授权条件，再决定真实项目的接入范围。',
+        description: '预期按业务与授权条件独立评估登录、通知和支付，不代表已通过平台审核、完成支付接入或取得经营收益。',
       },
     ],
     boundary:

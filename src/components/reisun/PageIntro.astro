@@ -1,47 +1,61 @@
 ---
+import IntroVisual, { type IntroVariant } from '~/components/reisun/IntroVisual.astro';
+
 export interface Props {
   title: string;
   description: string;
   label?: string;
+  variant?: IntroVariant;
 }
-const { title, description, label } = Astro.props;
+const { title, description, label, variant } = Astro.props;
 ---
 
-<section class="rs-page-intro">
-  <div class="rs-container">
-    {label && <p class="intro-label">{label}</p>}
-    <h1>{Astro.slots.has('title') ? <slot name="title" /> : title}</h1>
-    <p class="rs-lead">{description}</p>
+<section class:list={['rs-page-intro', variant && `intro-${variant}`]}>
+  <div class:list={['rs-container', { 'intro-layout': variant }]}>
+    <div class="intro-copy">
+      {label && <p class="intro-label">{label}</p>}
+      <h1>{Astro.slots.has('title') ? <slot name="title" /> : title}</h1>
+      <p class="rs-lead">{description}</p>
+    </div>
+    {variant && <IntroVisual variant={variant} />}
   </div>
-  <svg class="intro-lines" viewBox="0 0 500 300" fill="none" aria-hidden="true">
-    <path d="M0 260 280 100l200 115M80 300 360 140l140 80M0 180 280 20l220 127"></path>
-    <path d="m280 20 0 80 80 40v80M160 170v80l120 70"></path>
-    <circle cx="280" cy="100" r="8"></circle><circle cx="360" cy="140" r="8"></circle>
-  </svg>
 </section>
 
 <style>
   .rs-page-intro {
     position: relative;
-    isolation: isolate;
-    overflow: hidden;
     background: var(--rs-soft);
-    padding-block: 78px 74px;
+    padding-block: 68px 64px;
     border-bottom: 1px solid var(--rs-line);
   }
-  .rs-container {
-    position: relative;
-    z-index: 1;
+  .intro-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 256px;
+    align-items: center;
+    gap: 48px;
+  }
+  .intro-copy {
+    min-width: 0;
   }
   .intro-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     color: var(--rs-blue);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     margin-bottom: 18px;
   }
+  .intro-label::before {
+    content: '';
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
   h1 {
     max-width: 920px;
-    font-size: clamp(30px, 3.5vw, 48px);
+    font-size: clamp(30px, 3.5vw, 46px);
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -0.035em;
@@ -52,23 +66,60 @@ const { title, description, label } = Astro.props;
     margin-top: 22px;
     text-wrap: balance;
   }
-  .intro-lines {
-    position: absolute;
-    right: -80px;
-    bottom: -90px;
-    width: 530px;
-    stroke: var(--rs-blue);
-    stroke-width: 1;
-    opacity: 0.11;
-    z-index: -1;
+  .intro-services {
+    background: #f5f8ff;
+  }
+  .intro-solutions {
+    background: var(--rs-navy);
+    color: white;
+    border-bottom-color: #2a466b;
+  }
+  .intro-solutions .intro-label {
+    color: var(--rs-cyan);
+  }
+  .intro-solutions .rs-lead {
+    color: #c5d7ed;
+  }
+  .intro-cases {
+    background: #f1f5fb;
+  }
+  .intro-articles {
+    background: white;
+    border-bottom: 1px solid #c8d7eb;
+  }
+  .intro-about {
+    background: #edf3f9;
+  }
+  .intro-contact {
+    background: #f5f8fc;
+    border-bottom-color: #d7e2ef;
+  }
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .intro-layout {
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 28px;
+    }
+    h1 {
+      font-size: 32px;
+    }
+    .rs-lead {
+      font-size: 15px;
+    }
   }
   @media (max-width: 767px) {
     .rs-page-intro {
-      padding-block: 48px 44px;
+      padding-block: 40px 34px;
     }
-    .intro-lines {
-      right: -250px;
-      opacity: 0.07;
+    .intro-layout {
+      display: block;
+    }
+    .intro-label {
+      margin-bottom: 15px;
+      font-size: 12px;
+    }
+    .rs-lead {
+      margin-top: 18px;
+      text-wrap: pretty;
     }
   }
 </style>

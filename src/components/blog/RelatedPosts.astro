@@ -16,15 +16,11 @@ const relatedPosts = APP_BLOG.isRelatedPostsEnabled ? await getRelatedPosts(post
     <section class="blog-related" aria-labelledby="related-posts-heading">
       <div class="rs-container">
         <div class="blog-related-heading">
-          <>
-            <div>
-              <>
-                <p>把问题继续想深一点</p>
-                <h2 id="related-posts-heading">延伸阅读</h2>
-              </>
-            </div>
-            <a href={getBlogPermalink()}>浏览全部文章</a>
-          </>
+          <div>
+            <h2 id="related-posts-heading">延伸阅读</h2>
+            <p>把问题继续想深一点</p>
+          </div>
+          <a href={getBlogPermalink()}>浏览全部文章</a>
         </div>
         <Grid posts={relatedPosts} />
       </div>
@@ -48,7 +44,7 @@ const relatedPosts = APP_BLOG.isRelatedPostsEnabled ? await getRelatedPosts(post
   .blog-related-heading p {
     color: #5b6b80;
     font-size: 0.875rem;
-    margin: 0 0 8px;
+    margin: 12px 0 0;
   }
   .blog-related-heading h2 {
     font-size: 1.9rem;
@@ -68,5 +64,23 @@ const relatedPosts = APP_BLOG.isRelatedPostsEnabled ? await getRelatedPosts(post
   .blog-related-heading > a:focus-visible {
     outline: 2px solid #245eea;
     outline-offset: 4px;
+  }
+  @media (min-width: 1024px) {
+    .blog-related :global(.blog-grid) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+  }
+  @media (max-width: 767px) {
+    .blog-related {
+      padding-block: 48px 56px;
+    }
+    .blog-related-heading {
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .blog-related-heading h2 {
+      font-size: 1.6rem;
+    }
   }
 </style>

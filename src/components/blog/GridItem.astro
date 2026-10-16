@@ -3,8 +3,9 @@ import Item from '~/components/blog/ListItem.astro';
 import type { Post } from '~/types';
 export interface Props {
   post: Post;
+  compact?: boolean;
 }
-const { post } = Astro.props;
+const { post, compact = false } = Astro.props;
 ---
 
-<Item post={post} headingLevel="h3" />
+<Item post={post} headingLevel="h3" compact={compact} />

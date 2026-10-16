@@ -1,6 +1,7 @@
 ---
 import Logo from '~/components/Logo.astro';
 import { headerData } from '~/navigation';
+import { hasConfirmedContact } from '~/data/brand';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const active = (href: string) =>
   href === '/'
@@ -34,8 +35,11 @@ const active = (href: string) =>
             ))
           }
         </ul>
-        <a href="/contact" class="rs-button nav-cta"
-          >咨询合作<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"
+        <a
+          href={headerData.actions[0].href}
+          class="rs-button nav-cta"
+          title={hasConfirmedContact() ? '了解合作与正式联系渠道' : '了解合作方式，正式联系渠道待配置'}
+          >{headerData.actions[0].text}<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"
             ><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5"></path></svg
           ></a
         >

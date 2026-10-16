@@ -8,6 +8,10 @@ import SystemPreview from '~/components/reisun/SystemPreview.astro';
 import SolutionArchitecture from '~/components/reisun/SolutionArchitecture.astro';
 import { solutions, type Solution } from '~/data/solutions';
 import { services } from '~/data/services';
+import { cases } from '~/data/cases';
+import { evidenceLabels } from '~/data/evidence';
+import { findPostsBySlugs, isBlogEnabled, isBlogPostRouteEnabled } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
 
 export const getStaticPaths = (() =>
   solutions.map((solution) => ({
@@ -21,10 +25,12 @@ interface Props {
 
 const { solution } = Astro.props;
 const relatedServices = services.filter((service) => solution.serviceIds.includes(service.id));
+const relatedCases = cases.filter((item) => solution.caseIds?.includes(item.id));
+const relatedPosts = isBlogEnabled && isBlogPostRouteEnabled ? await findPostsBySlugs(solution.postSlugs ?? []) : [];
 const relatedSolutions = solutions.filter((item) => item.id !== solution.id);
 const metadata = {
-  title: `${solution.title}｜架构、功能与交付内容`,
-  description: `${solution.summary}${solution.audience}了解业务问题、逻辑架构、功能模块、实施路径与交付边界。REISUN 定制开发方案说明。`,
+  title: `${solution.title}｜概念架构与定制交付准备`,
+  description: `${solution.summary}查看适用场景、拟开发模块、按项目约定的交付与前置资料。本页为静态概念演示，不代表后端已实现、现场接入已验证或客户交付。`,
 };
 ---
 
@@ -39,7 +45,7 @@ const metadata = {
     </ol>
   </nav>
 
-  <PageIntro label="解决方案" title={solution.title} description={solution.introduction} />
+  <PageIntro label="解决方案 · 概念演示" title={solution.title} description={solution.introduction} />
 
   <div class="rs-container detail-context">
     <dl class="context-grid">
@@ -55,7 +61,7 @@ const metadata = {
     <nav class="detail-navigation" aria-label="方案内容导航">
       <a href="#problems">业务问题</a>
       <a href="#architecture">方案架构</a>
-      <a href="#capabilities">功能模块</a>
+      <a href="#capabilities">拟开发模块</a>
       <a href="#preview">界面演示</a>
       <a href="#delivery">交付与边界</a>
     </nav>
@@ -97,8 +103,8 @@ const metadata = {
   <section class="rs-section rs-section-soft" aria-labelledby="advantages-title">
     <div class="rs-container advantage-layout">
       <div class="section-aside">
-        <h2 id="advantages-title">方案的价值，体现在日常使用中。</h2>
-        <p>不是增加更多页面，而是让业务的连接方式更清楚。</p>
+        <h2 id="advantages-title">设计目标，是让业务连接更清楚。</h2>
+        <p>以下为拟实现的协作方式，不是已经验证的使用效果或商业成效。</p>
       </div>
       <dl class="advantage-list">
         {
@@ -116,14 +122,14 @@ const metadata = {
   <section id="capabilities" class="rs-section detail-section" aria-labelledby="capabilities-title">
     <div class="rs-container capability-layout">
       <div class="section-aside">
-        <h2 id="capabilities-title">围绕业务闭环，组织功能模块。</h2>
-        <p>以下用于说明可讨论的实施范围，具体模块与优先级在需求梳理后确定。</p>
+        <h2 id="capabilities-title">围绕业务闭环，规划开发模块。</h2>
+        <p>以下为拟开发范围，不是现成功能清单。模块、优先级与验收条件需在需求梳理后约定。</p>
         <div class="technology-note">
-          <h3>可选技术方向</h3>
+          <h3>拟选技术方向 · 尚非实施记录</h3>
           <ul class="rs-tags">
             {solution.technologies.map((technology) => <li class="rs-tag">{technology}</li>)}
           </ul>
-          <p>技术选型结合已有环境、数据规模和维护条件确认。</p>
+          <p>这些是方案候选技术，不表示本站已实现这些系统；最终选型结合已有环境、数据规模、授权和维护条件确认。</p>
         </div>
       </div>
       <div class="module-list">
@@ -153,7 +159,16 @@ const metadata = {
         <h2 id="preview-title">把业务结构，放进界面里看。</h2>
         <p>{solution.summary}</p>
         <p class="preview-disclaimer">
-          本页为静态概念演示。界面、数据和状态用于说明信息组织方式，不连接真实业务系统，不代表已交付项目或部署承诺。
+          {
+            solution.evidence ? (
+              <>
+                <strong>{evidenceLabels[solution.evidence.status]}：</strong>
+                {solution.evidence.summary}
+              </>
+            ) : (
+              '本页为静态概念演示。界面、数据和状态用于说明信息组织方式，不连接真实业务系统，不代表已交付项目或部署承诺。'
+            )
+          }
         </p>
       </div>
       <figure class="detail-preview">
@@ -167,7 +182,7 @@ const metadata = {
     <div class="rs-container">
       <div class="rs-section-heading">
         <h2 id="implementation-title">从可用的切入点，逐步形成完整链路。</h2>
-        <p>围绕当前场景安排实施工作，不把未知条件藏到交付阶段。</p>
+        <p>以下是项目启动后拟采用的实施路径，不表示相关开发、联调或交付已经完成。</p>
       </div>
       <dl class="implementation-list">
         {
@@ -190,7 +205,7 @@ const metadata = {
       </div>
       <div class="delivery-layout">
         <div class="deliverable-list">
-          <h3>可约定的交付内容</h3>
+          <h3>按项目约定交付</h3>
           <ul>
             {
               solution.deliverables.map((deliverable) => (
@@ -201,6 +216,21 @@ const metadata = {
               ))
             }
           </ul>
+          {
+            solution.preparation?.length ? (
+              <div class="preparation-note">
+                <h3>启动前准备资料与集成条件</h3>
+                <ul>
+                  {solution.preparation.map((item) => (
+                    <li>
+                      <Icon name="tabler:file-description" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null
+          }
         </div>
         <aside class="scope-note" aria-labelledby="scope-title">
           <h3 id="scope-title">演示说明与实施前提</h3>
@@ -221,6 +251,40 @@ const metadata = {
             ))
           }
         </ul>
+        {
+          relatedCases.length > 0 && (
+            <>
+              <h3>相关演示案例 · 非客户业绩</h3>
+              <ul>
+                {relatedCases.map((item) => (
+                  <li>
+                    <a class="rs-link" href={`/cases/${item.id}`}>
+                      {item.title}
+                      <Icon name="tabler:arrow-up-right" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+        {
+          relatedPosts.length > 0 && (
+            <>
+              <h3>相关技术文章 · 设计与实现参考</h3>
+              <ul>
+                {relatedPosts.map((post) => (
+                  <li>
+                    <a class="rs-link" href={getPermalink(post.permalink, 'post')}>
+                      {post.title}
+                      <Icon name="tabler:arrow-up-right" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
       </div>
     </div>
   </section>
@@ -251,7 +315,7 @@ const metadata = {
 
   <CTA
     title="让方案，回到你的实际业务里。"
-    description="带上现有流程、系统或现场资料，一起确认适用范围、优先级与实施条件。"
+    description="可先整理业务问题和脱敏资料，通过联系页的微信或邮箱交流。在线表单仅作演示，不接收提交。"
   />
 </Layout>
 
@@ -509,6 +573,9 @@ const metadata = {
   .deliverable-list {
     padding-top: 1.5rem;
   }
+  .preparation-note {
+    margin-top: 2rem;
+  }
   .scope-note {
     padding: 1.5rem 1.75rem;
     border-left: 3px solid var(--rs-blue, #245eea);
@@ -534,6 +601,9 @@ const metadata = {
     color: var(--rs-ink, #172b46);
     font-size: 0.875rem;
     font-weight: 650;
+  }
+  .service-links ul + h3 {
+    margin-top: 1.5rem;
   }
   .service-links ul {
     display: flex;

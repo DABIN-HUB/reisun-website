@@ -7,9 +7,9 @@ site:
 
 metadata:
   title:
-    default: REISUN｜软件定制开发与企业数字化解决方案
+    default: REISUN｜Java 软件定制开发与工业数据采集
     template: '%s｜REISUN'
-  description: 'REISUN 独立软件开发品牌，专注 Java 企业应用、工业物联网、ERP/OA、微信小程序与系统集成。用清晰的工程方法，让技术真正服务业务。'
+  description: 'REISUN 软件开发与技术服务，面向企业 Java 应用、工业数据采集、ERP/OA、微信小程序和系统集成需求。了解业务场景、开发范围、概念方案与合作准备。'
   # 第一阶段仅本地 UI 演示，正式上线前再确认索引策略。
   robots:
     index: false
