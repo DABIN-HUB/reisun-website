@@ -29,13 +29,14 @@ export const POST_PERMALINK_PATTERN = trimSlash(APP_BLOG?.post?.permalink || `${
 
 /** */
 export const getCanonical = (path = ''): string | URL => {
-  const url = String(new URL(path, SITE.site));
-  if (SITE.trailingSlash == false && path && url.endsWith('/')) {
-    return url.slice(0, -1);
-  } else if (SITE.trailingSlash == true && path && !url.endsWith('/')) {
-    return url + '/';
+  const url = new URL(path || '/', SITE.site);
+  url.search = '';
+  url.hash = '';
+  const pathname = url.pathname.replace(/\/+$/, '') || '/';
+  if (pathname !== '/') {
+    url.pathname = SITE.trailingSlash ? `${pathname}/` : pathname;
   }
-  return url;
+  return url.href;
 };
 
 /** */

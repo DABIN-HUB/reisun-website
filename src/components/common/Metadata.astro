@@ -7,6 +7,7 @@ import type { SEOProps } from 'astro-seo';
 import { SITE, METADATA, I18N } from 'astrowind:config';
 import type { MetaData, MetaDataOpenGraph } from '~/types';
 import { getCanonical } from '~/utils/permalinks';
+import { isProductionSearchBuild, isPublicIndexingPath } from '~/utils/indexing';
 
 import { adaptOpenGraphImages } from '~/utils/images';
 
@@ -17,12 +18,27 @@ export interface Props extends MetaData {
 const {
   title,
   ignoreTitleTemplate = false,
-  canonical = String(getCanonical(String(Astro.url.pathname))),
+  canonical: requestedCanonical,
   robots = {},
   description,
   openGraph = {},
   twitter = {},
 } = Astro.props;
+
+const publicSection = isPublicIndexingPath(Astro.url.pathname, SITE.base);
+const productionIndexing = isProductionSearchBuild(import.meta.env.PROD, import.meta.env.MODE, {
+  SITE_ENV: import.meta.env.SITE_ENV ?? process.env.SITE_ENV,
+  CI: import.meta.env.CI ?? process.env.CI,
+  CF_PAGES: import.meta.env.CF_PAGES ?? process.env.CF_PAGES,
+  CF_PAGES_BRANCH: import.meta.env.CF_PAGES_BRANCH ?? process.env.CF_PAGES_BRANCH,
+  SITE_PRODUCTION_BRANCH: import.meta.env.SITE_PRODUCTION_BRANCH ?? process.env.SITE_PRODUCTION_BRANCH,
+  VERCEL: import.meta.env.VERCEL ?? process.env.VERCEL,
+  VERCEL_ENV: import.meta.env.VERCEL_ENV ?? process.env.VERCEL_ENV,
+  NETLIFY: import.meta.env.NETLIFY ?? process.env.NETLIFY,
+  CONTEXT: import.meta.env.CONTEXT ?? process.env.CONTEXT,
+});
+const requestedIndex = robots.index ?? METADATA?.robots?.index;
+const canonical = String(getCanonical(publicSection ? Astro.url.pathname : (requestedCanonical ?? Astro.url.pathname)));
 
 const mergedOg: MetaDataOpenGraph = merge(
   {
@@ -92,14 +108,10 @@ const seoProps: SEOProps = {
   title: title || METADATA?.title?.default || '',
   titleTemplate: ignoreTitleTemplate ? '%s' : METADATA?.title?.template || '%s',
   canonical: canonical,
-  noindex:
-    typeof robots?.index !== 'undefined'
-      ? !robots.index
-      : typeof METADATA?.robots?.index !== 'undefined'
-        ? !METADATA.robots.index
-        : true,
-  nofollow:
-    typeof robots?.follow !== 'undefined'
+  noindex: !productionIndexing || !publicSection || requestedIndex !== true,
+  nofollow: !productionIndexing
+    ? true
+    : typeof robots?.follow !== 'undefined'
       ? !robots.follow
       : typeof METADATA?.robots?.follow !== 'undefined'
         ? !METADATA.robots.follow

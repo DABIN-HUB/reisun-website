@@ -29,6 +29,7 @@ const relatedCases = cases.filter((item) => solution.caseIds?.includes(item.id))
 const relatedPosts = isBlogEnabled && isBlogPostRouteEnabled ? await findPostsBySlugs(solution.postSlugs ?? []) : [];
 const relatedSolutions = solutions.filter((item) => item.id !== solution.id);
 const metadata = {
+  robots: { index: true },
   title: `${solution.title}｜概念架构与定制交付准备`,
   description: `${solution.summary}查看适用场景、拟开发模块、按项目约定的交付与前置资料。本页为静态概念演示，不代表后端已实现、现场接入已验证或客户交付。`,
 };

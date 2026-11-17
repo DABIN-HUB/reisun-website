@@ -19,6 +19,7 @@ import { brand } from '~/data/brand';
 const posts = await findLatestPosts({ count: 3 });
 const featuredSolution = solutions[0];
 const metadata = {
+  robots: { index: true },
   title: '小斌opc｜Java 软件定制开发与工业数据采集',
   description: brand.description ?? undefined,
   ignoreTitleTemplate: true,

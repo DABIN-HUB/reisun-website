@@ -14,12 +14,14 @@ import compress from 'astro-compress';
 import type { AstroIntegration } from 'astro';
 
 import astrowind from './vendor/integration';
+import searchIndexing from './vendor/integration/search-indexing';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const hasExternalScripts = false;
+const indexing = searchIndexing();
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
@@ -50,7 +52,7 @@ export default defineConfig({
   ],
 
   integrations: [
-    sitemap(),
+    sitemap({ filter: indexing.filterSitemap, serialize: indexing.serializeSitemap }),
     mdx(),
     icon({
       // Local SVG icons (used as <Icon name="file-name" />) live next to the other assets.
@@ -97,6 +99,7 @@ export default defineConfig({
     astrowind({
       config: './src/config.yaml',
     }),
+    indexing.integration,
   ],
 
   image: {
