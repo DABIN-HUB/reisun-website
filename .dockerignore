@@ -2,3 +2,9 @@ dist/
 node_modules/
 .vscode/
 .github/
+.git/
+.hermes/
+.wrangler/
+.env
+.env.*
+site/

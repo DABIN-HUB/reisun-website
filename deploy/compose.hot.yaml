@@ -1,0 +1,23 @@
+name: reisun
+
+services:
+  web:
+    build:
+      context: '${REISUN_PROJECT_DIR:-/data/reisun-website}'
+      dockerfile: Dockerfile
+      target: hot-runtime
+    image: reisun-website:hot-runtime
+    container_name: reisun-website
+    restart: unless-stopped
+    ports:
+      - '8888:8080'
+    volumes:
+      # Shared SELinux label is restricted to this project-owned new directory.
+      # Mount the parent, never the resolved current symlink target.
+      - '${REISUN_SITE_DIR:-/data/reisun-website/site}:/srv/site:ro,z'
+    networks:
+      - middleware-net
+
+networks:
+  middleware-net:
+    external: true

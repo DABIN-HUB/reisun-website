@@ -26,3 +26,6 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .astro
+
+# Oracle static publishing state (releases, manifests, logs, and assets).
+/site/
