@@ -567,7 +567,11 @@ def freeze_release(root, files, directories):
             os.fchmod(stream.fileno(), 0o444)
             os.fsync(stream.fileno())
     for directory in sorted(directories, key=lambda p: len(p.parts), reverse=True):
-        os.chmod(directory, 0o555)
+        # Moving a directory between parents needs write permission on its
+        # root to update '..'. Keep the private workspace root writable until
+        # it has moved; freeze the published root immediately after rename.
+        if directory != root:
+            os.chmod(directory, 0o555)
         fsync_dir(directory)
 
 
@@ -798,6 +802,8 @@ class Site:
             require(not os.path.lexists(final) and not os.path.lexists(manifest_path),
                     'release_exists', 'Release identifier appeared during staging.')
             os.rename(workspace, final)
+            os.chmod(final, 0o555)
+            fsync_dir(final)
             fsync_dir(self.releases)
             fsync_dir(self.staging)
             os.rename(manifest_temp, manifest_path)
@@ -809,10 +815,10 @@ class Site:
             if manifest_temp is not None and os.path.lexists(manifest_temp):
                 os.unlink(manifest_temp)
 
-    def summary(self, action, manifest, **extra):
-        return {'ok': True, 'action': action, 'release': manifest['release'],
-                'commit': manifest['commit'], 'file_count': manifest['file_count'],
-                'indexable_count': len(manifest['indexable_urls']), **extra}
+    def summary(self, action, release_manifest, **extra):
+        return {'ok': True, 'action': action, 'release': release_manifest['release'],
+                'commit': release_manifest['commit'], 'file_count': release_manifest['file_count'],
+                'indexable_count': len(release_manifest['indexable_urls']), **extra}
 
     def initialize(self, identifier):
         require(self.pointer('current', absent=True) is None, 'already_initialized',
